@@ -3,6 +3,7 @@ import {
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
+  Users,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -25,6 +26,7 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/', icon: LayoutDashboard, label: t('dashboard') },
     { path: '/inventory', icon: Package, label: t('inventory') },
     { path: '/orders', icon: ShoppingCart, label: t('orders') },
+    { path: '/customers', icon: Users, label: t('customers') },
     { path: '/analytics', icon: BarChart3, label: t('analytics') },
     { path: '/settings', icon: Settings, label: t('settings') },
   ];

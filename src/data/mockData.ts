@@ -1,4 +1,4 @@
-import { ProductDTO, OrderDTO, SalesData } from '@/types';
+import { ProductDTO, OrderDTO, SalesData, CustomerDTO } from '@/types';
 
 // Mock Products
 export const mockProducts: ProductDTO[] = [
@@ -134,3 +134,98 @@ export const getCategoryDistribution = (gender: 'Men' | 'Women' | 'All') => {
     { name: 'Relaxed', value: fitCounts['Relaxed'] || 0, fill: 'hsl(var(--chart-5))' },
   ];
 };
+
+// Mock Customers
+export const mockCustomers: CustomerDTO[] = [
+  {
+    id: 'CUS001',
+    name: 'John Smith',
+    email: 'john.smith@email.com',
+    phone: '+1 (555) 123-4567',
+    address: '123 Main St, New York, NY 10001',
+    status: 'vip',
+    totalOrders: 12,
+    totalSpent: 1549.88,
+    createdAt: '2023-03-15T10:00:00Z',
+    notes: 'Prefers express shipping. Loyal customer since 2023.',
+  },
+  {
+    id: 'CUS002',
+    name: 'Sarah Johnson',
+    email: 'sarah.j@email.com',
+    phone: '+1 (555) 234-5678',
+    address: '456 Oak Ave, Los Angeles, CA 90001',
+    status: 'active',
+    totalOrders: 5,
+    totalSpent: 449.95,
+    createdAt: '2023-08-20T14:30:00Z',
+  },
+  {
+    id: 'CUS003',
+    name: 'Michael Brown',
+    email: 'mbrown@email.com',
+    phone: '+1 (555) 345-6789',
+    address: '789 Pine Rd, Chicago, IL 60601',
+    status: 'active',
+    totalOrders: 8,
+    totalSpent: 879.92,
+    createdAt: '2023-05-10T09:15:00Z',
+  },
+  {
+    id: 'CUS004',
+    name: 'Emily Davis',
+    email: 'emily.d@email.com',
+    phone: '+1 (555) 456-7890',
+    address: '321 Elm St, Houston, TX 77001',
+    status: 'active',
+    totalOrders: 3,
+    totalSpent: 269.97,
+    createdAt: '2024-01-05T16:45:00Z',
+  },
+  {
+    id: 'CUS005',
+    name: 'David Wilson',
+    email: 'dwilson@email.com',
+    phone: '+1 (555) 567-8901',
+    address: '555 Maple Dr, Phoenix, AZ 85001',
+    status: 'inactive',
+    totalOrders: 1,
+    totalSpent: 129.99,
+    createdAt: '2023-11-28T11:00:00Z',
+    notes: 'Account inactive - no orders in 60+ days.',
+  },
+  {
+    id: 'CUS006',
+    name: 'Jessica Martinez',
+    email: 'jmartinez@email.com',
+    phone: '+1 (555) 678-9012',
+    address: '888 Cedar Ln, Philadelphia, PA 19101',
+    status: 'vip',
+    totalOrders: 15,
+    totalSpent: 2124.85,
+    createdAt: '2023-02-01T08:00:00Z',
+    notes: 'Top customer. Enrolled in loyalty program.',
+  },
+  {
+    id: 'CUS007',
+    name: 'Robert Taylor',
+    email: 'rtaylor@email.com',
+    phone: '+1 (555) 789-0123',
+    address: '999 Birch Blvd, San Antonio, TX 78201',
+    status: 'active',
+    totalOrders: 4,
+    totalSpent: 359.96,
+    createdAt: '2023-09-12T13:20:00Z',
+  },
+  {
+    id: 'CUS008',
+    name: 'Amanda White',
+    email: 'awhite@email.com',
+    phone: '+1 (555) 890-1234',
+    address: '111 Spruce Way, San Diego, CA 92101',
+    status: 'active',
+    totalOrders: 6,
+    totalSpent: 509.94,
+    createdAt: '2023-07-03T10:30:00Z',
+  },
+];

@@ -59,3 +59,17 @@ export interface CategoryData {
   value: number;
   fill: string;
 }
+
+// CustomerDTO
+export interface CustomerDTO {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  status: 'active' | 'inactive' | 'vip';
+  totalOrders: number;
+  totalSpent: number;
+  createdAt: string;
+  notes?: string;
+}
