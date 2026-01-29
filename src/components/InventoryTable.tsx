@@ -21,6 +21,7 @@ import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
 import SortableHeader from './SortableHeader';
+import ProductQuickViewDialog from './ProductQuickViewDialog';
 import { exportToCsv } from '@/lib/exportCsv';
 import { toast } from 'sonner';
 
@@ -28,6 +29,8 @@ const InventoryTable = () => {
   const { t } = useLanguage();
   const { genderFilter } = useGenderFilter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState<ProductDTO | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products', genderFilter],
@@ -190,7 +193,14 @@ const InventoryTable = () => {
                 </TableRow>
               ) : (
                 pagination.paginatedItems.map((product) => (
-                  <TableRow key={product.id}>
+                  <TableRow 
+                    key={product.id}
+                    className="cursor-pointer transition-colors hover:bg-muted/50"
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setIsQuickViewOpen(true);
+                    }}
+                  >
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">
@@ -239,6 +249,13 @@ const InventoryTable = () => {
           />
         )}
       </CardContent>
+
+      {/* Product Quick View Dialog */}
+      <ProductQuickViewDialog
+        product={selectedProduct}
+        open={isQuickViewOpen}
+        onOpenChange={setIsQuickViewOpen}
+      />
     </Card>
   );
 };
