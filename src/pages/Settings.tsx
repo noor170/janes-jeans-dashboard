@@ -1,14 +1,81 @@
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from 'next-themes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Languages } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Languages, Moon, Sun, Monitor } from 'lucide-react';
 
 const Settings = () => {
   const { language, setLanguage, t } = useLanguage();
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="space-y-6">
+      {/* Theme Settings */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sun className="h-5 w-5 text-primary" />
+            <CardTitle>{t('theme')}</CardTitle>
+          </div>
+          <CardDescription>
+            Choose your preferred theme for the dashboard interface.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={theme}
+            onValueChange={setTheme}
+            className="grid gap-4 sm:grid-cols-3"
+          >
+            <div>
+              <RadioGroupItem
+                value="light"
+                id="light"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="light"
+                className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+              >
+                <Sun className="mb-3 h-6 w-6" />
+                <span className="text-sm font-medium">{t('lightMode')}</span>
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="dark"
+                id="dark"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="dark"
+                className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+              >
+                <Moon className="mb-3 h-6 w-6" />
+                <span className="text-sm font-medium">{t('darkMode')}</span>
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="system"
+                id="system"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="system"
+                className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+              >
+                <Monitor className="mb-3 h-6 w-6" />
+                <span className="text-sm font-medium">{t('systemMode')}</span>
+              </Label>
+            </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {/* Language Settings */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -43,6 +110,7 @@ const Settings = () => {
         </CardContent>
       </Card>
 
+      {/* Preferences */}
       <Card>
         <CardHeader>
           <CardTitle>{t('preferences')}</CardTitle>
