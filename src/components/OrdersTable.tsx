@@ -38,6 +38,8 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
+import { usePagination } from '@/hooks/usePagination';
+import TablePagination from './TablePagination';
 
 const OrdersTable = () => {
   const { t } = useLanguage();
@@ -77,6 +79,8 @@ const OrdersTable = () => {
     
     return result;
   }, [orders, searchQuery, statusFilter]);
+
+  const pagination = usePagination(filteredOrders, { initialPageSize: 10 });
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
@@ -208,7 +212,7 @@ const OrdersTable = () => {
             </div>
           )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="overflow-x-auto scrollbar-thin">
             <Table>
               <TableHeader>
@@ -223,14 +227,14 @@ const OrdersTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.length === 0 ? (
+                {pagination.paginatedItems.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                       {t('noData')}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredOrders.map((order) => (
+                  pagination.paginatedItems.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>
@@ -305,6 +309,25 @@ const OrdersTable = () => {
               </TableBody>
             </Table>
           </div>
+
+          {filteredOrders.length > 0 && (
+            <TablePagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              pageSize={pagination.pageSize}
+              totalItems={pagination.totalItems}
+              startIndex={pagination.startIndex}
+              endIndex={pagination.endIndex}
+              canGoNext={pagination.canGoNext}
+              canGoPrevious={pagination.canGoPrevious}
+              onPageChange={pagination.setCurrentPage}
+              onPageSizeChange={pagination.setPageSize}
+              goToFirstPage={pagination.goToFirstPage}
+              goToLastPage={pagination.goToLastPage}
+              goToNextPage={pagination.goToNextPage}
+              goToPreviousPage={pagination.goToPreviousPage}
+            />
+          )}
         </CardContent>
       </Card>
 
