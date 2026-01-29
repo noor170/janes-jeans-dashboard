@@ -21,6 +21,7 @@ import Settings from "./pages/Settings";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route element={<ProtectedRoute requiredRoles={['ADMIN', 'SUPER_ADMIN']} />}>
                       <Route element={<DashboardLayout />}>
+                        <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/admin/users" element={<UserManagement />} />
                         <Route path="/admin/audit-logs" element={<AuditLogs />} />
                       </Route>
