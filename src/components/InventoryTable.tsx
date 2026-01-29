@@ -12,11 +12,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
 import TablePagination from './TablePagination';
+import { exportToCsv } from '@/lib/exportCsv';
+import { toast } from 'sonner';
 
 const InventoryTable = () => {
   const { t } = useLanguage();
@@ -43,6 +46,29 @@ const InventoryTable = () => {
 
   const pagination = usePagination(filteredProducts, { initialPageSize: 10 });
 
+  const handleExportCsv = () => {
+    const headers = ['ID', 'Product Name', 'Gender', 'Fit', 'Size', 'Wash', 'Price', 'Stock Level', 'Status'];
+    const data = filteredProducts.map(product => [
+      product.id,
+      product.name,
+      product.gender,
+      product.fit,
+      product.size,
+      product.wash,
+      product.price.toFixed(2),
+      product.stockLevel,
+      product.stockLevel < 10 ? 'Low Stock' : 'In Stock'
+    ]);
+
+    exportToCsv({
+      filename: `inventory-${new Date().toISOString().split('T')[0]}`,
+      headers,
+      data,
+    });
+
+    toast.success(t('export') + ' successful');
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -64,14 +90,25 @@ const InventoryTable = () => {
               {searchQuery && ` (${products.length} total)`}
             </p>
           </div>
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={`${t('search')}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={`${t('search')}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleExportCsv}
+              disabled={filteredProducts.length === 0}
+              className="gap-2"
+            >
+              <Download className="h-4 w-4" />
+              {t('export')}
+            </Button>
           </div>
         </div>
       </CardHeader>
