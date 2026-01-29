@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { usePagination } from '@/hooks/usePagination';
+import TablePagination from './TablePagination';
 
 const InventoryTable = () => {
   const { t } = useLanguage();
@@ -38,6 +40,8 @@ const InventoryTable = () => {
       product.gender.toLowerCase().includes(query)
     );
   }, [products, searchQuery]);
+
+  const pagination = usePagination(filteredProducts, { initialPageSize: 10 });
 
   if (isLoading) {
     return (
@@ -71,7 +75,7 @@ const InventoryTable = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <div className="overflow-x-auto scrollbar-thin">
           <Table>
             <TableHeader>
@@ -86,14 +90,14 @@ const InventoryTable = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.length === 0 ? (
+              {pagination.paginatedItems.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                     {t('noData')}
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredProducts.map((product) => (
+                pagination.paginatedItems.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>
@@ -123,6 +127,25 @@ const InventoryTable = () => {
             </TableBody>
           </Table>
         </div>
+
+        {filteredProducts.length > 0 && (
+          <TablePagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+            startIndex={pagination.startIndex}
+            endIndex={pagination.endIndex}
+            canGoNext={pagination.canGoNext}
+            canGoPrevious={pagination.canGoPrevious}
+            onPageChange={pagination.setCurrentPage}
+            onPageSizeChange={pagination.setPageSize}
+            goToFirstPage={pagination.goToFirstPage}
+            goToLastPage={pagination.goToLastPage}
+            goToNextPage={pagination.goToNextPage}
+            goToPreviousPage={pagination.goToPreviousPage}
+          />
+        )}
       </CardContent>
     </Card>
   );
