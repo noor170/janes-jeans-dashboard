@@ -38,9 +38,12 @@ import { usePagination } from '@/hooks/usePagination';
 import CustomerDetailsDialog from '@/components/CustomerDetailsDialog';
 import CustomerFormDialog from '@/components/CustomerFormDialog';
 
+type StatusFilter = 'all' | 'active' | 'inactive' | 'vip';
+
 const CustomerTable = () => {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDTO | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -53,11 +56,24 @@ const CustomerTable = () => {
     queryFn: fetchCustomers,
   });
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.phone.includes(searchQuery)
-  );
+  // Count customers by status for filter chips
+  const statusCounts = {
+    all: customers.length,
+    active: customers.filter(c => c.status === 'active').length,
+    inactive: customers.filter(c => c.status === 'inactive').length,
+    vip: customers.filter(c => c.status === 'vip').length,
+  };
+
+  const filteredCustomers = customers.filter(customer => {
+    const matchesSearch = 
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.phone.includes(searchQuery);
+    
+    const matchesStatus = statusFilter === 'all' || customer.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const pagination = usePagination(filteredCustomers, { initialPageSize: 10 });
 
@@ -162,6 +178,43 @@ const CustomerTable = () => {
             {t('addCustomer')}
           </Button>
         </div>
+      </div>
+
+      {/* Status Filter Chips */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant={statusFilter === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setStatusFilter('all')}
+          className="rounded-full"
+        >
+          {t('all')} ({statusCounts.all})
+        </Button>
+        <Button
+          variant={statusFilter === 'active' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setStatusFilter('active')}
+          className="rounded-full"
+        >
+          {t('active')} ({statusCounts.active})
+        </Button>
+        <Button
+          variant={statusFilter === 'inactive' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setStatusFilter('inactive')}
+          className="rounded-full"
+        >
+          {t('inactive')} ({statusCounts.inactive})
+        </Button>
+        <Button
+          variant={statusFilter === 'vip' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setStatusFilter('vip')}
+          className="rounded-full bg-amber-500 hover:bg-amber-600 text-white border-amber-500"
+          style={statusFilter !== 'vip' ? { background: 'transparent', color: 'hsl(var(--foreground))' } : {}}
+        >
+          VIP ({statusCounts.vip})
+        </Button>
       </div>
 
       {/* Table */}
