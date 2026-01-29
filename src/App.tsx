@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { GenderFilterProvider } from "@/contexts/GenderFilterContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CartProvider } from "@/contexts/CartContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
@@ -23,6 +24,13 @@ import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+// Shop pages
+import ShoppingDashboard from "./pages/shop/ShoppingDashboard";
+import ProductDetails from "./pages/shop/ProductDetails";
+import CartPage from "./pages/shop/CartPage";
+import CheckoutPage from "./pages/shop/CheckoutPage";
+import PaymentPage from "./pages/shop/PaymentPage";
+import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
 
 const queryClient = new QueryClient();
 
@@ -34,32 +42,41 @@ const App = () => (
           <GenderFilterProvider>
             <NotificationProvider>
               <AuthProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route element={<DashboardLayout />}>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/orders" element={<Orders />} />
-                      <Route path="/customers" element={<Customers />} />
-                      <Route path="/shipments" element={<Shipments />} />
-                      <Route path="/shipping-vendors" element={<ShippingVendors />} />
-                      <Route path="/analytics" element={<Analytics />} />
-                      <Route path="/settings" element={<Settings />} />
-                    </Route>
-                    {/* Admin Routes */}
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route element={<ProtectedRoute requiredRoles={['ADMIN', 'SUPER_ADMIN']} />}>
+                <CartProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
                       <Route element={<DashboardLayout />}>
-                        <Route path="/admin" element={<AdminDashboard />} />
-                        <Route path="/admin/users" element={<UserManagement />} />
-                        <Route path="/admin/audit-logs" element={<AuditLogs />} />
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/inventory" element={<Inventory />} />
+                        <Route path="/orders" element={<Orders />} />
+                        <Route path="/customers" element={<Customers />} />
+                        <Route path="/shipments" element={<Shipments />} />
+                        <Route path="/shipping-vendors" element={<ShippingVendors />} />
+                        <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/settings" element={<Settings />} />
                       </Route>
-                    </Route>
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
+                      {/* Shop Routes (Guest Checkout - No Auth Required) */}
+                      <Route path="/shop" element={<ShoppingDashboard />} />
+                      <Route path="/shop/product/:productId" element={<ProductDetails />} />
+                      <Route path="/shop/cart" element={<CartPage />} />
+                      <Route path="/shop/checkout" element={<CheckoutPage />} />
+                      <Route path="/shop/payment" element={<PaymentPage />} />
+                      <Route path="/shop/order-success" element={<OrderSuccessPage />} />
+                      {/* Admin Routes */}
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route element={<ProtectedRoute requiredRoles={['ADMIN', 'SUPER_ADMIN']} />}>
+                        <Route element={<DashboardLayout />}>
+                          <Route path="/admin" element={<AdminDashboard />} />
+                          <Route path="/admin/users" element={<UserManagement />} />
+                          <Route path="/admin/audit-logs" element={<AuditLogs />} />
+                        </Route>
+                      </Route>
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </CartProvider>
               </AuthProvider>
             </NotificationProvider>
           </GenderFilterProvider>
