@@ -177,15 +177,6 @@ const InventoryTable = () => {
     toast.success(t('export') + ' successful');
   };
 
-    exportToCsv({
-      filename: `inventory-${new Date().toISOString().split('T')[0]}`,
-      headers,
-      data,
-    });
-
-    toast.success(t('export') + ' successful');
-  };
-
   if (isLoading) {
     return (
       <Card>
