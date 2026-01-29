@@ -11,12 +11,14 @@ import {
   Key,
   MoreHorizontal,
   Plus,
-  RefreshCw
+  RefreshCw,
+  ClipboardList
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/lib/authApi';
+import { auditLogService } from '@/lib/auditLogService';
 import { UserDTO, UserRole } from '@/types/auth';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,10 +48,11 @@ import EditUserDialog from '@/components/admin/EditUserDialog';
 
 const UserManagement = () => {
   const { user: currentUser } = useAuth();
-  const { t } = useLanguage();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+  const [deleteUserData, setDeleteUserData] = useState<UserDTO | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [resetPasswordUser, setResetPasswordUser] = useState<UserDTO | null>(null);
   const [editUser, setEditUser] = useState<UserDTO | null>(null);
@@ -60,39 +63,81 @@ const UserManagement = () => {
   });
 
   const deactivateMutation = useMutation({
-    mutationFn: (id: string) => authApi.deactivateUser(id),
-    onSuccess: () => {
+    mutationFn: async (user: UserDTO) => {
+      await authApi.deactivateUser(user.id);
+      return user;
+    },
+    onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User deactivated successfully');
+      auditLogService.logAction({
+        action: 'USER_DEACTIVATED',
+        targetUserId: user.id,
+        details: {
+          targetUser: { id: user.id, email: user.email, name: `${user.firstName} ${user.lastName}` },
+        },
+      });
     },
     onError: () => toast.error('Failed to deactivate user'),
   });
 
   const activateMutation = useMutation({
-    mutationFn: (id: string) => authApi.activateUser(id),
-    onSuccess: () => {
+    mutationFn: async (user: UserDTO) => {
+      await authApi.activateUser(user.id);
+      return user;
+    },
+    onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User activated successfully');
+      auditLogService.logAction({
+        action: 'USER_ACTIVATED',
+        targetUserId: user.id,
+        details: {
+          targetUser: { id: user.id, email: user.email, name: `${user.firstName} ${user.lastName}` },
+        },
+      });
     },
     onError: () => toast.error('Failed to activate user'),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => authApi.deleteUser(id),
-    onSuccess: () => {
+    mutationFn: async (user: UserDTO) => {
+      await authApi.deleteUser(user.id);
+      return user;
+    },
+    onSuccess: (user) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User deleted successfully');
       setDeleteUserId(null);
+      setDeleteUserData(null);
+      auditLogService.logAction({
+        action: 'USER_DELETED',
+        targetUserId: user.id,
+        details: {
+          targetUser: { id: user.id, email: user.email, name: `${user.firstName} ${user.lastName}` },
+        },
+      });
     },
     onError: () => toast.error('Failed to delete user'),
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: ({ id, role }: { id: string; role: UserRole }) => 
-      authApi.updateUserRole(id, role),
-    onSuccess: () => {
+    mutationFn: async ({ user, newRole }: { user: UserDTO; newRole: UserRole }) => {
+      await authApi.updateUserRole(user.id, newRole);
+      return { user, newRole };
+    },
+    onSuccess: ({ user, newRole }) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User role updated successfully');
+      auditLogService.logAction({
+        action: 'USER_ROLE_CHANGED',
+        targetUserId: user.id,
+        details: {
+          targetUser: { id: user.id, email: user.email, name: `${user.firstName} ${user.lastName}` },
+          previousRole: user.role,
+          newRole,
+        },
+      });
     },
     onError: () => toast.error('Failed to update user role'),
   });
@@ -116,6 +161,11 @@ const UserManagement = () => {
 
   const isSuperAdmin = currentUser?.role === 'SUPER_ADMIN';
 
+  const handleDeleteClick = (user: UserDTO) => {
+    setDeleteUserId(user.id);
+    setDeleteUserData(user);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -129,6 +179,10 @@ const UserManagement = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button variant="outline" onClick={() => navigate('/admin/audit-logs')}>
+            <ClipboardList className="h-4 w-4 mr-2" />
+            Audit Logs
+          </Button>
           <Button variant="outline" size="icon" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -194,11 +248,11 @@ const UserManagement = () => {
                       <TableCell>{getRoleBadge(user.role)}</TableCell>
                       <TableCell>
                         {user.isActive ? (
-                          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
+                          <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30">
                             Active
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-red-500/10 text-red-500 border-red-500/30">
+                          <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30">
                             Inactive
                           </Badge>
                         )}
@@ -227,14 +281,14 @@ const UserManagement = () => {
                               <>
                                 {user.role === 'USER' ? (
                                   <DropdownMenuItem 
-                                    onClick={() => updateRoleMutation.mutate({ id: user.id, role: 'ADMIN' })}
+                                    onClick={() => updateRoleMutation.mutate({ user, newRole: 'ADMIN' })}
                                   >
                                     <Shield className="h-4 w-4 mr-2" />
                                     Promote to Admin
                                   </DropdownMenuItem>
                                 ) : (
                                   <DropdownMenuItem 
-                                    onClick={() => updateRoleMutation.mutate({ id: user.id, role: 'USER' })}
+                                    onClick={() => updateRoleMutation.mutate({ user, newRole: 'USER' })}
                                   >
                                     <ShieldCheck className="h-4 w-4 mr-2" />
                                     Demote to User
@@ -245,14 +299,14 @@ const UserManagement = () => {
                             )}
                             {user.isActive ? (
                               <DropdownMenuItem 
-                                onClick={() => deactivateMutation.mutate(user.id)}
+                                onClick={() => deactivateMutation.mutate(user)}
                                 disabled={user.id === currentUser?.id}
                               >
                                 <UserX className="h-4 w-4 mr-2" />
                                 Deactivate
                               </DropdownMenuItem>
                             ) : (
-                              <DropdownMenuItem onClick={() => activateMutation.mutate(user.id)}>
+                              <DropdownMenuItem onClick={() => activateMutation.mutate(user)}>
                                 <UserCheck className="h-4 w-4 mr-2" />
                                 Activate
                               </DropdownMenuItem>
@@ -262,7 +316,7 @@ const UserManagement = () => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem 
                                   className="text-destructive focus:text-destructive"
-                                  onClick={() => setDeleteUserId(user.id)}
+                                  onClick={() => handleDeleteClick(user)}
                                 >
                                   <Trash2 className="h-4 w-4 mr-2" />
                                   Delete User
@@ -289,7 +343,7 @@ const UserManagement = () => {
       </Card>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
+      <AlertDialog open={!!deleteUserId} onOpenChange={() => { setDeleteUserId(null); setDeleteUserData(null); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete User</AlertDialogTitle>
@@ -301,7 +355,7 @@ const UserManagement = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => deleteUserId && deleteMutation.mutate(deleteUserId)}
+              onClick={() => deleteUserData && deleteMutation.mutate(deleteUserData)}
             >
               Delete
             </AlertDialogAction>

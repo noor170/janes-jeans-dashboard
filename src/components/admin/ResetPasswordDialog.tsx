@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/lib/authApi';
+import { auditLogService } from '@/lib/auditLogService';
 import { UserDTO } from '@/types/auth';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -43,6 +44,19 @@ const ResetPasswordDialog = ({ user, onClose }: ResetPasswordDialogProps) => {
       authApi.resetPassword(user!.id, data.newPassword),
     onSuccess: () => {
       toast.success('Password reset successfully');
+      if (user) {
+        auditLogService.logAction({
+          action: 'PASSWORD_RESET',
+          targetUserId: user.id,
+          details: {
+            targetUser: { 
+              id: user.id, 
+              email: user.email, 
+              name: `${user.firstName} ${user.lastName}` 
+            },
+          },
+        });
+      }
       onClose();
       form.reset();
     },

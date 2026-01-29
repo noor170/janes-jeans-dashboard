@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, User, LogOut } from 'lucide-react';
+import { ShieldCheck, User, LogOut, ClipboardList } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { auditLogService } from '@/lib/auditLogService';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -64,9 +65,14 @@ const AdminButton = () => {
           <User className="mr-2 h-4 w-4" />
           User Management
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/admin/audit-logs')}>
+          <ClipboardList className="mr-2 h-4 w-4" />
+          Audit Logs
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           onClick={() => {
+            auditLogService.logAction({ action: 'USER_LOGOUT' });
             logout();
             navigate('/');
           }}

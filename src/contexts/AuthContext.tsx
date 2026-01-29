@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { AuthUser, LoginRequest } from '@/types/auth';
 import { authApi } from '@/lib/authApi';
+import { auditLogService } from '@/lib/auditLogService';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -51,6 +52,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (credentials: LoginRequest) => {
     const response = await authApi.adminLogin(credentials);
     setUser(response.user);
+    // Log successful login after user is set
+    setTimeout(() => {
+      auditLogService.logAction({ action: 'USER_LOGIN' });
+    }, 100);
   };
 
   const logout = () => {
