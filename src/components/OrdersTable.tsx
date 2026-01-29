@@ -33,7 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, Eye, Trash2, RefreshCw, Search } from 'lucide-react';
+import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
@@ -47,6 +47,7 @@ const OrdersTable = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<OrderStatus | 'All'>('All');
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
@@ -54,18 +55,28 @@ const OrdersTable = () => {
   });
 
   const filteredOrders = useMemo(() => {
-    if (!searchQuery.trim()) return orders;
+    let result = orders;
     
-    const query = searchQuery.toLowerCase();
-    return orders.filter((order) =>
-      order.id.toLowerCase().includes(query) ||
-      order.customerName.toLowerCase().includes(query) ||
-      order.customerEmail.toLowerCase().includes(query) ||
-      order.status.toLowerCase().includes(query) ||
-      order.shippingAddress.toLowerCase().includes(query) ||
-      order.items.some(item => item.productName.toLowerCase().includes(query))
-    );
-  }, [orders, searchQuery]);
+    // Apply status filter
+    if (statusFilter !== 'All') {
+      result = result.filter(order => order.status === statusFilter);
+    }
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((order) =>
+        order.id.toLowerCase().includes(query) ||
+        order.customerName.toLowerCase().includes(query) ||
+        order.customerEmail.toLowerCase().includes(query) ||
+        order.status.toLowerCase().includes(query) ||
+        order.shippingAddress.toLowerCase().includes(query) ||
+        order.items.some(item => item.productName.toLowerCase().includes(query))
+      );
+    }
+    
+    return result;
+  }, [orders, searchQuery, statusFilter]);
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
@@ -130,28 +141,72 @@ const OrdersTable = () => {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle>{t('orders')}</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {filteredOrders.length} {t('orders').toLowerCase()}
-              {searchQuery && ` (${orders.length} total)`}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder={`${t('search')}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
+        <CardHeader className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <CardTitle>{t('orders')}</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {filteredOrders.length} {t('orders').toLowerCase()}
+                {(searchQuery || statusFilter !== 'All') && ` (${orders.length} total)`}
+              </p>
             </div>
-            <Button onClick={() => setIsCreateOpen(true)}>
-              {t('newOrder')}
-            </Button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder={`${t('search')}...`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    <Filter className="h-4 w-4" />
+                    {statusFilter === 'All' ? t('status') : t(statusFilter.toLowerCase() as any)}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-popover">
+                  <DropdownMenuLabel>{t('filter')}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setStatusFilter('All')}
+                    className={statusFilter === 'All' ? 'bg-accent' : ''}
+                  >
+                    {t('all')}
+                  </DropdownMenuItem>
+                  {statusOptions.map((status) => (
+                    <DropdownMenuItem
+                      key={status}
+                      onClick={() => setStatusFilter(status)}
+                      className={statusFilter === status ? 'bg-accent' : ''}
+                    >
+                      <Badge className={`mr-2 ${getStatusColor(status)}`}>
+                        {t(status.toLowerCase() as any)}
+                      </Badge>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button onClick={() => setIsCreateOpen(true)}>
+                {t('newOrder')}
+              </Button>
+            </div>
           </div>
+          {statusFilter !== 'All' && (
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="gap-1">
+                {t('status')}: {t(statusFilter.toLowerCase() as any)}
+                <button
+                  onClick={() => setStatusFilter('All')}
+                  className="ml-1 rounded-full hover:bg-muted-foreground/20"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto scrollbar-thin">
