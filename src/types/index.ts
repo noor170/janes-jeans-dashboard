@@ -22,6 +22,7 @@ export interface OrderDTO {
   deliveredDate?: string;
   totalAmount: number;
   shippingAddress: string;
+  notes?: string; // Markdown-formatted notes
 }
 
 export interface OrderItemDTO {
