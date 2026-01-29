@@ -38,7 +38,8 @@ export const mockOrders: OrderDTO[] = [
     shippedDate: '2024-01-16T14:00:00Z',
     deliveredDate: '2024-01-19T11:00:00Z',
     totalAmount: 254.97,
-    shippingAddress: '123 Main St, New York, NY 10001'
+    shippingAddress: '123 Main St, New York, NY 10001',
+    notes: '**VIP Customer** - Handle with care.\n\n- Gift wrapping requested\n- Leave at front door'
   },
   {
     id: 'ORD002',
@@ -64,7 +65,8 @@ export const mockOrders: OrderDTO[] = [
     status: 'Processing',
     orderDate: '2024-01-20T09:15:00Z',
     totalAmount: 179.98,
-    shippingAddress: '789 Pine Rd, Chicago, IL 60601'
+    shippingAddress: '789 Pine Rd, Chicago, IL 60601',
+    notes: '## Special Instructions\n\nCustomer requested:\n1. Express shipping\n2. No promotional materials\n\n> "Please ensure fast delivery for birthday gift"'
   },
   {
     id: 'ORD004',

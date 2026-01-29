@@ -9,6 +9,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';
+import ReactMarkdown from 'react-markdown';
 
 interface OrderDetailsDialogProps {
   order: OrderDTO | null;
@@ -118,8 +119,23 @@ const OrderDetailsDialog = ({ order, open, onOpenChange }: OrderDetailsDialogPro
                   {format(new Date(order.deliveredDate), 'MMM dd, yyyy HH:mm')}
                 </p>
               </div>
-            )}
+          )}
           </div>
+
+          {/* Notes (Markdown) */}
+          {order.notes && (
+            <>
+              <Separator />
+              <div>
+                <h4 className="mb-2 text-sm font-medium text-muted-foreground">
+                  {t('notes')}
+                </h4>
+                <div className="prose prose-sm max-w-none rounded-lg bg-muted/50 p-3 dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground prose-blockquote:text-muted-foreground prose-blockquote:border-primary">
+                  <ReactMarkdown>{order.notes}</ReactMarkdown>
+                </div>
+              </div>
+            </>
+          )}
 
           <Separator />
 

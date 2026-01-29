@@ -83,6 +83,7 @@ export const translations = {
     refresh: 'Refresh',
     loading: 'Loading...',
     noData: 'No data available',
+    notes: 'Notes',
   },
   bn: {
     // Navigation
@@ -166,6 +167,7 @@ export const translations = {
     refresh: 'রিফ্রেশ',
     loading: 'লোড হচ্ছে...',
     noData: 'কোন ডেটা নেই',
+    notes: 'নোট',
   },
 };
 
