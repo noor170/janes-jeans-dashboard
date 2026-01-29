@@ -76,6 +76,12 @@ export const translations = {
     preferences: 'Preferences',
     languageSettings: 'Language Settings',
     
+    // Theme
+    lightMode: 'Light',
+    darkMode: 'Dark',
+    systemMode: 'System',
+    theme: 'Theme',
+    
     // Common
     search: 'Search',
     filter: 'Filter',
@@ -159,6 +165,12 @@ export const translations = {
     bengali: 'বাংলা',
     preferences: 'পছন্দসমূহ',
     languageSettings: 'ভাষা সেটিংস',
+    
+    // Theme
+    lightMode: 'হালকা',
+    darkMode: 'অন্ধকার',
+    systemMode: 'সিস্টেম',
+    theme: 'থিম',
     
     // Common
     search: 'অনুসন্ধান',
