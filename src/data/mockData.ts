@@ -1,4 +1,4 @@
-import { ProductDTO, OrderDTO, SalesData, CustomerDTO } from '@/types';
+import { ProductDTO, OrderDTO, SalesData, CustomerDTO, ShippingVendorDTO, ShipmentDTO } from '@/types';
 
 // Mock Products
 export const mockProducts: ProductDTO[] = [
@@ -227,5 +227,90 @@ export const mockCustomers: CustomerDTO[] = [
     totalOrders: 6,
     totalSpent: 509.94,
     createdAt: '2023-07-03T10:30:00Z',
+  },
+];
+
+// Mock Shipping Vendors
+export const mockShippingVendors: ShippingVendorDTO[] = [
+  {
+    id: 'VND001',
+    name: 'Pathao',
+    code: 'PATHAO',
+    contactEmail: 'business@pathao.com',
+    contactPhone: '+880 9666-777777',
+    website: 'https://pathao.com',
+    trackingUrlTemplate: 'https://pathao.com/track/{tracking_number}',
+    status: 'active',
+    avgDeliveryDays: 3,
+    createdAt: '2023-01-01T00:00:00Z',
+  },
+  {
+    id: 'VND002',
+    name: 'Steadfast',
+    code: 'STEADFAST',
+    contactEmail: 'support@steadfast.com.bd',
+    contactPhone: '+880 9612-123456',
+    website: 'https://steadfast.com.bd',
+    trackingUrlTemplate: 'https://steadfast.com.bd/track/{tracking_number}',
+    status: 'active',
+    avgDeliveryDays: 2,
+    createdAt: '2023-01-15T00:00:00Z',
+  },
+  {
+    id: 'VND003',
+    name: 'Redx',
+    code: 'REDX',
+    contactEmail: 'info@redx.com.bd',
+    contactPhone: '+880 9613-789012',
+    website: 'https://redx.com.bd',
+    trackingUrlTemplate: 'https://redx.com.bd/track/{tracking_number}',
+    status: 'active',
+    avgDeliveryDays: 4,
+    createdAt: '2023-02-01T00:00:00Z',
+  },
+  {
+    id: 'VND004',
+    name: 'Paperfly',
+    code: 'PAPERFLY',
+    contactEmail: 'contact@paperfly.com.bd',
+    contactPhone: '+880 9614-456789',
+    website: 'https://paperfly.com.bd',
+    status: 'inactive',
+    avgDeliveryDays: 5,
+    createdAt: '2023-03-01T00:00:00Z',
+  },
+];
+
+// Mock Shipments
+export const mockShipments: ShipmentDTO[] = [
+  {
+    id: 'SHP001',
+    orderId: 'ORD001',
+    vendorId: 'VND001',
+    trackingNumber: 'PTH123456789',
+    status: 'delivered',
+    shippedAt: '2024-01-16T14:00:00Z',
+    estimatedDelivery: '2024-01-19T18:00:00Z',
+    deliveredAt: '2024-01-19T11:00:00Z',
+    createdAt: '2024-01-16T10:00:00Z',
+  },
+  {
+    id: 'SHP002',
+    orderId: 'ORD002',
+    vendorId: 'VND002',
+    trackingNumber: 'STF987654321',
+    status: 'in_transit',
+    shippedAt: '2024-01-19T09:00:00Z',
+    estimatedDelivery: '2024-01-21T18:00:00Z',
+    createdAt: '2024-01-18T16:00:00Z',
+  },
+  {
+    id: 'SHP003',
+    orderId: 'ORD003',
+    vendorId: 'VND001',
+    trackingNumber: 'PTH456789123',
+    status: 'pending',
+    estimatedDelivery: '2024-01-25T18:00:00Z',
+    createdAt: '2024-01-20T10:00:00Z',
   },
 ];

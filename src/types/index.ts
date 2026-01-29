@@ -73,3 +73,33 @@ export interface CustomerDTO {
   createdAt: string;
   notes?: string;
 }
+
+// ShippingVendorDTO
+export interface ShippingVendorDTO {
+  id: string;
+  name: string;
+  code: string;
+  contactEmail: string;
+  contactPhone: string;
+  website?: string;
+  trackingUrlTemplate?: string; // e.g., "https://pathao.com/track/{tracking_number}"
+  status: 'active' | 'inactive';
+  avgDeliveryDays: number;
+  createdAt: string;
+}
+
+// ShipmentDTO
+export interface ShipmentDTO {
+  id: string;
+  orderId: string;
+  vendorId: string;
+  trackingNumber: string;
+  status: ShipmentStatus;
+  shippedAt?: string;
+  estimatedDelivery?: string;
+  deliveredAt?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export type ShipmentStatus = 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'failed';

@@ -1,5 +1,5 @@
-import { ProductDTO, OrderDTO, DashboardStats, GenderFilter, OrderStatus, CustomerDTO } from '@/types';
-import { mockProducts, mockOrders, mockSalesData, getCategoryDistribution, mockCustomers } from '@/data/mockData';
+import { ProductDTO, OrderDTO, DashboardStats, GenderFilter, OrderStatus, CustomerDTO, ShippingVendorDTO, ShipmentDTO, ShipmentStatus } from '@/types';
+import { mockProducts, mockOrders, mockSalesData, getCategoryDistribution, mockCustomers, mockShippingVendors, mockShipments } from '@/data/mockData';
 
 // Simulating API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -175,5 +175,128 @@ export const deleteCustomer = async (id: string): Promise<boolean> => {
   if (index === -1) return false;
   
   customersStore.splice(index, 1);
+  return true;
+};
+
+// ============= SHIPPING VENDORS API =============
+
+let vendorsStore = [...mockShippingVendors];
+
+// GET /api/vendors
+export const fetchShippingVendors = async (): Promise<ShippingVendorDTO[]> => {
+  await delay(200);
+  return [...vendorsStore].sort((a, b) => a.name.localeCompare(b.name));
+};
+
+// GET /api/vendors/:id
+export const fetchShippingVendorById = async (id: string): Promise<ShippingVendorDTO | undefined> => {
+  await delay(150);
+  return vendorsStore.find(v => v.id === id);
+};
+
+// POST /api/vendors
+export const createShippingVendor = async (vendor: Omit<ShippingVendorDTO, 'id' | 'createdAt'>): Promise<ShippingVendorDTO> => {
+  await delay(300);
+  const newVendor: ShippingVendorDTO = {
+    ...vendor,
+    id: `VND${String(vendorsStore.length + 1).padStart(3, '0')}`,
+    createdAt: new Date().toISOString(),
+  };
+  vendorsStore.push(newVendor);
+  return newVendor;
+};
+
+// PUT /api/vendors/:id
+export const updateShippingVendor = async (id: string, updates: Partial<ShippingVendorDTO>): Promise<ShippingVendorDTO | undefined> => {
+  await delay(300);
+  const index = vendorsStore.findIndex(v => v.id === id);
+  if (index === -1) return undefined;
+  
+  vendorsStore[index] = { ...vendorsStore[index], ...updates };
+  return vendorsStore[index];
+};
+
+// DELETE /api/vendors/:id
+export const deleteShippingVendor = async (id: string): Promise<boolean> => {
+  await delay(200);
+  const index = vendorsStore.findIndex(v => v.id === id);
+  if (index === -1) return false;
+  
+  vendorsStore.splice(index, 1);
+  return true;
+};
+
+// ============= SHIPMENTS API =============
+
+let shipmentsStore = [...mockShipments];
+
+// GET /api/shipments
+export const fetchShipments = async (): Promise<ShipmentDTO[]> => {
+  await delay(200);
+  return [...shipmentsStore].sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+};
+
+// GET /api/shipments/:id
+export const fetchShipmentById = async (id: string): Promise<ShipmentDTO | undefined> => {
+  await delay(150);
+  return shipmentsStore.find(s => s.id === id);
+};
+
+// GET /api/shipments/order/:orderId
+export const fetchShipmentByOrderId = async (orderId: string): Promise<ShipmentDTO | undefined> => {
+  await delay(150);
+  return shipmentsStore.find(s => s.orderId === orderId);
+};
+
+// POST /api/shipments
+export const createShipment = async (shipment: Omit<ShipmentDTO, 'id' | 'createdAt'>): Promise<ShipmentDTO> => {
+  await delay(300);
+  const newShipment: ShipmentDTO = {
+    ...shipment,
+    id: `SHP${String(shipmentsStore.length + 1).padStart(3, '0')}`,
+    createdAt: new Date().toISOString(),
+  };
+  shipmentsStore.push(newShipment);
+  return newShipment;
+};
+
+// PUT /api/shipments/:id
+export const updateShipment = async (id: string, updates: Partial<ShipmentDTO>): Promise<ShipmentDTO | undefined> => {
+  await delay(300);
+  const index = shipmentsStore.findIndex(s => s.id === id);
+  if (index === -1) return undefined;
+  
+  shipmentsStore[index] = { ...shipmentsStore[index], ...updates };
+  return shipmentsStore[index];
+};
+
+// PUT /api/shipments/:id/status
+export const updateShipmentStatus = async (id: string, status: ShipmentStatus): Promise<ShipmentDTO | undefined> => {
+  await delay(200);
+  const index = shipmentsStore.findIndex(s => s.id === id);
+  if (index === -1) return undefined;
+  
+  const updates: Partial<ShipmentDTO> = { status };
+  if (status === 'picked_up' || status === 'in_transit') {
+    if (!shipmentsStore[index].shippedAt) {
+      updates.shippedAt = new Date().toISOString();
+    }
+  } else if (status === 'delivered') {
+    updates.deliveredAt = new Date().toISOString();
+  }
+  
+  shipmentsStore[index] = { ...shipmentsStore[index], ...updates };
+  return shipmentsStore[index];
+};
+
+// DELETE /api/shipments/:id
+export const deleteShipment = async (id: string): Promise<boolean> => {
+  await delay(200);
+  const index = shipmentsStore.findIndex(s => s.id === id);
+  if (index === -1) return false;
+  
+  shipmentsStore.splice(index, 1);
   return true;
 };
