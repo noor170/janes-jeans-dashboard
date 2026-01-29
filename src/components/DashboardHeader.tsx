@@ -1,6 +1,7 @@
 import GenderToggle from '@/components/GenderToggle';
 import LanguageToggle from '@/components/LanguageToggle';
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationBell from '@/components/NotificationBell';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const DashboardHeader = ({ onMenuClick, isSidebarCollapsed }: DashboardHeaderPro
       
       <div className="flex items-center gap-2 sm:gap-4">
         <GenderToggle />
+        <NotificationBell />
         <ThemeToggle />
         <div className="hidden md:block">
           <LanguageToggle />
