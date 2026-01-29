@@ -17,13 +17,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Download, Edit, X } from 'lucide-react';
+import { Search, Download, Edit, X, Upload } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
 import SortableHeader from './SortableHeader';
 import ProductQuickViewDialog from './ProductQuickViewDialog';
 import BulkEditDialog from './BulkEditDialog';
+import ImportCsvDialog from './ImportCsvDialog';
 import { exportToCsv } from '@/lib/exportCsv';
 import { toast } from 'sonner';
 
@@ -36,6 +37,7 @@ const InventoryTable = () => {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products', genderFilter],
@@ -145,6 +147,13 @@ const InventoryTable = () => {
     // queryClient.invalidateQueries({ queryKey: ['products'] });
   };
 
+  const handleImport = (products: any[]) => {
+    // In a real app, this would call an API to add products
+    // For now, we show a success message
+    console.log('Imported products:', products);
+    // queryClient.invalidateQueries({ queryKey: ['products'] });
+  };
+
   const handleExportCsv = () => {
     const headers = ['ID', 'Product Name', 'Gender', 'Fit', 'Size', 'Wash', 'Price', 'Stock Level', 'Status'];
     const data = sortedItems.map(product => [
@@ -158,6 +167,15 @@ const InventoryTable = () => {
       product.stockLevel,
       product.stockLevel < 10 ? 'Low Stock' : 'In Stock'
     ]);
+
+    exportToCsv({
+      filename: `inventory-${new Date().toISOString().split('T')[0]}`,
+      headers,
+      data,
+    });
+
+    toast.success(t('export') + ' successful');
+  };
 
     exportToCsv({
       filename: `inventory-${new Date().toISOString().split('T')[0]}`,
@@ -199,6 +217,14 @@ const InventoryTable = () => {
                 className="pl-9"
               />
             </div>
+            <Button
+              variant="outline"
+              onClick={() => setIsImportOpen(true)}
+              className="gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              {language === 'en' ? 'Import' : 'আমদানি'}
+            </Button>
             <Button
               variant="outline"
               onClick={handleExportCsv}
@@ -444,6 +470,13 @@ const InventoryTable = () => {
         open={isBulkEditOpen}
         onOpenChange={setIsBulkEditOpen}
         onUpdate={handleBulkUpdate}
+      />
+
+      {/* Import CSV Dialog */}
+      <ImportCsvDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onImport={handleImport}
       />
     </Card>
   );
