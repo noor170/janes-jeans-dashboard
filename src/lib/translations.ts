@@ -109,6 +109,7 @@ export const translations = {
     contactInfo: 'Contact Information',
     orderStats: 'Order Statistics',
     deleteConfirmation: 'Are you sure you want to delete this customer? This action cannot be undone.',
+    address: 'Address',
   },
   bn: {
     // Navigation
@@ -218,6 +219,7 @@ export const translations = {
     contactInfo: 'যোগাযোগের তথ্য',
     orderStats: 'অর্ডার পরিসংখ্যান',
     deleteConfirmation: 'আপনি কি নিশ্চিত যে আপনি এই গ্রাহকটি মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।',
+    address: 'ঠিকানা',
   },
 };
 

@@ -95,6 +95,7 @@ export interface ShipmentDTO {
   vendorId: string;
   trackingNumber: string;
   status: ShipmentStatus;
+  shippingAddress: string;
   shippedAt?: string;
   estimatedDelivery?: string;
   deliveredAt?: string;
