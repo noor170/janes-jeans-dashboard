@@ -40,7 +40,9 @@ import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
 import { usePagination } from '@/hooks/usePagination';
+import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
+import SortableHeader from './SortableHeader';
 import { exportToCsv, formatDateForCsv } from '@/lib/exportCsv';
 import DateRangeFilter from './DateRangeFilter';
 
@@ -94,7 +96,8 @@ const OrdersTable = () => {
     return result;
   }, [orders, searchQuery, statusFilter, dateRange]);
 
-  const pagination = usePagination(filteredOrders, { initialPageSize: 10 });
+  const { sortedItems, requestSort, getSortDirection } = useSorting<OrderDTO>(filteredOrders);
+  const pagination = usePagination(sortedItems, { initialPageSize: 10 });
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
@@ -148,7 +151,7 @@ const OrdersTable = () => {
 
   const handleExportCsv = () => {
     const headers = ['Order ID', 'Customer Name', 'Customer Email', 'Items', 'Status', 'Order Date', 'Shipped Date', 'Delivered Date', 'Total Amount', 'Shipping Address'];
-    const data = filteredOrders.map(order => [
+    const data = sortedItems.map(order => [
       order.id,
       order.customerName,
       order.customerEmail,
@@ -268,12 +271,48 @@ const OrdersTable = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('orderId')}</TableHead>
-                  <TableHead>{t('customer')}</TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      sortDirection={getSortDirection('id')}
+                      onClick={() => requestSort('id')}
+                    >
+                      {t('orderId')}
+                    </SortableHeader>
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      sortDirection={getSortDirection('customerName')}
+                      onClick={() => requestSort('customerName')}
+                    >
+                      {t('customer')}
+                    </SortableHeader>
+                  </TableHead>
                   <TableHead>{t('items')}</TableHead>
-                  <TableHead>{t('status')}</TableHead>
-                  <TableHead>{t('orderDate')}</TableHead>
-                  <TableHead className="text-right">{t('total')}</TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      sortDirection={getSortDirection('status')}
+                      onClick={() => requestSort('status')}
+                    >
+                      {t('status')}
+                    </SortableHeader>
+                  </TableHead>
+                  <TableHead>
+                    <SortableHeader
+                      sortDirection={getSortDirection('orderDate')}
+                      onClick={() => requestSort('orderDate')}
+                    >
+                      {t('orderDate')}
+                    </SortableHeader>
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <SortableHeader
+                      sortDirection={getSortDirection('totalAmount')}
+                      onClick={() => requestSort('totalAmount')}
+                      className="justify-end"
+                    >
+                      {t('total')}
+                    </SortableHeader>
+                  </TableHead>
                   <TableHead className="text-right">{t('actions')}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -361,7 +400,7 @@ const OrdersTable = () => {
             </Table>
           </div>
 
-          {filteredOrders.length > 0 && (
+          {sortedItems.length > 0 && (
             <TablePagination
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
