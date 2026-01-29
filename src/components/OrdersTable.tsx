@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { fetchOrders, updateOrderStatus, deleteOrder } from '@/lib/api';
+import { fetchOrders, updateOrderStatus, deleteOrder, fetchShipmentByOrderId } from '@/lib/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { OrderDTO, OrderStatus } from '@/types';
 import {
@@ -39,6 +39,7 @@ import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
+import CreateShipmentFromOrderDialog from './CreateShipmentFromOrderDialog';
 import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
@@ -56,6 +57,8 @@ const OrdersTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'All'>('All');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [orderForShipment, setOrderForShipment] = useState<OrderDTO | null>(null);
+  const [isShipmentDialogOpen, setIsShipmentDialogOpen] = useState(false);
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
@@ -371,12 +374,18 @@ const OrdersTable = () => {
                             <DropdownMenuItem
                               key={status}
                               disabled={order.status === status}
-                              onClick={() =>
-                                updateStatusMutation.mutate({
-                                  id: order.id,
-                                  status,
-                                })
-                              }
+                              onClick={() => {
+                                if (status === 'Shipped' && order.status !== 'Shipped') {
+                                  // Open shipment creation dialog
+                                  setOrderForShipment(order);
+                                  setIsShipmentDialogOpen(true);
+                                } else {
+                                  updateStatusMutation.mutate({
+                                    id: order.id,
+                                    status,
+                                  });
+                                }
+                              }}
                             >
                               <RefreshCw className="mr-2 h-4 w-4" />
                               {t(status.toLowerCase() as any)}
@@ -432,6 +441,24 @@ const OrdersTable = () => {
       <CreateOrderDialog
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
+      />
+
+      {/* Create Shipment from Order Dialog */}
+      <CreateShipmentFromOrderDialog
+        order={orderForShipment}
+        isOpen={isShipmentDialogOpen}
+        onClose={() => {
+          setIsShipmentDialogOpen(false);
+          setOrderForShipment(null);
+        }}
+        onSuccess={() => {
+          setIsShipmentDialogOpen(false);
+          setOrderForShipment(null);
+        }}
+        onSkip={() => {
+          setIsShipmentDialogOpen(false);
+          setOrderForShipment(null);
+        }}
       />
 
       {/* Delete Confirmation */}
