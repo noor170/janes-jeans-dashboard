@@ -3,6 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useGenderFilter } from '@/contexts/GenderFilterContext';
 import { fetchProducts } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+import { ProductDTO } from '@/types';
 import {
   Table,
   TableBody,
@@ -17,7 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Search, Download } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
+import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
+import SortableHeader from './SortableHeader';
 import { exportToCsv } from '@/lib/exportCsv';
 import { toast } from 'sonner';
 
@@ -44,11 +47,12 @@ const InventoryTable = () => {
     );
   }, [products, searchQuery]);
 
-  const pagination = usePagination(filteredProducts, { initialPageSize: 10 });
+  const { sortedItems, requestSort, getSortDirection } = useSorting<ProductDTO>(filteredProducts);
+  const pagination = usePagination(sortedItems, { initialPageSize: 10 });
 
   const handleExportCsv = () => {
     const headers = ['ID', 'Product Name', 'Gender', 'Fit', 'Size', 'Wash', 'Price', 'Stock Level', 'Status'];
-    const data = filteredProducts.map(product => [
+    const data = sortedItems.map(product => [
       product.id,
       product.name,
       product.gender,
@@ -117,13 +121,64 @@ const InventoryTable = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('productName')}</TableHead>
-                <TableHead>{t('gender')}</TableHead>
-                <TableHead>{t('fit')}</TableHead>
-                <TableHead>{t('size')}</TableHead>
-                <TableHead>{t('wash')}</TableHead>
-                <TableHead className="text-right">{t('price')}</TableHead>
-                <TableHead className="text-right">{t('stockLevel')}</TableHead>
+                <TableHead>
+                  <SortableHeader
+                    sortDirection={getSortDirection('name')}
+                    onClick={() => requestSort('name')}
+                  >
+                    {t('productName')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    sortDirection={getSortDirection('gender')}
+                    onClick={() => requestSort('gender')}
+                  >
+                    {t('gender')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    sortDirection={getSortDirection('fit')}
+                    onClick={() => requestSort('fit')}
+                  >
+                    {t('fit')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    sortDirection={getSortDirection('size')}
+                    onClick={() => requestSort('size')}
+                  >
+                    {t('size')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead>
+                  <SortableHeader
+                    sortDirection={getSortDirection('wash')}
+                    onClick={() => requestSort('wash')}
+                  >
+                    {t('wash')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead className="text-right">
+                  <SortableHeader
+                    sortDirection={getSortDirection('price')}
+                    onClick={() => requestSort('price')}
+                    className="justify-end"
+                  >
+                    {t('price')}
+                  </SortableHeader>
+                </TableHead>
+                <TableHead className="text-right">
+                  <SortableHeader
+                    sortDirection={getSortDirection('stockLevel')}
+                    onClick={() => requestSort('stockLevel')}
+                    className="justify-end"
+                  >
+                    {t('stockLevel')}
+                  </SortableHeader>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -165,7 +220,7 @@ const InventoryTable = () => {
           </Table>
         </div>
 
-        {filteredProducts.length > 0 && (
+        {sortedItems.length > 0 && (
           <TablePagination
             currentPage={pagination.currentPage}
             totalPages={pagination.totalPages}
