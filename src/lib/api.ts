@@ -1,5 +1,5 @@
-import { ProductDTO, OrderDTO, DashboardStats, GenderFilter, OrderStatus } from '@/types';
-import { mockProducts, mockOrders, mockSalesData, getCategoryDistribution } from '@/data/mockData';
+import { ProductDTO, OrderDTO, DashboardStats, GenderFilter, OrderStatus, CustomerDTO } from '@/types';
+import { mockProducts, mockOrders, mockSalesData, getCategoryDistribution, mockCustomers } from '@/data/mockData';
 
 // Simulating API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -124,5 +124,56 @@ export const deleteOrder = async (id: string): Promise<boolean> => {
   if (index === -1) return false;
   
   ordersStore.splice(index, 1);
+  return true;
+};
+
+// In-memory store for customers
+let customersStore = [...mockCustomers];
+
+// GET /api/customers
+export const fetchCustomers = async (): Promise<CustomerDTO[]> => {
+  await delay(200);
+  return [...customersStore].sort((a, b) => 
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+};
+
+// GET /api/customers/:id
+export const fetchCustomerById = async (id: string): Promise<CustomerDTO | undefined> => {
+  await delay(150);
+  return customersStore.find(c => c.id === id);
+};
+
+// POST /api/customers
+export const createCustomer = async (customer: Omit<CustomerDTO, 'id' | 'createdAt' | 'totalOrders' | 'totalSpent'>): Promise<CustomerDTO> => {
+  await delay(300);
+  const newCustomer: CustomerDTO = {
+    ...customer,
+    id: `CUS${String(customersStore.length + 1).padStart(3, '0')}`,
+    createdAt: new Date().toISOString(),
+    totalOrders: 0,
+    totalSpent: 0,
+  };
+  customersStore.push(newCustomer);
+  return newCustomer;
+};
+
+// PUT /api/customers/:id
+export const updateCustomer = async (id: string, updates: Partial<CustomerDTO>): Promise<CustomerDTO | undefined> => {
+  await delay(300);
+  const index = customersStore.findIndex(c => c.id === id);
+  if (index === -1) return undefined;
+  
+  customersStore[index] = { ...customersStore[index], ...updates };
+  return customersStore[index];
+};
+
+// DELETE /api/customers/:id
+export const deleteCustomer = async (id: string): Promise<boolean> => {
+  await delay(200);
+  const index = customersStore.findIndex(c => c.id === id);
+  if (index === -1) return false;
+  
+  customersStore.splice(index, 1);
   return true;
 };

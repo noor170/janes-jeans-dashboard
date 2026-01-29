@@ -95,6 +95,20 @@ export const translations = {
     notifications: 'Notifications',
     markAllRead: 'Mark all read',
     noNotifications: 'No notifications',
+
+    // Customers
+    customers: 'Customers',
+    addCustomer: 'Add Customer',
+    editCustomer: 'Edit Customer',
+    phone: 'Phone',
+    totalOrders: 'Total Orders',
+    totalSpent: 'Total Spent',
+    memberSince: 'Member Since',
+    active: 'Active',
+    inactive: 'Inactive',
+    contactInfo: 'Contact Information',
+    orderStats: 'Order Statistics',
+    deleteConfirmation: 'Are you sure you want to delete this customer? This action cannot be undone.',
   },
   bn: {
     // Navigation
@@ -190,6 +204,20 @@ export const translations = {
     notifications: 'বিজ্ঞপ্তি',
     markAllRead: 'সব পঠিত',
     noNotifications: 'কোন বিজ্ঞপ্তি নেই',
+
+    // Customers
+    customers: 'গ্রাহক',
+    addCustomer: 'গ্রাহক যোগ করুন',
+    editCustomer: 'গ্রাহক সম্পাদনা',
+    phone: 'ফোন',
+    totalOrders: 'মোট অর্ডার',
+    totalSpent: 'মোট ব্যয়',
+    memberSince: 'সদস্য থেকে',
+    active: 'সক্রিয়',
+    inactive: 'নিষ্ক্রিয়',
+    contactInfo: 'যোগাযোগের তথ্য',
+    orderStats: 'অর্ডার পরিসংখ্যান',
+    deleteConfirmation: 'আপনি কি নিশ্চিত যে আপনি এই গ্রাহকটি মুছতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।',
   },
 };
 
