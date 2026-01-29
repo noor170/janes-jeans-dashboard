@@ -49,6 +49,7 @@ import {
 } from 'recharts';
 import { DateRange } from 'react-day-picker';
 import DateRangeFilter from '@/components/DateRangeFilter';
+import RefreshControls from '@/components/RefreshControls';
 import { format, subDays, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { exportToCsv } from '@/lib/exportCsv';
 import { toast } from 'sonner';
@@ -256,9 +257,18 @@ const Analytics = () => {
     exportCategoryDistribution();
   };
 
+  // Query keys for refresh
+  const analyticsQueryKeys = [
+    ['dashboardStats', genderFilter],
+    ['salesData', genderFilter],
+    ['categoryData', genderFilter],
+    ['orders'],
+    ['products', genderFilter],
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header with Date Range Filter and Export */}
+      {/* Header with Date Range Filter, Refresh and Export */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">{analyticsTitle}</h1>
@@ -269,6 +279,7 @@ const Analytics = () => {
             dateRange={dateRange}
             onDateRangeChange={setDateRange}
           />
+          <RefreshControls queryKeys={analyticsQueryKeys} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2">
