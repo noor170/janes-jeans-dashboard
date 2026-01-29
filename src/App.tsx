@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { GenderFilterProvider } from "@/contexts/GenderFilterContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
@@ -22,20 +23,22 @@ const App = () => (
       <TooltipProvider>
         <LanguageProvider>
           <GenderFilterProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route element={<DashboardLayout />}>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/inventory" element={<Inventory />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
+            <NotificationProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route element={<DashboardLayout />}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/inventory" element={<Inventory />} />
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </NotificationProvider>
           </GenderFilterProvider>
         </LanguageProvider>
       </TooltipProvider>

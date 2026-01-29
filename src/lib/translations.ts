@@ -90,6 +90,11 @@ export const translations = {
     loading: 'Loading...',
     noData: 'No data available',
     notes: 'Notes',
+    
+    // Notifications
+    notifications: 'Notifications',
+    markAllRead: 'Mark all read',
+    noNotifications: 'No notifications',
   },
   bn: {
     // Navigation
@@ -180,6 +185,11 @@ export const translations = {
     loading: 'লোড হচ্ছে...',
     noData: 'কোন ডেটা নেই',
     notes: 'নোট',
+    
+    // Notifications
+    notifications: 'বিজ্ঞপ্তি',
+    markAllRead: 'সব পঠিত',
+    noNotifications: 'কোন বিজ্ঞপ্তি নেই',
   },
 };
 
