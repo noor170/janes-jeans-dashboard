@@ -34,13 +34,15 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X, Download } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
 import { usePagination } from '@/hooks/usePagination';
 import TablePagination from './TablePagination';
 import { exportToCsv, formatDateForCsv } from '@/lib/exportCsv';
+import DateRangeFilter from './DateRangeFilter';
 
 const OrdersTable = () => {
   const { t } = useLanguage();
@@ -51,6 +53,7 @@ const OrdersTable = () => {
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'All'>('All');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
@@ -63,6 +66,16 @@ const OrdersTable = () => {
     // Apply status filter
     if (statusFilter !== 'All') {
       result = result.filter(order => order.status === statusFilter);
+    }
+    
+    // Apply date range filter
+    if (dateRange?.from) {
+      result = result.filter(order => {
+        const orderDate = new Date(order.orderDate);
+        const from = startOfDay(dateRange.from!);
+        const to = dateRange.to ? endOfDay(dateRange.to) : endOfDay(dateRange.from!);
+        return isWithinInterval(orderDate, { start: from, end: to });
+      });
     }
     
     // Apply search filter
@@ -79,7 +92,7 @@ const OrdersTable = () => {
     }
     
     return result;
-  }, [orders, searchQuery, statusFilter]);
+  }, [orders, searchQuery, statusFilter, dateRange]);
 
   const pagination = usePagination(filteredOrders, { initialPageSize: 10 });
 
@@ -176,11 +189,11 @@ const OrdersTable = () => {
               <CardTitle>{t('orders')}</CardTitle>
               <p className="text-sm text-muted-foreground">
                 {filteredOrders.length} {t('orders').toLowerCase()}
-                {(searchQuery || statusFilter !== 'All') && ` (${orders.length} total)`}
+                {(searchQuery || statusFilter !== 'All' || dateRange?.from) && ` (${orders.length} total)`}
               </p>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="relative w-full sm:w-64">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:flex-wrap">
+              <div className="relative w-full sm:w-48">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder={`${t('search')}...`}
@@ -189,6 +202,10 @@ const OrdersTable = () => {
                   className="pl-9"
                 />
               </div>
+              <DateRangeFilter
+                dateRange={dateRange}
+                onDateRangeChange={setDateRange}
+              />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2">
