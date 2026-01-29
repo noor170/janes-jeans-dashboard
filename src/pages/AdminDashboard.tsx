@@ -1,6 +1,21 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import {
   Users,
   UserCheck,
@@ -12,12 +27,14 @@ import {
   Clock,
   ArrowRight,
   RefreshCw,
+  BarChart3,
 } from 'lucide-react';
 import { authApi } from '@/lib/authApi';
 import { auditLogService } from '@/lib/auditLogService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { cn } from '@/lib/utils';
 
 const AdminDashboard = () => {
@@ -32,6 +49,61 @@ const AdminDashboard = () => {
     queryKey: ['admin-recent-activity'],
     queryFn: () => auditLogService.getAuditLogs({ limit: 10 }),
   });
+
+  // Calculate user growth data for charts
+  const userGrowthData = useMemo(() => {
+    const last30Days = eachDayOfInterval({
+      start: subDays(new Date(), 29),
+      end: new Date(),
+    });
+
+    return last30Days.map(day => {
+      const dayStart = startOfDay(day);
+      const usersOnDay = users.filter(u => {
+        const createdDate = startOfDay(new Date(u.createdAt));
+        return createdDate <= dayStart;
+      }).length;
+
+      const newUsersOnDay = users.filter(u => {
+        const createdDate = startOfDay(new Date(u.createdAt));
+        return createdDate.getTime() === dayStart.getTime();
+      }).length;
+
+      return {
+        date: format(day, 'MMM d'),
+        total: usersOnDay,
+        new: newUsersOnDay,
+      };
+    });
+  }, [users]);
+
+  // Calculate role distribution for pie chart
+  const roleDistribution = useMemo(() => [
+    { name: 'Super Admins', value: users.filter(u => u.role === 'SUPER_ADMIN').length, color: 'hsl(var(--chart-1))' },
+    { name: 'Admins', value: users.filter(u => u.role === 'ADMIN').length, color: 'hsl(var(--chart-2))' },
+    { name: 'Users', value: users.filter(u => u.role === 'USER').length, color: 'hsl(var(--chart-3))' },
+  ], [users]);
+
+  // Weekly signup data
+  const weeklySignupData = useMemo(() => {
+    const last7Days = eachDayOfInterval({
+      start: subDays(new Date(), 6),
+      end: new Date(),
+    });
+
+    return last7Days.map(day => {
+      const dayStart = startOfDay(day);
+      const signups = users.filter(u => {
+        const createdDate = startOfDay(new Date(u.createdAt));
+        return createdDate.getTime() === dayStart.getTime();
+      }).length;
+
+      return {
+        day: format(day, 'EEE'),
+        signups,
+      };
+    });
+  }, [users]);
 
   const stats = {
     totalUsers: users.length,
@@ -157,10 +229,159 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
-      {/* Two Column Layout */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Activity */}
+      {/* Charts Row */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* User Growth Chart */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              User Growth (30 Days)
+            </CardTitle>
+            <CardDescription>Total users over the last month</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                total: { label: "Total Users", color: "hsl(var(--primary))" },
+                new: { label: "New Users", color: "hsl(var(--chart-2))" },
+              }}
+              className="h-[250px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={userGrowthData}>
+                  <defs>
+                    <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Area
+                    type="monotone"
+                    dataKey="total"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorTotal)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        {/* Weekly Signups Bar Chart */}
         <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Weekly Signups
+            </CardTitle>
+            <CardDescription>New users this week</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                signups: { label: "Signups", color: "hsl(var(--chart-2))" },
+              }}
+              className="h-[250px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={weeklySignupData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="day" 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickLine={false}
+                    axisLine={false}
+                    allowDecimals={false}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar 
+                    dataKey="signups" 
+                    fill="hsl(var(--chart-2))" 
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Role Distribution Pie Chart + Activity */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Role Distribution Pie */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5" />
+              Role Distribution
+            </CardTitle>
+            <CardDescription>Users by role type</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={roleDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {roleDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: number) => [value, 'Users']}
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-center gap-4 mt-2">
+              {roleDistribution.map((entry, index) => (
+                <div key={index} className="flex items-center gap-1.5 text-xs">
+                  <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                  <span className="text-muted-foreground">{entry.name}</span>
+                  <span className="font-medium">({entry.value})</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
@@ -181,8 +402,8 @@ const AdminDashboard = () => {
                 <p>No recent activity</p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {auditData?.logs.slice(0, 5).map((log) => (
+              <div className="space-y-3">
+                {auditData?.logs.slice(0, 6).map((log) => (
                   <div key={log.id} className="flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0">
                     <div className="mt-0.5">
                       {getActionBadge(log.action)}
@@ -206,89 +427,27 @@ const AdminDashboard = () => {
             )}
           </CardContent>
         </Card>
-
-        {/* User Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5" />
-              User Distribution
-            </CardTitle>
-            <CardDescription>Breakdown by role and status</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {/* Role Distribution */}
-              <div>
-                <h4 className="text-sm font-medium mb-3">By Role</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-purple-500" />
-                      <span className="text-sm">Super Admins</span>
-                    </div>
-                    <span className="font-medium">{stats.superAdmins}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-blue-500" />
-                      <span className="text-sm">Admins</span>
-                    </div>
-                    <span className="font-medium">{stats.admins}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 rounded-full bg-muted-foreground" />
-                      <span className="text-sm">Users</span>
-                    </div>
-                    <span className="font-medium">{stats.regularUsers}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Status Bar */}
-              <div>
-                <h4 className="text-sm font-medium mb-3">By Status</h4>
-                <div className="h-4 rounded-full overflow-hidden bg-muted flex">
-                  <div
-                    className="bg-emerald-500 transition-all"
-                    style={{ width: `${(stats.activeUsers / (stats.totalUsers || 1)) * 100}%` }}
-                  />
-                  <div
-                    className="bg-red-500 transition-all"
-                    style={{ width: `${(stats.inactiveUsers / (stats.totalUsers || 1)) * 100}%` }}
-                  />
-                </div>
-                <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                    Active ({stats.activeUsers})
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <div className="h-2 w-2 rounded-full bg-red-500" />
-                    Inactive ({stats.inactiveUsers})
-                  </span>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="pt-4 border-t">
-                <h4 className="text-sm font-medium mb-3">Quick Actions</h4>
-                <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/users')}>
-                    <Users className="h-4 w-4 mr-1" />
-                    Manage Users
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => navigate('/admin/audit-logs')}>
-                    <Activity className="h-4 w-4 mr-1" />
-                    View Logs
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common administrative tasks</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="outline" onClick={() => navigate('/admin/users')}>
+              <Users className="h-4 w-4 mr-2" />
+              Manage Users
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/admin/audit-logs')}>
+              <Activity className="h-4 w-4 mr-2" />
+              View All Logs
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
