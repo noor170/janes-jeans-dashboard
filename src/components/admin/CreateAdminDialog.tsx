@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/authApi';
+import { auditLogService } from '@/lib/auditLogService';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -42,11 +43,22 @@ const CreateAdminDialog = ({ open, onOpenChange }: CreateAdminDialogProps) => {
   const mutation = useMutation({
     mutationFn: (data: CreateAdminForm) => 
       authApi.createAdminUser(data.email, data.password, data.firstName, data.lastName),
-    onSuccess: () => {
+    onSuccess: (createdUser, data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('Admin user created successfully');
       onOpenChange(false);
       form.reset();
+      auditLogService.logAction({
+        action: 'ADMIN_CREATED',
+        targetUserId: createdUser.id,
+        details: {
+          targetUser: { 
+            id: createdUser.id, 
+            email: data.email, 
+            name: `${data.firstName} ${data.lastName}` 
+          },
+        },
+      });
     },
     onError: (error: { message?: string }) => {
       toast.error(error.message || 'Failed to create admin user');

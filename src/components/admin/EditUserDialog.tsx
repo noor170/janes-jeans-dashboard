@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/authApi';
+import { auditLogService } from '@/lib/auditLogService';
 import { UserDTO, UserRole } from '@/types/auth';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -57,9 +58,28 @@ const EditUserDialog = ({ user, onClose }: EditUserDialogProps) => {
   const mutation = useMutation({
     mutationFn: (data: EditUserForm) => 
       authApi.updateUser(user!.id, data),
-    onSuccess: () => {
+    onSuccess: (_, data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
       toast.success('User updated successfully');
+      if (user) {
+        auditLogService.logAction({
+          action: 'USER_UPDATED',
+          targetUserId: user.id,
+          details: {
+            targetUser: { 
+              id: user.id, 
+              email: user.email, 
+              name: `${data.firstName} ${data.lastName}` 
+            },
+            changes: {
+              firstName: data.firstName !== user.firstName ? { from: user.firstName, to: data.firstName } : undefined,
+              lastName: data.lastName !== user.lastName ? { from: user.lastName, to: data.lastName } : undefined,
+              role: data.role !== user.role ? { from: user.role, to: data.role } : undefined,
+              isActive: data.isActive !== user.isActive ? { from: user.isActive, to: data.isActive } : undefined,
+            },
+          },
+        });
+      }
       onClose();
     },
     onError: (error: { message?: string }) => {
