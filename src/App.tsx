@@ -12,6 +12,8 @@ import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Orders from "./pages/Orders";
 import Customers from "./pages/Customers";
+import Shipments from "./pages/Shipments";
+import ShippingVendors from "./pages/ShippingVendors";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -34,6 +36,8 @@ const App = () => (
                     <Route path="/inventory" element={<Inventory />} />
                     <Route path="/orders" element={<Orders />} />
                     <Route path="/customers" element={<Customers />} />
+                    <Route path="/shipments" element={<Shipments />} />
+                    <Route path="/shipping-vendors" element={<ShippingVendors />} />
                     <Route path="/analytics" element={<Analytics />} />
                     <Route path="/settings" element={<Settings />} />
                   </Route>

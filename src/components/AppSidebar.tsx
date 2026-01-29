@@ -4,6 +4,8 @@ import {
   Package, 
   ShoppingCart, 
   Users,
+  Truck,
+  Building2,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -19,7 +21,7 @@ interface AppSidebarProps {
 }
 
 const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const location = useLocation();
 
   const menuItems = [
@@ -27,6 +29,8 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/inventory', icon: Package, label: t('inventory') },
     { path: '/orders', icon: ShoppingCart, label: t('orders') },
     { path: '/customers', icon: Users, label: t('customers') },
+    { path: '/shipments', icon: Truck, label: language === 'en' ? 'Shipments' : 'শিপমেন্ট' },
+    { path: '/shipping-vendors', icon: Building2, label: language === 'en' ? 'Vendors' : 'ভেন্ডর' },
     { path: '/analytics', icon: BarChart3, label: t('analytics') },
     { path: '/settings', icon: Settings, label: t('settings') },
   ];
