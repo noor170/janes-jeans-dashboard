@@ -103,6 +103,7 @@ const CreateShipmentFromOrderDialog = ({
         vendorId: data.vendorId,
         trackingNumber: data.trackingNumber,
         status: 'pending' as ShipmentStatus,
+        shippingAddress: order.shippingAddress,
         estimatedDelivery: data.estimatedDelivery ? new Date(data.estimatedDelivery).toISOString() : undefined,
         notes: data.notes || undefined,
       });

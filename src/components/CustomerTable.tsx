@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Download, Mail, Eye, Edit2, Trash2, UserPlus } from 'lucide-react';
+import { Search, Download, Mail, Eye, Edit2, Trash2, UserPlus, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { fetchCustomers, deleteCustomer } from '@/lib/api';
@@ -225,6 +225,7 @@ const CustomerTable = () => {
               <TableHead>{t('customerName')}</TableHead>
               <TableHead>{t('customerEmail')}</TableHead>
               <TableHead>{t('phone')}</TableHead>
+              <TableHead>{t('address')}</TableHead>
               <TableHead className="text-center">{t('totalOrders')}</TableHead>
               <TableHead className="text-right">{t('totalSpent')}</TableHead>
               <TableHead>{t('status')}</TableHead>
@@ -234,7 +235,7 @@ const CustomerTable = () => {
           <TableBody>
             {pagination.paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   {t('noData')}
                 </TableCell>
               </TableRow>
@@ -249,6 +250,14 @@ const CustomerTable = () => {
                     </div>
                   </TableCell>
                   <TableCell>{customer.phone}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 max-w-[180px]">
+                      <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                      <span className="truncate text-sm" title={customer.address}>
+                        {customer.address}
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell className="text-center">{customer.totalOrders}</TableCell>
                   <TableCell className="text-right font-medium">
                     ${customer.totalSpent.toFixed(2)}

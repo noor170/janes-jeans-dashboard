@@ -283,6 +283,7 @@ const Shipments = () => {
             <TableRow>
               <TableHead>{language === 'en' ? 'Order' : 'অর্ডার'}</TableHead>
               <TableHead>{language === 'en' ? 'Customer' : 'গ্রাহক'}</TableHead>
+              <TableHead>{language === 'en' ? 'Shipping Address' : 'শিপিং ঠিকানা'}</TableHead>
               <TableHead>{language === 'en' ? 'Vendor' : 'ভেন্ডর'}</TableHead>
               <TableHead>{language === 'en' ? 'Tracking' : 'ট্র্যাকিং'}</TableHead>
               <TableHead>{t('status')}</TableHead>
@@ -292,7 +293,7 @@ const Shipments = () => {
           <TableBody>
             {pagination.paginatedItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   {t('noData')}
                 </TableCell>
               </TableRow>
@@ -311,9 +312,13 @@ const Shipments = () => {
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">{order?.customerName || '-'}</div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        <span className="truncate max-w-[150px]">{order?.shippingAddress || '-'}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 max-w-[180px]">
+                        <MapPin className="h-3 w-3 text-muted-foreground flex-shrink-0" />
+                        <span className="truncate text-sm" title={shipment.shippingAddress}>
+                          {shipment.shippingAddress || order?.shippingAddress || '-'}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>

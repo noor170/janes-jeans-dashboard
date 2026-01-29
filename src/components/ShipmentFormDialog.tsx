@@ -123,11 +123,16 @@ const ShipmentFormDialog = ({ shipment, isOpen, onClose, onSuccess }: ShipmentFo
 
   const onSubmit = async (data: ShipmentFormData) => {
     try {
+      // Get the order's shipping address
+      const order = orders.find(o => o.id === data.orderId);
+      const shippingAddress = order?.shippingAddress || '';
+
       const shipmentData = {
         orderId: data.orderId,
         vendorId: data.vendorId,
         trackingNumber: data.trackingNumber,
         status: data.status as ShipmentStatus,
+        shippingAddress,
         estimatedDelivery: data.estimatedDelivery ? new Date(data.estimatedDelivery).toISOString() : undefined,
         notes: data.notes || undefined,
       };
