@@ -33,22 +33,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X, Download } from 'lucide-react';
+import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X, Download, Truck } from 'lucide-react';
 import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
 import CreateShipmentFromOrderDialog from './CreateShipmentFromOrderDialog';
+import ShipmentDetailsDialog from './ShipmentDetailsDialog';
 import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
 import SortableHeader from './SortableHeader';
 import { exportToCsv, formatDateForCsv } from '@/lib/exportCsv';
 import DateRangeFilter from './DateRangeFilter';
+import { ShipmentDTO } from '@/types';
 
 const OrdersTable = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const queryClient = useQueryClient();
   const [selectedOrder, setSelectedOrder] = useState<OrderDTO | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -59,6 +61,22 @@ const OrdersTable = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [orderForShipment, setOrderForShipment] = useState<OrderDTO | null>(null);
   const [isShipmentDialogOpen, setIsShipmentDialogOpen] = useState(false);
+  const [selectedShipment, setSelectedShipment] = useState<ShipmentDTO | null>(null);
+  const [isShipmentDetailsOpen, setIsShipmentDetailsOpen] = useState(false);
+
+  const handleViewShipment = async (orderId: string) => {
+    try {
+      const shipment = await fetchShipmentByOrderId(orderId);
+      if (shipment) {
+        setSelectedShipment(shipment);
+        setIsShipmentDetailsOpen(true);
+      } else {
+        toast.error(t('noData'));
+      }
+    } catch (error) {
+      toast.error('Error fetching shipment');
+    }
+  };
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
@@ -368,6 +386,14 @@ const OrdersTable = () => {
                             <Eye className="mr-2 h-4 w-4" />
                             {t('viewDetails')}
                           </DropdownMenuItem>
+                          {(order.status === 'Shipped' || order.status === 'Delivered') && (
+                            <DropdownMenuItem
+                              onClick={() => handleViewShipment(order.id)}
+                            >
+                              <Truck className="mr-2 h-4 w-4" />
+                              {language === 'en' ? 'Track Shipment' : 'শিপমেন্ট ট্র্যাক'}
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
                           <DropdownMenuLabel>{t('updateStatus')}</DropdownMenuLabel>
                           {statusOptions.map((status) => (
@@ -458,6 +484,16 @@ const OrdersTable = () => {
         onSkip={() => {
           setIsShipmentDialogOpen(false);
           setOrderForShipment(null);
+        }}
+      />
+
+      {/* Shipment Details Dialog */}
+      <ShipmentDetailsDialog
+        shipment={selectedShipment}
+        isOpen={isShipmentDetailsOpen}
+        onClose={() => {
+          setIsShipmentDetailsOpen(false);
+          setSelectedShipment(null);
         }}
       />
 
