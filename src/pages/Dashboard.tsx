@@ -6,6 +6,7 @@ import StatsCard from '@/components/StatsCard';
 import SalesChart from '@/components/SalesChart';
 import CategoryChart from '@/components/CategoryChart';
 import InventoryTable from '@/components/InventoryTable';
+import RefreshControls from '@/components/RefreshControls';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -70,43 +71,54 @@ const Dashboard = () => {
     exportCategoryData();
   };
 
+  // Query keys for refresh
+  const dashboardQueryKeys = [
+    ['dashboardStats', genderFilter],
+    ['salesData', genderFilter],
+    ['categoryData', genderFilter],
+    ['products', genderFilter],
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header with Export */}
-      <div className="flex items-center justify-between">
+      {/* Header with Refresh and Export */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">{t('dashboard')}</h1>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              {t('export')}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel className="flex items-center gap-2">
-              <FileSpreadsheet className="h-4 w-4" />
-              {language === 'en' ? 'Export Data' : 'ডেটা রপ্তানি'}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={exportAllDashboard}>
-              <Download className="mr-2 h-4 w-4" />
-              {language === 'en' ? 'Export All' : 'সব রপ্তানি'}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={exportStats}>
-              <DollarSign className="mr-2 h-4 w-4" />
-              {language === 'en' ? 'Stats Cards' : 'স্ট্যাটস'}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={exportSalesData}>
-              <BarChart3 className="mr-2 h-4 w-4" />
-              {t('salesAnalytics')}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={exportCategoryData}>
-              <PieChart className="mr-2 h-4 w-4" />
-              {t('categoryDistribution')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex flex-wrap items-center gap-2">
+          <RefreshControls queryKeys={dashboardQueryKeys} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                {t('export')}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel className="flex items-center gap-2">
+                <FileSpreadsheet className="h-4 w-4" />
+                {language === 'en' ? 'Export Data' : 'ডেটা রপ্তানি'}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={exportAllDashboard}>
+                <Download className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Export All' : 'সব রপ্তানি'}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={exportStats}>
+                <DollarSign className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Stats Cards' : 'স্ট্যাটস'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportSalesData}>
+                <BarChart3 className="mr-2 h-4 w-4" />
+                {t('salesAnalytics')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportCategoryData}>
+                <PieChart className="mr-2 h-4 w-4" />
+                {t('categoryDistribution')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Stats Grid */}
