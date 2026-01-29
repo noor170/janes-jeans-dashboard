@@ -6,6 +6,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  BarChart3,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/', icon: LayoutDashboard, label: t('dashboard') },
     { path: '/inventory', icon: Package, label: t('inventory') },
     { path: '/orders', icon: ShoppingCart, label: t('orders') },
+    { path: '/analytics', icon: BarChart3, label: t('analytics') },
     { path: '/settings', icon: Settings, label: t('settings') },
   ];
 
