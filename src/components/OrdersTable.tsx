@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { fetchOrders, updateOrderStatus, deleteOrder } from '@/lib/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, Eye, Trash2, RefreshCw } from 'lucide-react';
+import { MoreHorizontal, Eye, Trash2, RefreshCw, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
@@ -45,11 +46,26 @@ const OrdersTable = () => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['orders'],
     queryFn: fetchOrders,
   });
+
+  const filteredOrders = useMemo(() => {
+    if (!searchQuery.trim()) return orders;
+    
+    const query = searchQuery.toLowerCase();
+    return orders.filter((order) =>
+      order.id.toLowerCase().includes(query) ||
+      order.customerName.toLowerCase().includes(query) ||
+      order.customerEmail.toLowerCase().includes(query) ||
+      order.status.toLowerCase().includes(query) ||
+      order.shippingAddress.toLowerCase().includes(query) ||
+      order.items.some(item => item.productName.toLowerCase().includes(query))
+    );
+  }, [orders, searchQuery]);
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
@@ -114,16 +130,28 @@ const OrdersTable = () => {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>{t('orders')}</CardTitle>
             <p className="text-sm text-muted-foreground">
-              {orders.length} {t('orders').toLowerCase()}
+              {filteredOrders.length} {t('orders').toLowerCase()}
+              {searchQuery && ` (${orders.length} total)`}
             </p>
           </div>
-          <Button onClick={() => setIsCreateOpen(true)}>
-            {t('newOrder')}
-          </Button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={`${t('search')}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button onClick={() => setIsCreateOpen(true)}>
+              {t('newOrder')}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto scrollbar-thin">
@@ -140,7 +168,14 @@ const OrdersTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.map((order) => (
+                {filteredOrders.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                      {t('noData')}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredOrders.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>
@@ -210,7 +245,8 @@ const OrdersTable = () => {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
