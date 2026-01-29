@@ -4,6 +4,15 @@ import { useGenderFilter } from '@/contexts/GenderFilterContext';
 import { fetchDashboardStats, fetchSalesData, fetchCategoryDistribution, fetchOrders, fetchProducts } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -16,7 +25,9 @@ import {
   BarChart3,
   PieChartIcon,
   LineChartIcon,
-  Target
+  Target,
+  Download,
+  FileSpreadsheet,
 } from 'lucide-react';
 import {
   BarChart,
@@ -39,6 +50,8 @@ import {
 import { DateRange } from 'react-day-picker';
 import DateRangeFilter from '@/components/DateRangeFilter';
 import { format, subDays, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { exportToCsv } from '@/lib/exportCsv';
+import { toast } from 'sonner';
 
 // KPI Card Component
 interface KPICardProps {
@@ -177,18 +190,134 @@ const Analytics = () => {
   const kpiTitle = language === 'en' ? 'Key Performance Indicators' : 'প্রধান কর্মক্ষমতা সূচক';
   const vsLastMonth = language === 'en' ? 'vs last month' : 'গত মাসের তুলনায়';
 
+  // Export functions
+  const exportKPIs = () => {
+    const headers = ['Metric', 'Value', 'Change %', 'Trend'];
+    const avgOrderValue = orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0;
+    const data = [
+      ['Total Sales', `$${(stats?.totalSales || 0).toLocaleString()}`, '12.5', 'up'],
+      ['Active Orders', stats?.activeOrders || 0, '-3.2', 'down'],
+      ['Avg Order Value', `$${avgOrderValue}`, '8.1', 'up'],
+      ['Total Customers', stats?.totalCustomers || 0, '15.3', 'up'],
+    ];
+    exportToCsv({ filename: `kpi-metrics-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - KPIs');
+  };
+
+  const exportRevenueTrend = () => {
+    const headers = ['Month', 'Revenue', 'Growth %'];
+    const data = revenueTrendData.map(item => [item.month, item.total, item.growth]);
+    exportToCsv({ filename: `revenue-trend-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Revenue Trend');
+  };
+
+  const exportSalesByGender = () => {
+    const headers = ['Month', 'Men Sales', 'Women Sales', 'Total'];
+    const data = salesData.map(item => [item.month, item.men, item.women, item.total]);
+    exportToCsv({ filename: `sales-by-gender-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Sales by Gender');
+  };
+
+  const exportOrderStatus = () => {
+    const headers = ['Status', 'Count'];
+    const data = orderStatusData.map(item => [item.name, item.value]);
+    exportToCsv({ filename: `order-status-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Order Status');
+  };
+
+  const exportStockLevels = () => {
+    const headers = ['Category', 'Product Count'];
+    const data = stockLevelData.map(item => [item.name, item.value]);
+    exportToCsv({ filename: `stock-levels-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Stock Levels');
+  };
+
+  const exportTopProducts = () => {
+    const headers = ['Product Name', 'Revenue', 'Units Sold'];
+    const data = topProductsData.map(item => [item.name, item.revenue, item.units]);
+    exportToCsv({ filename: `top-products-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Top Products');
+  };
+
+  const exportCategoryDistribution = () => {
+    const headers = ['Category', 'Value'];
+    const data = categoryData.map(item => [item.name, item.value]);
+    exportToCsv({ filename: `category-distribution-${new Date().toISOString().split('T')[0]}`, headers, data });
+    toast.success(t('export') + ' - Category Distribution');
+  };
+
+  const exportAllAnalytics = () => {
+    exportKPIs();
+    exportRevenueTrend();
+    exportSalesByGender();
+    exportOrderStatus();
+    exportStockLevels();
+    exportTopProducts();
+    exportCategoryDistribution();
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header with Date Range Filter */}
+      {/* Header with Date Range Filter and Export */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">{analyticsTitle}</h1>
           <p className="text-sm text-muted-foreground">{kpiTitle}</p>
         </div>
-        <DateRangeFilter
-          dateRange={dateRange}
-          onDateRangeChange={setDateRange}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <DateRangeFilter
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Download className="h-4 w-4" />
+                {t('export')}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="flex items-center gap-2">
+                <FileSpreadsheet className="h-4 w-4" />
+                {language === 'en' ? 'Export Data' : 'ডেটা রপ্তানি'}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={exportAllAnalytics}>
+                <Download className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Export All Reports' : 'সব রিপোর্ট'}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={exportKPIs}>
+                <Target className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'KPI Metrics' : 'কেপিআই মেট্রিক্স'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportRevenueTrend}>
+                <LineChartIcon className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Revenue Trend' : 'রাজস্ব প্রবণতা'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportSalesByGender}>
+                <BarChart3 className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Sales by Gender' : 'লিঙ্গ অনুসারে বিক্রয়'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportOrderStatus}>
+                <PieChartIcon className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Order Status' : 'অর্ডার স্থিতি'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportStockLevels}>
+                <Package className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Stock Levels' : 'স্টক স্তর'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportTopProducts}>
+                <TrendingUp className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Top Products' : 'শীর্ষ পণ্য'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportCategoryDistribution}>
+                <PieChartIcon className="mr-2 h-4 w-4" />
+                {language === 'en' ? 'Category Distribution' : 'বিভাগ বন্টন'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* KPI Cards */}
