@@ -33,13 +33,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X } from 'lucide-react';
+import { MoreHorizontal, Eye, Trash2, RefreshCw, Search, Filter, X, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import OrderDetailsDialog from './OrderDetailsDialog';
 import CreateOrderDialog from './CreateOrderDialog';
 import { usePagination } from '@/hooks/usePagination';
 import TablePagination from './TablePagination';
+import { exportToCsv, formatDateForCsv } from '@/lib/exportCsv';
 
 const OrdersTable = () => {
   const { t } = useLanguage();
@@ -132,6 +133,30 @@ const OrdersTable = () => {
 
   const statusOptions: OrderStatus[] = ['Pending', 'Processing', 'Shipped', 'Delivered'];
 
+  const handleExportCsv = () => {
+    const headers = ['Order ID', 'Customer Name', 'Customer Email', 'Items', 'Status', 'Order Date', 'Shipped Date', 'Delivered Date', 'Total Amount', 'Shipping Address'];
+    const data = filteredOrders.map(order => [
+      order.id,
+      order.customerName,
+      order.customerEmail,
+      order.items.map(item => `${item.productName} (x${item.quantity})`).join('; '),
+      order.status,
+      formatDateForCsv(order.orderDate),
+      order.shippedDate ? formatDateForCsv(order.shippedDate) : '',
+      order.deliveredDate ? formatDateForCsv(order.deliveredDate) : '',
+      order.totalAmount.toFixed(2),
+      order.shippingAddress
+    ]);
+
+    exportToCsv({
+      filename: `orders-${new Date().toISOString().split('T')[0]}`,
+      headers,
+      data,
+    });
+
+    toast.success(t('export') + ' successful');
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -193,6 +218,15 @@ const OrdersTable = () => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button
+                variant="outline"
+                onClick={handleExportCsv}
+                disabled={filteredOrders.length === 0}
+                className="gap-2"
+              >
+                <Download className="h-4 w-4" />
+                {t('export')}
+              </Button>
               <Button onClick={() => setIsCreateOpen(true)}>
                 {t('newOrder')}
               </Button>
