@@ -19,6 +19,7 @@ import Shipments from "./pages/Shipments";
 import ShippingVendors from "./pages/ShippingVendors";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
@@ -47,16 +48,10 @@ const App = () => (
                   <Sonner />
                   <BrowserRouter>
                     <Routes>
-                      <Route element={<DashboardLayout />}>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/inventory" element={<Inventory />} />
-                        <Route path="/orders" element={<Orders />} />
-                        <Route path="/customers" element={<Customers />} />
-                        <Route path="/shipments" element={<Shipments />} />
-                        <Route path="/shipping-vendors" element={<ShippingVendors />} />
-                        <Route path="/analytics" element={<Analytics />} />
-                        <Route path="/settings" element={<Settings />} />
-                      </Route>
+                      {/* Public Routes */}
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      
                       {/* Shop Routes (Guest Checkout - No Auth Required) */}
                       <Route path="/shop" element={<ShoppingDashboard />} />
                       <Route path="/shop/product/:productId" element={<ProductDetails />} />
@@ -64,8 +59,22 @@ const App = () => (
                       <Route path="/shop/checkout" element={<CheckoutPage />} />
                       <Route path="/shop/payment" element={<PaymentPage />} />
                       <Route path="/shop/order-success" element={<OrderSuccessPage />} />
-                      {/* Admin Routes */}
-                      <Route path="/admin/login" element={<AdminLogin />} />
+                      
+                      {/* Protected Dashboard Routes - Requires Authentication */}
+                      <Route element={<ProtectedRoute />}>
+                        <Route element={<DashboardLayout />}>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/inventory" element={<Inventory />} />
+                          <Route path="/orders" element={<Orders />} />
+                          <Route path="/customers" element={<Customers />} />
+                          <Route path="/shipments" element={<Shipments />} />
+                          <Route path="/shipping-vendors" element={<ShippingVendors />} />
+                          <Route path="/analytics" element={<Analytics />} />
+                          <Route path="/settings" element={<Settings />} />
+                        </Route>
+                      </Route>
+                      
+                      {/* Admin Routes - Requires Admin Role */}
                       <Route element={<ProtectedRoute requiredRoles={['ADMIN', 'SUPER_ADMIN']} />}>
                         <Route element={<DashboardLayout />}>
                           <Route path="/admin" element={<AdminDashboard />} />
@@ -73,6 +82,7 @@ const App = () => (
                           <Route path="/admin/audit-logs" element={<AuditLogs />} />
                         </Route>
                       </Route>
+                      
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </BrowserRouter>
