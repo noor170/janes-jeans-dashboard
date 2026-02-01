@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-003-demo-customers" author="janesjeans" context="dev,docker">
+        <insert tableName="customers">
+            <column name="id" value="CUS001"/>
+            <column name="name" value="John Smith"/>
+            <column name="email" value="john.smith@email.com"/>
+            <column name="phone" value="+1 (555) 123-4567"/>
+            <column name="address" value="123 Main St, New York, NY 10001"/>
+            <column name="status" value="vip"/>
+            <column name="total_orders" valueNumeric="12"/>
+            <column name="total_spent" valueNumeric="1549.88"/>
+            <column name="notes" value="Prefers express shipping. Loyal customer since 2023."/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS002"/>
+            <column name="name" value="Sarah Johnson"/>
+            <column name="email" value="sarah.j@email.com"/>
+            <column name="phone" value="+1 (555) 234-5678"/>
+            <column name="address" value="456 Oak Ave, Los Angeles, CA 90001"/>
+            <column name="status" value="active"/>
+            <column name="total_orders" valueNumeric="5"/>
+            <column name="total_spent" valueNumeric="449.95"/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS003"/>
+            <column name="name" value="Michael Brown"/>
+            <column name="email" value="mbrown@email.com"/>
+            <column name="phone" value="+1 (555) 345-6789"/>
+            <column name="address" value="789 Pine Rd, Chicago, IL 60601"/>
+            <column name="status" value="active"/>
+            <column name="total_orders" valueNumeric="8"/>
+            <column name="total_spent" valueNumeric="879.92"/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS004"/>
+            <column name="name" value="Emily Davis"/>
+            <column name="email" value="emily.d@email.com"/>
+            <column name="phone" value="+1 (555) 456-7890"/>
+            <column name="address" value="321 Elm St, Houston, TX 77001"/>
+            <column name="status" value="active"/>
+            <column name="total_orders" valueNumeric="3"/>
+            <column name="total_spent" valueNumeric="269.97"/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS005"/>
+            <column name="name" value="David Wilson"/>
+            <column name="email" value="dwilson@email.com"/>
+            <column name="phone" value="+1 (555) 567-8901"/>
+            <column name="address" value="555 Maple Dr, Phoenix, AZ 85001"/>
+            <column name="status" value="inactive"/>
+            <column name="total_orders" valueNumeric="1"/>
+            <column name="total_spent" valueNumeric="129.99"/>
+            <column name="notes" value="Account inactive - no orders in 60+ days."/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS006"/>
+            <column name="name" value="Jessica Martinez"/>
+            <column name="email" value="jmartinez@email.com"/>
+            <column name="phone" value="+1 (555) 678-9012"/>
+            <column name="address" value="888 Cedar Ln, Philadelphia, PA 19101"/>
+            <column name="status" value="vip"/>
+            <column name="total_orders" valueNumeric="15"/>
+            <column name="total_spent" valueNumeric="2124.85"/>
+            <column name="notes" value="Top customer. Enrolled in loyalty program."/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS007"/>
+            <column name="name" value="Robert Taylor"/>
+            <column name="email" value="rtaylor@email.com"/>
+            <column name="phone" value="+1 (555) 789-0123"/>
+            <column name="address" value="999 Birch Blvd, San Antonio, TX 78201"/>
+            <column name="status" value="active"/>
+            <column name="total_orders" valueNumeric="4"/>
+            <column name="total_spent" valueNumeric="359.96"/>
+        </insert>
+        
+        <insert tableName="customers">
+            <column name="id" value="CUS008"/>
+            <column name="name" value="Amanda White"/>
+            <column name="email" value="awhite@email.com"/>
+            <column name="phone" value="+1 (555) 890-1234"/>
+            <column name="address" value="111 Spruce Way, San Diego, CA 92101"/>
+            <column name="status" value="active"/>
+            <column name="total_orders" valueNumeric="6"/>
+            <column name="total_spent" valueNumeric="509.94"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

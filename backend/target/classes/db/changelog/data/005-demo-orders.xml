@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-005-demo-orders" author="janesjeans" context="dev,docker">
+        <!-- Order 1: Delivered -->
+        <insert tableName="orders">
+            <column name="id" value="ORD001"/>
+            <column name="customer_id" value="CUS001"/>
+            <column name="customer_name" value="John Smith"/>
+            <column name="customer_email" value="john.smith@email.com"/>
+            <column name="status" value="Delivered"/>
+            <column name="total_amount" valueNumeric="254.97"/>
+            <column name="shipping_address" value="123 Main St, New York, NY 10001"/>
+            <column name="notes" value="**VIP Customer** - Handle with care."/>
+            <column name="order_date" valueDate="2024-01-15T10:30:00"/>
+            <column name="shipped_date" valueDate="2024-01-16T14:00:00"/>
+            <column name="delivered_date" valueDate="2024-01-19T11:00:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI001-1"/>
+            <column name="order_id" value="ORD001"/>
+            <column name="product_id" value="P001"/>
+            <column name="product_name" value="Classic Indigo Slim"/>
+            <column name="size" value="32"/>
+            <column name="quantity" valueNumeric="2"/>
+            <column name="price" valueNumeric="89.99"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI001-2"/>
+            <column name="order_id" value="ORD001"/>
+            <column name="product_id" value="P003"/>
+            <column name="product_name" value="Comfort Relaxed"/>
+            <column name="size" value="34"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="74.99"/>
+        </insert>
+        
+        <!-- Order 2: Shipped -->
+        <insert tableName="orders">
+            <column name="id" value="ORD002"/>
+            <column name="customer_id" value="CUS002"/>
+            <column name="customer_name" value="Sarah Johnson"/>
+            <column name="customer_email" value="sarah.j@email.com"/>
+            <column name="status" value="Shipped"/>
+            <column name="total_amount" valueNumeric="89.99"/>
+            <column name="shipping_address" value="456 Oak Ave, Los Angeles, CA 90001"/>
+            <column name="order_date" valueDate="2024-01-18T14:45:00"/>
+            <column name="shipped_date" valueDate="2024-01-19T09:00:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI002-1"/>
+            <column name="order_id" value="ORD002"/>
+            <column name="product_id" value="P009"/>
+            <column name="product_name" value="High Rise Skinny"/>
+            <column name="size" value="26"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="89.99"/>
+        </insert>
+        
+        <!-- Order 3: Processing -->
+        <insert tableName="orders">
+            <column name="id" value="ORD003"/>
+            <column name="customer_id" value="CUS003"/>
+            <column name="customer_name" value="Michael Brown"/>
+            <column name="customer_email" value="mbrown@email.com"/>
+            <column name="status" value="Processing"/>
+            <column name="total_amount" valueNumeric="179.98"/>
+            <column name="shipping_address" value="789 Pine Rd, Chicago, IL 60601"/>
+            <column name="notes" value="Customer requested express shipping."/>
+            <column name="order_date" valueDate="2024-01-20T09:15:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI003-1"/>
+            <column name="order_id" value="ORD003"/>
+            <column name="product_id" value="P002"/>
+            <column name="product_name" value="Urban Skinny Fit"/>
+            <column name="size" value="30"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="79.99"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI003-2"/>
+            <column name="order_id" value="ORD003"/>
+            <column name="product_id" value="P007"/>
+            <column name="product_name" value="Executive Slim"/>
+            <column name="size" value="33"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="99.99"/>
+        </insert>
+        
+        <!-- Order 4: Pending -->
+        <insert tableName="orders">
+            <column name="id" value="ORD004"/>
+            <column name="customer_id" value="CUS004"/>
+            <column name="customer_name" value="Emily Davis"/>
+            <column name="customer_email" value="emily.d@email.com"/>
+            <column name="status" value="Pending"/>
+            <column name="total_amount" valueNumeric="269.97"/>
+            <column name="shipping_address" value="321 Elm St, Houston, TX 77001"/>
+            <column name="order_date" valueDate="2024-01-21T16:30:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI004-1"/>
+            <column name="order_id" value="ORD004"/>
+            <column name="product_id" value="P011"/>
+            <column name="product_name" value="Ankle Slim"/>
+            <column name="size" value="27"/>
+            <column name="quantity" valueNumeric="2"/>
+            <column name="price" valueNumeric="84.99"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI004-2"/>
+            <column name="order_id" value="ORD004"/>
+            <column name="product_id" value="P013"/>
+            <column name="product_name" value="Wide Leg Relaxed"/>
+            <column name="size" value="26"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="99.99"/>
+        </insert>
+        
+        <!-- Order 5: Pending -->
+        <insert tableName="orders">
+            <column name="id" value="ORD005"/>
+            <column name="customer_id" value="CUS005"/>
+            <column name="customer_name" value="David Wilson"/>
+            <column name="customer_email" value="dwilson@email.com"/>
+            <column name="status" value="Pending"/>
+            <column name="total_amount" valueNumeric="129.99"/>
+            <column name="shipping_address" value="555 Maple Dr, Phoenix, AZ 85001"/>
+            <column name="order_date" valueDate="2024-01-21T18:00:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI005-1"/>
+            <column name="order_id" value="ORD005"/>
+            <column name="product_id" value="P004"/>
+            <column name="product_name" value="Premium Slim Dark"/>
+            <column name="size" value="32"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="price" valueNumeric="129.99"/>
+        </insert>
+        
+        <!-- Order 6: Processing -->
+        <insert tableName="orders">
+            <column name="id" value="ORD006"/>
+            <column name="customer_id" value="CUS006"/>
+            <column name="customer_name" value="Jessica Martinez"/>
+            <column name="customer_email" value="jmartinez@email.com"/>
+            <column name="status" value="Processing"/>
+            <column name="total_amount" valueNumeric="254.97"/>
+            <column name="shipping_address" value="888 Cedar Ln, Philadelphia, PA 19101"/>
+            <column name="order_date" valueDate="2024-01-20T11:45:00"/>
+        </insert>
+        
+        <insert tableName="order_items">
+            <column name="id" value="OI006-1"/>
+            <column name="order_id" value="ORD006"/>
+            <column name="product_id" value="P016"/>
+            <column name="product_name" value="Stretch Skinny"/>
+            <column name="size" value="27"/>
+            <column name="quantity" valueNumeric="3"/>
+            <column name="price" valueNumeric="84.99"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
