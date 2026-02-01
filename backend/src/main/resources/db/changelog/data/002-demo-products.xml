@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-002-demo-products" author="janesjeans" context="dev,docker">
+        <!-- Men's Jeans -->
+        <insert tableName="products">
+            <column name="id" value="P001"/>
+            <column name="name" value="Classic Indigo Slim"/>
+            <column name="description" value="Timeless slim-fit jeans in classic indigo wash"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="32"/>
+            <column name="wash" value="Dark Indigo"/>
+            <column name="price" valueNumeric="89.99"/>
+            <column name="stock_level" valueNumeric="45"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P002"/>
+            <column name="name" value="Urban Skinny Fit"/>
+            <column name="description" value="Modern skinny jeans for urban style"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Skinny"/>
+            <column name="size" value="30"/>
+            <column name="wash" value="Black"/>
+            <column name="price" valueNumeric="79.99"/>
+            <column name="stock_level" valueNumeric="8"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P003"/>
+            <column name="name" value="Comfort Relaxed"/>
+            <column name="description" value="Relaxed fit for all-day comfort"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Relaxed"/>
+            <column name="size" value="34"/>
+            <column name="wash" value="Stone Wash"/>
+            <column name="price" valueNumeric="74.99"/>
+            <column name="stock_level" valueNumeric="32"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P004"/>
+            <column name="name" value="Premium Slim Dark"/>
+            <column name="description" value="Premium quality raw denim slim jeans"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="32"/>
+            <column name="wash" value="Raw Denim"/>
+            <column name="price" valueNumeric="129.99"/>
+            <column name="stock_level" valueNumeric="5"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P005"/>
+            <column name="name" value="Weekend Relaxed"/>
+            <column name="description" value="Perfect for casual weekends"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Relaxed"/>
+            <column name="size" value="36"/>
+            <column name="wash" value="Light Blue"/>
+            <column name="price" valueNumeric="69.99"/>
+            <column name="stock_level" valueNumeric="28"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P006"/>
+            <column name="name" value="Street Skinny"/>
+            <column name="description" value="Edgy skinny fit for street style"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Skinny"/>
+            <column name="size" value="28"/>
+            <column name="wash" value="Washed Black"/>
+            <column name="price" valueNumeric="84.99"/>
+            <column name="stock_level" valueNumeric="3"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P007"/>
+            <column name="name" value="Executive Slim"/>
+            <column name="description" value="Professional slim fit for the office"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="33"/>
+            <column name="wash" value="Deep Navy"/>
+            <column name="price" valueNumeric="99.99"/>
+            <column name="stock_level" valueNumeric="18"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P008"/>
+            <column name="name" value="Vintage Relaxed"/>
+            <column name="description" value="Vintage wash relaxed fit"/>
+            <column name="gender" value="Men"/>
+            <column name="fit" value="Relaxed"/>
+            <column name="size" value="35"/>
+            <column name="wash" value="Vintage Wash"/>
+            <column name="price" valueNumeric="79.99"/>
+            <column name="stock_level" valueNumeric="22"/>
+        </insert>
+        
+        <!-- Women's Jeans -->
+        <insert tableName="products">
+            <column name="id" value="P009"/>
+            <column name="name" value="High Rise Skinny"/>
+            <column name="description" value="Flattering high rise skinny jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Skinny"/>
+            <column name="size" value="26"/>
+            <column name="wash" value="Dark Indigo"/>
+            <column name="price" valueNumeric="89.99"/>
+            <column name="stock_level" valueNumeric="42"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P010"/>
+            <column name="name" value="Mom Fit Relaxed"/>
+            <column name="description" value="Classic mom jeans with relaxed fit"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Relaxed"/>
+            <column name="size" value="28"/>
+            <column name="wash" value="Light Wash"/>
+            <column name="price" valueNumeric="79.99"/>
+            <column name="stock_level" valueNumeric="6"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P011"/>
+            <column name="name" value="Ankle Slim"/>
+            <column name="description" value="Chic ankle-length slim jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="27"/>
+            <column name="wash" value="Medium Blue"/>
+            <column name="price" valueNumeric="84.99"/>
+            <column name="stock_level" valueNumeric="35"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P012"/>
+            <column name="name" value="Curve Skinny"/>
+            <column name="description" value="Designed for curves skinny fit"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Skinny"/>
+            <column name="size" value="29"/>
+            <column name="wash" value="Black"/>
+            <column name="price" valueNumeric="94.99"/>
+            <column name="stock_level" valueNumeric="9"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P013"/>
+            <column name="name" value="Wide Leg Relaxed"/>
+            <column name="description" value="Trendy wide leg relaxed jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Relaxed"/>
+            <column name="size" value="26"/>
+            <column name="wash" value="Stone Wash"/>
+            <column name="price" valueNumeric="99.99"/>
+            <column name="stock_level" valueNumeric="27"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P014"/>
+            <column name="name" value="Cropped Slim"/>
+            <column name="description" value="Stylish cropped slim jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="25"/>
+            <column name="wash" value="Bleached"/>
+            <column name="price" valueNumeric="74.99"/>
+            <column name="stock_level" valueNumeric="4"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P015"/>
+            <column name="name" value="Bootcut Slim"/>
+            <column name="description" value="Classic bootcut slim jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Slim"/>
+            <column name="size" value="28"/>
+            <column name="wash" value="Dark Wash"/>
+            <column name="price" valueNumeric="89.99"/>
+            <column name="stock_level" valueNumeric="31"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="P016"/>
+            <column name="name" value="Stretch Skinny"/>
+            <column name="description" value="Super stretch skinny jeans"/>
+            <column name="gender" value="Women"/>
+            <column name="fit" value="Skinny"/>
+            <column name="size" value="27"/>
+            <column name="wash" value="Midnight Blue"/>
+            <column name="price" valueNumeric="84.99"/>
+            <column name="stock_level" valueNumeric="19"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

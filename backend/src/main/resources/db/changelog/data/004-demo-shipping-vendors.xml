@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-004-demo-shipping-vendors" author="janesjeans" context="dev,docker">
+        <insert tableName="shipping_vendors">
+            <column name="id" value="VND001"/>
+            <column name="name" value="Pathao"/>
+            <column name="code" value="PATHAO"/>
+            <column name="contact_email" value="business@pathao.com"/>
+            <column name="contact_phone" value="+880 9666-777777"/>
+            <column name="website" value="https://pathao.com"/>
+            <column name="tracking_url_template" value="https://pathao.com/track/{tracking_number}"/>
+            <column name="status" value="active"/>
+            <column name="avg_delivery_days" valueNumeric="3"/>
+        </insert>
+        
+        <insert tableName="shipping_vendors">
+            <column name="id" value="VND002"/>
+            <column name="name" value="Steadfast"/>
+            <column name="code" value="STEADFAST"/>
+            <column name="contact_email" value="support@steadfast.com.bd"/>
+            <column name="contact_phone" value="+880 9612-123456"/>
+            <column name="website" value="https://steadfast.com.bd"/>
+            <column name="tracking_url_template" value="https://steadfast.com.bd/track/{tracking_number}"/>
+            <column name="status" value="active"/>
+            <column name="avg_delivery_days" valueNumeric="2"/>
+        </insert>
+        
+        <insert tableName="shipping_vendors">
+            <column name="id" value="VND003"/>
+            <column name="name" value="Redx"/>
+            <column name="code" value="REDX"/>
+            <column name="contact_email" value="info@redx.com.bd"/>
+            <column name="contact_phone" value="+880 9613-789012"/>
+            <column name="website" value="https://redx.com.bd"/>
+            <column name="tracking_url_template" value="https://redx.com.bd/track/{tracking_number}"/>
+            <column name="status" value="active"/>
+            <column name="avg_delivery_days" valueNumeric="4"/>
+        </insert>
+        
+        <insert tableName="shipping_vendors">
+            <column name="id" value="VND004"/>
+            <column name="name" value="Paperfly"/>
+            <column name="code" value="PAPERFLY"/>
+            <column name="contact_email" value="contact@paperfly.com.bd"/>
+            <column name="contact_phone" value="+880 9614-456789"/>
+            <column name="website" value="https://paperfly.com.bd"/>
+            <column name="status" value="inactive"/>
+            <column name="avg_delivery_days" valueNumeric="5"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
