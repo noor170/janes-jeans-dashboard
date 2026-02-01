@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,11 +32,12 @@ const Login = () => {
   // Get the redirect path from location state or default to dashboard
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate(from, { replace: true });
-    return null;
-  }
+  // Redirect if already authenticated - use useEffect instead of render-time navigation
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
