@@ -229,6 +229,7 @@ const UserManagement = () => {
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -261,6 +262,33 @@ const UserManagement = () => {
                         {new Date(user.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
+                        <div className="flex items-center justify-center gap-2">
+                          {user.isActive ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deactivateMutation.mutate(user)}
+                              disabled={user.id === currentUser?.id || deactivateMutation.isPending}
+                              className="text-amber-600 border-amber-600/30 hover:bg-amber-600/10 hover:text-amber-600"
+                            >
+                              <UserX className="h-4 w-4 mr-1" />
+                              Deactivate
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => activateMutation.mutate(user)}
+                              disabled={activateMutation.isPending}
+                              className="text-emerald-600 border-emerald-600/30 hover:bg-emerald-600/10 hover:text-emerald-600"
+                            >
+                              <UserCheck className="h-4 w-4 mr-1" />
+                              Activate
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -276,9 +304,9 @@ const UserManagement = () => {
                               <Key className="h-4 w-4 mr-2" />
                               Reset Password
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
                             {isSuperAdmin && user.role !== 'SUPER_ADMIN' && (
                               <>
+                                <DropdownMenuSeparator />
                                 {user.role === 'USER' ? (
                                   <DropdownMenuItem 
                                     onClick={() => updateRoleMutation.mutate({ user, newRole: 'ADMIN' })}
@@ -294,22 +322,7 @@ const UserManagement = () => {
                                     Demote to User
                                   </DropdownMenuItem>
                                 )}
-                                <DropdownMenuSeparator />
                               </>
-                            )}
-                            {user.isActive ? (
-                              <DropdownMenuItem 
-                                onClick={() => deactivateMutation.mutate(user)}
-                                disabled={user.id === currentUser?.id}
-                              >
-                                <UserX className="h-4 w-4 mr-2" />
-                                Deactivate
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem onClick={() => activateMutation.mutate(user)}>
-                                <UserCheck className="h-4 w-4 mr-2" />
-                                Activate
-                              </DropdownMenuItem>
                             )}
                             {isSuperAdmin && user.id !== currentUser?.id && (
                               <>
@@ -330,7 +343,7 @@ const UserManagement = () => {
                   ))}
                   {filteredUsers.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                         No users found
                       </TableCell>
                     </TableRow>

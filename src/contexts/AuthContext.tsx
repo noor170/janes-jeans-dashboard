@@ -50,7 +50,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [initAuth]);
 
   const login = async (credentials: LoginRequest) => {
-    const response = await authApi.adminLogin(credentials);
+    // Use regular login for all users - backend will validate role appropriately
+    const response = await authApi.login(credentials);
     setUser(response.user);
     // Log successful login after user is set
     setTimeout(() => {
