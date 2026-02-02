@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-006-demo-shipments" author="janesjeans" context="dev,docker">
+        <!-- Shipment for Order 1: Delivered -->
+        <insert tableName="shipments">
+            <column name="id" value="SHP001"/>
+            <column name="order_id" value="ORD001"/>
+            <column name="vendor_id" value="VND001"/>
+            <column name="tracking_number" value="PTH123456789"/>
+            <column name="status" value="delivered"/>
+            <column name="shipping_address" value="123 Main St, New York, NY 10001"/>
+            <column name="shipped_at" valueDate="2024-01-16T14:00:00"/>
+            <column name="estimated_delivery" valueDate="2024-01-19T18:00:00"/>
+            <column name="delivered_at" valueDate="2024-01-19T11:00:00"/>
+        </insert>
+        
+        <!-- Shipment for Order 2: In Transit -->
+        <insert tableName="shipments">
+            <column name="id" value="SHP002"/>
+            <column name="order_id" value="ORD002"/>
+            <column name="vendor_id" value="VND002"/>
+            <column name="tracking_number" value="STF987654321"/>
+            <column name="status" value="in_transit"/>
+            <column name="shipping_address" value="456 Oak Ave, Los Angeles, CA 90001"/>
+            <column name="shipped_at" valueDate="2024-01-19T09:00:00"/>
+            <column name="estimated_delivery" valueDate="2024-01-21T18:00:00"/>
+        </insert>
+        
+        <!-- Shipment for Order 3: Pending -->
+        <insert tableName="shipments">
+            <column name="id" value="SHP003"/>
+            <column name="order_id" value="ORD003"/>
+            <column name="vendor_id" value="VND001"/>
+            <column name="tracking_number" value="PTH456789123"/>
+            <column name="status" value="pending"/>
+            <column name="shipping_address" value="789 Pine Rd, Chicago, IL 60601"/>
+            <column name="estimated_delivery" valueDate="2024-01-25T18:00:00"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
