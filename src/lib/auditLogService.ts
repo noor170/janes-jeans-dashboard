@@ -2,9 +2,6 @@ import { AuditLog, AuditLogFilters, PaginatedAuditLogs, CreateAuditLogRequest, A
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-// In-memory store for demo (replace with actual API calls when backend is ready)
-let auditLogsStore: AuditLog[] = [];
-
 class AuditLogService {
   private getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
@@ -35,93 +32,96 @@ class AuditLogService {
     return null;
   }
 
-  // Log an action (uses mock store for demo, can be switched to API)
   async logAction(request: CreateAuditLogRequest): Promise<AuditLog | null> {
     const currentUser = this.getCurrentUser();
     if (!currentUser) return null;
 
-    const log: AuditLog = {
-      id: `LOG${Date.now()}`,
-      action: request.action,
-      performedBy: currentUser,
-      targetUser: request.details?.targetUser as AuditLog['targetUser'],
-      details: request.details,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-    };
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({
+          userId: currentUser.id,
+          userEmail: currentUser.email,
+          action: request.action,
+          details: request.details ? JSON.stringify(request.details) : null,
+          userAgent: navigator.userAgent,
+        }),
+      });
 
-    // For demo: store locally
-    auditLogsStore.unshift(log);
+      if (!response.ok) {
+        // Silently fail for audit logging - don't break the app
+        console.warn('Failed to log audit action:', request.action);
+        return null;
+      }
 
-    // When backend is ready, use this:
-    // try {
-    //   const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs`, {
-    //     method: 'POST',
-    //     headers: this.getAuthHeaders(),
-    //     body: JSON.stringify(request),
-    //   });
-    //   return await response.json();
-    // } catch (error) {
-    //   console.error('Failed to log action:', error);
-    //   return null;
-    // }
-
-    return log;
+      const data = await response.json();
+      return {
+        id: data.id,
+        action: data.action as AuditAction,
+        performedBy: {
+          id: currentUser.id,
+          email: currentUser.email,
+          name: currentUser.name,
+        },
+        targetUser: request.details?.targetUser as AuditLog['targetUser'],
+        details: request.details,
+        timestamp: data.createdAt,
+        userAgent: data.userAgent,
+      };
+    } catch (error) {
+      console.warn('Failed to log audit action:', error);
+      return null;
+    }
   }
 
-  // Get audit logs with filters
   async getAuditLogs(filters: AuditLogFilters = {}): Promise<PaginatedAuditLogs> {
-    const { action, performedById, targetUserId, startDate, endDate, page = 1, limit = 20 } = filters;
+    const { action, performedById, page = 1, limit = 20 } = filters;
 
-    // For demo: filter from local store
-    let filteredLogs = [...auditLogsStore];
+    const params = new URLSearchParams();
+    if (action) params.append('action', action);
+    if (performedById) params.append('userId', performedById);
+    params.append('page', String(page - 1)); // Backend uses 0-indexed pages
+    params.append('limit', String(limit));
 
-    if (action) {
-      filteredLogs = filteredLogs.filter(log => log.action === action);
-    }
-    if (performedById) {
-      filteredLogs = filteredLogs.filter(log => log.performedBy.id === performedById);
-    }
-    if (targetUserId) {
-      filteredLogs = filteredLogs.filter(log => log.targetUser?.id === targetUserId);
-    }
-    if (startDate) {
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(startDate));
-    }
-    if (endDate) {
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(endDate));
-    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs?${params}`, {
+        headers: this.getAuthHeaders(),
+      });
 
-    const total = filteredLogs.length;
-    const totalPages = Math.ceil(total / limit);
-    const startIndex = (page - 1) * limit;
-    const paginatedLogs = filteredLogs.slice(startIndex, startIndex + limit);
+      if (!response.ok) {
+        return { logs: [], total: 0, page, limit, totalPages: 0 };
+      }
 
-    return {
-      logs: paginatedLogs,
-      total,
-      page,
-      limit,
-      totalPages,
-    };
+      const data = await response.json();
 
-    // When backend is ready, use this:
-    // const params = new URLSearchParams();
-    // if (action) params.append('action', action);
-    // if (performedById) params.append('performedById', performedById);
-    // if (targetUserId) params.append('targetUserId', targetUserId);
-    // if (startDate) params.append('startDate', startDate);
-    // if (endDate) params.append('endDate', endDate);
-    // params.append('page', page.toString());
-    // params.append('limit', limit.toString());
-    //
-    // const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs?${params}`, {
-    //   headers: this.getAuthHeaders(),
-    // });
-    // return await response.json();
+      const logs: AuditLog[] = (data.logs || []).map((log: any) => ({
+        id: log.id,
+        action: log.action as AuditAction,
+        performedBy: {
+          id: log.userId || '',
+          email: log.userEmail || '',
+          name: log.userEmail || '',
+        },
+        targetUser: undefined,
+        details: log.details ? JSON.parse(log.details) : undefined,
+        timestamp: log.createdAt,
+        userAgent: log.userAgent,
+      }));
+
+      return {
+        logs,
+        total: data.total || 0,
+        page: data.page || page,
+        limit: data.limit || limit,
+        totalPages: data.totalPages || 0,
+      };
+    } catch (error) {
+      console.error('Failed to fetch audit logs:', error);
+      return { logs: [], total: 0, page, limit, totalPages: 0 };
+    }
   }
 
-  // Helper to get action display label
   getActionLabel(action: AuditAction): string {
     const labels: Record<AuditAction, string> = {
       USER_LOGIN: 'User Login',
@@ -138,7 +138,6 @@ class AuditLogService {
     return labels[action] || action;
   }
 
-  // Helper to get action severity
   getActionSeverity(action: AuditAction): 'info' | 'warning' | 'error' | 'success' {
     const severity: Record<AuditAction, 'info' | 'warning' | 'error' | 'success'> = {
       USER_LOGIN: 'info',
