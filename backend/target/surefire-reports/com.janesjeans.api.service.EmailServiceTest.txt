@@ -1,0 +1,38 @@
+-------------------------------------------------------------------------------
+Test set: com.janesjeans.api.service.EmailServiceTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.187 s <<< FAILURE! -- in com.janesjeans.api.service.EmailServiceTest
+com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSendEmail -- Time elapsed: 0.176 s <<< ERROR!
+java.lang.IllegalArgumentException: From address must not be null
+	at org.springframework.util.Assert.notNull(Assert.java:181)
+	at org.springframework.mail.javamail.MimeMessageHelper.setFrom(MimeMessageHelper.java:572)
+	at com.janesjeans.api.service.EmailService.sendOrderConfirmation(EmailService.java:48)
+	at com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSendEmail(EmailServiceTest.java:56)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSkipWhenBlankEmail -- Time elapsed: 0.008 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.janesjeans.api.service.EmailServiceTest.setUp(EmailServiceTest.java:34)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSkipWhenNoEmail -- Time elapsed: 0.001 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.janesjeans.api.service.EmailServiceTest.setUp(EmailServiceTest.java:34)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+

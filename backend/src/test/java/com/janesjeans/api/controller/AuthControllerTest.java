@@ -6,6 +6,7 @@ import com.janesjeans.api.dto.RegisterRequest;
 import com.janesjeans.api.dto.AuthResponse;
 import com.janesjeans.api.dto.UserDTO;
 import com.janesjeans.api.service.AuthService;
+import com.janesjeans.api.entity.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,7 +42,7 @@ class AuthControllerTest {
                         .email("test@janesjeans.com")
                         .firstName("Test")
                         .lastName("User")
-                        .role("ADMIN")
+                        .role(Role.ADMIN)
                         .isActive(true)
                         .build())
                 .build();
