@@ -9,6 +9,7 @@ import { GenderFilterProvider } from "@/contexts/GenderFilterContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { ShopCustomerProvider } from "@/contexts/ShopCustomerContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
@@ -33,7 +34,7 @@ import CartPage from "./pages/shop/CartPage";
 import CheckoutPage from "./pages/shop/CheckoutPage";
 import PaymentPage from "./pages/shop/PaymentPage";
 import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
-
+import ShopRegister from "./pages/shop/ShopRegister";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -46,6 +47,7 @@ const App = () => (
               <NotificationProvider>
                 <AuthProvider>
                   <CartProvider>
+                    <ShopCustomerProvider>
                     <Toaster />
                     <Sonner />
                     <Routes>
@@ -54,7 +56,8 @@ const App = () => (
                       <Route path="/register" element={<Register />} />
                       <Route path="/admin/login" element={<AdminLogin />} />
                       
-                      {/* Shop Routes (Guest Checkout - No Auth Required) */}
+                      {/* Shop Routes */}
+                      <Route path="/shop/register" element={<ShopRegister />} />
                       <Route path="/shop" element={<ShoppingDashboard />} />
                       <Route path="/shop/product/:productId" element={<ProductDetails />} />
                       <Route path="/shop/cart" element={<CartPage />} />
@@ -88,6 +91,7 @@ const App = () => (
                       <Route path="/" element={<Navigate to="/shop" replace />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
+                    </ShopCustomerProvider>
                   </CartProvider>
                 </AuthProvider>
               </NotificationProvider>
