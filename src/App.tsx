@@ -20,6 +20,7 @@ import ShippingVendors from "./pages/ShippingVendors";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
@@ -50,6 +51,7 @@ const App = () => (
                     <Routes>
                       {/* Public Routes */}
                       <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
                       <Route path="/admin/login" element={<AdminLogin />} />
                       
                       {/* Shop Routes (Guest Checkout - No Auth Required) */}
