@@ -2,7 +2,7 @@
 logs
 *.log
 
-#*.target
+./backend/target
 
 npm-debug.log*
 yarn-debug.log*
