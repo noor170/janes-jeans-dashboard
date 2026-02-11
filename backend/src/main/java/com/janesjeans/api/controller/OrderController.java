@@ -25,6 +25,7 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
+    private final com.janesjeans.api.service.EmailSender emailSender;
 
     @Operation(summary = "List all orders")
     @ApiResponse(responseCode = "200", description = "Orders retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Order.class))))
@@ -82,5 +83,16 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
         orderService.deleteOrder(id);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Send confirmation email for an order", description = "Triggers an order confirmation email to be sent for the given order id")
+    @ApiResponses({
+        @ApiResponse(responseCode = "202", description = "Email send accepted"),
+        @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
+    })
+    @PostMapping("/{id}/confirm-email")
+    public ResponseEntity<Void> confirmOrderByEmail(@PathVariable String id) {
+        emailSender.confirmOrderByEmail(id);
+        return ResponseEntity.accepted().build();
     }
 }
