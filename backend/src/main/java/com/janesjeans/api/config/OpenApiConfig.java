@@ -9,8 +9,6 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.oas.models.responses.ApiResponses;
-import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,31 +54,5 @@ public class OpenApiConfig {
                 ));
     }
 
-        @Bean
-        public OpenApiCustomiser globalResponsesCustomiser() {
-                return openApi -> {
-                        var paths = openApi.getPaths();
-                        if (paths == null) return;
-                        paths.forEach((path, pathItem) -> {
-                                pathItem.readOperations().forEach(operation -> {
-                                        ApiResponses responses = operation.getResponses();
-                                        if (!responses.containsKey("400")) {
-                                                responses.addApiResponse("400", new ApiResponse().description("Bad Request"));
-                                        }
-                                        if (!responses.containsKey("401")) {
-                                                responses.addApiResponse("401", new ApiResponse().description("Unauthorized"));
-                                        }
-                                        if (!responses.containsKey("403")) {
-                                                responses.addApiResponse("403", new ApiResponse().description("Forbidden"));
-                                        }
-                                        if (!responses.containsKey("404")) {
-                                                responses.addApiResponse("404", new ApiResponse().description("Not Found"));
-                                        }
-                                        if (!responses.containsKey("500")) {
-                                                responses.addApiResponse("500", new ApiResponse().description("Internal Server Error"));
-                                        }
-                                });
-                        });
-                };
-        }
+    
 }
