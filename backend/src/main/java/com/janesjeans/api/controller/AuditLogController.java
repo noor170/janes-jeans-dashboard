@@ -3,6 +3,10 @@ package com.janesjeans.api.controller;
 import com.janesjeans.api.entity.AuditLog;
 import com.janesjeans.api.service.AuditLogServiceBackend;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,7 @@ public class AuditLogController {
     private final AuditLogServiceBackend auditLogService;
 
     @Operation(summary = "List audit logs", description = "Paginated list with optional action and userId filters")
+    @ApiResponse(responseCode = "200", description = "Paginated audit logs with total, page, limit, and totalPages fields")
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAuditLogs(
             @RequestParam(required = false) String action,
@@ -40,6 +45,10 @@ public class AuditLogController {
     }
 
     @Operation(summary = "Create an audit log entry")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Log created", content = @Content(schema = @Schema(implementation = AuditLog.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
+    })
     @PostMapping
     public ResponseEntity<AuditLog> createAuditLog(@RequestBody AuditLog log) {
         return ResponseEntity.ok(auditLogService.createLog(log));

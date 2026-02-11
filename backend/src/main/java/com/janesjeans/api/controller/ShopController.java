@@ -10,6 +10,11 @@ import com.janesjeans.api.service.EmailService;
 import com.janesjeans.api.service.OrderService;
 import com.janesjeans.api.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +37,9 @@ public class ShopController {
     private final EmailService emailService;
 
     @Operation(summary = "List shop products", description = "Returns all products grouped by name with aggregated sizes. Optionally filter by category.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Products retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShopProductDTO.class))))
+    })
     @GetMapping("/products")
     public ResponseEntity<List<ShopProductDTO>> getShopProducts(@RequestParam(required = false) String category) {
         List<Product> allProducts = productService.getAllProducts();
@@ -45,6 +53,10 @@ public class ShopController {
     }
 
     @Operation(summary = "Get shop product by ID", description = "Returns a single product with all size/color variants")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Product found", content = @Content(schema = @Schema(implementation = ShopProductDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Product not found", content = @Content)
+    })
     @GetMapping("/products/{id}")
     public ResponseEntity<ShopProductDTO> getShopProduct(@PathVariable String id) {
         Product product = productService.getProductById(id);
@@ -56,6 +68,9 @@ public class ShopController {
     }
 
     @Operation(summary = "Check stock availability", description = "Validates stock levels for a list of cart items before checkout")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock check result with available flag and any issues")
+    })
     @PostMapping("/check-stock")
     public ResponseEntity<Map<String, Object>> checkStock(@RequestBody List<GuestOrderRequest.GuestOrderItem> items) {
         List<Map<String, Object>> outOfStock = new ArrayList<>();
@@ -85,6 +100,10 @@ public class ShopController {
     }
 
     @Operation(summary = "Create guest order", description = "Places a new order as a guest with stock validation and email confirmation")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Order created", content = @Content(schema = @Schema(implementation = GuestOrderResponse.class))),
+        @ApiResponse(responseCode = "409", description = "Some items are out of stock", content = @Content)
+    })
     @PostMapping("/orders")
     public ResponseEntity<?> createGuestOrder(@RequestBody GuestOrderRequest request) {
         List<String> stockErrors = new ArrayList<>();

@@ -5,6 +5,12 @@ import com.janesjeans.api.entity.Role;
 import com.janesjeans.api.entity.User;
 import com.janesjeans.api.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +33,7 @@ public class AdminController {
     private final PasswordEncoder passwordEncoder;
 
     @Operation(summary = "List all users")
+    @ApiResponse(responseCode = "200", description = "Users retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDTO.class))))
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
@@ -34,13 +41,22 @@ public class AdminController {
     }
 
     @Operation(summary = "Get user by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User found", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(mapToDTO(user));
     }
 
-    @Operation(summary = "Update user details")
+    @Operation(summary = "Update user details", description = "Accepts partial update: firstName, lastName, email")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"firstName\":\"Jane\",\"lastName\":\"Updated\"}")))
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User updated", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -50,7 +66,12 @@ public class AdminController {
         return ResponseEntity.ok(mapToDTO(userRepository.save(user)));
     }
 
-    @Operation(summary = "Update user role")
+    @Operation(summary = "Update user role", description = "Body: {\"role\": \"ADMIN\"}")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"role\":\"ADMIN\"}")))
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Role updated", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PatchMapping("/{id}/role")
     public ResponseEntity<UserDTO> updateUserRole(@PathVariable String id, @RequestBody Map<String, String> body) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -59,6 +80,10 @@ public class AdminController {
     }
 
     @Operation(summary = "Activate a user")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User activated"),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PatchMapping("/{id}/activate")
     public ResponseEntity<Void> activateUser(@PathVariable String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -68,6 +93,10 @@ public class AdminController {
     }
 
     @Operation(summary = "Deactivate a user")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User deactivated"),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PatchMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -77,13 +106,22 @@ public class AdminController {
     }
 
     @Operation(summary = "Delete a user")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User deleted"),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Reset user password")
+    @Operation(summary = "Reset user password", description = "Body: {\"newPassword\": \"...\"}")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"newPassword\":\"newSecurePass123\"}")))
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Password reset"),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+    })
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Void> resetPassword(@PathVariable String id, @RequestBody Map<String, String> body) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
@@ -93,6 +131,11 @@ public class AdminController {
     }
 
     @Operation(summary = "Create a new admin user")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"email\":\"newadmin@janesjeans.com\",\"password\":\"admin123\",\"firstName\":\"New\",\"lastName\":\"Admin\"}")))
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Admin created", content = @Content(schema = @Schema(implementation = UserDTO.class))),
+        @ApiResponse(responseCode = "409", description = "Email already exists", content = @Content)
+    })
     @PostMapping("/create-admin")
     public ResponseEntity<UserDTO> createAdmin(@RequestBody Map<String, String> body) {
         if (userRepository.existsByEmail(body.get("email"))) {
