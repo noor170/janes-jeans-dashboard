@@ -6,8 +6,6 @@ import com.janesjeans.api.dto.RegisterRequest;
 import com.janesjeans.api.dto.AuthResponse;
 import com.janesjeans.api.dto.UserDTO;
 import com.janesjeans.api.service.AuthService;
-import com.janesjeans.api.service.JwtService;
-import com.janesjeans.api.config.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

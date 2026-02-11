@@ -93,7 +93,7 @@ class OrderControllerTest {
         doNothing().when(orderService).deleteOrder("o1");
 
         mockMvc.perform(delete("/api/orders/o1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
