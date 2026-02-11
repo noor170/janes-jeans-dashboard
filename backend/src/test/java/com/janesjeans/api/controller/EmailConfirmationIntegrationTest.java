@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,6 +19,8 @@ import java.math.BigDecimal;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "spring.datasource.driver-class-name=org.h2.Driver",
     "spring.datasource.username=sa",
     "spring.datasource.password=",
+    "management.health.mail.enabled=false",
     "spring.profiles.active=test"
 })
 @AutoConfigureMockMvc
@@ -43,7 +47,7 @@ public class EmailConfirmationIntegrationTest {
     private ProductRepository productRepository;
 
     @MockBean
-    private JavaMailSender mailSender;
+    private com.janesjeans.api.service.EmailService emailService;
 
     @Test
     void orderConfirm_shouldTriggerEmailSend() throws Exception {
@@ -82,12 +86,13 @@ public class EmailConfirmationIntegrationTest {
 
         req.setTotalAmount(p.getPrice());
 
+        // EmailService is mocked, so calls are recorded but no email is sent
         mockMvc.perform(post("/api/shop/orders/confirm")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated());
 
-        // verify JavaMailSender was used to send an email (allow async to complete)
-        verify(mailSender, timeout(2000)).send(any(javax.mail.internet.MimeMessage.class));
+        // verify EmailService was asked to send the confirmation
+        org.mockito.Mockito.verify(emailService, timeout(2000)).sendOrderConfirmationAsync(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.anyString());
     }
 }
