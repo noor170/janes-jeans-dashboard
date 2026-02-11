@@ -6,6 +6,7 @@ import com.janesjeans.api.dto.ShopProductDTO;
 import com.janesjeans.api.entity.Order;
 import com.janesjeans.api.entity.OrderItem;
 import com.janesjeans.api.entity.Product;
+import com.janesjeans.api.service.EmailService;
 import com.janesjeans.api.service.OrderService;
 import com.janesjeans.api.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class ShopController {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final EmailService emailService;
 
     /**
      * Public: Get all products formatted for the shop frontend.
@@ -155,11 +157,15 @@ public class ShopController {
         }
 
         Order saved = orderService.createOrder(order);
-        log.info("Guest order created: {}", saved.getId());
+        String orderNumber = "ORD-" + saved.getId().substring(0, 8).toUpperCase();
+        log.info("Guest order created: {} ({})", saved.getId(), orderNumber);
+
+        // Send confirmation email asynchronously
+        emailService.sendOrderConfirmationAsync(saved, orderNumber);
 
         GuestOrderResponse response = GuestOrderResponse.builder()
                 .id(saved.getId())
-                .orderNumber("ORD-" + saved.getId().substring(0, 8).toUpperCase())
+                .orderNumber(orderNumber)
                 .status(saved.getStatus())
                 .totalAmount(saved.getTotalAmount())
                 .customerName(saved.getCustomerName())
