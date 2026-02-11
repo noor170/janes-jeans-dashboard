@@ -1,5 +1,3 @@
-
-/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/JanesJeansApplication.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/repository/UserRepository.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/exception/GlobalExceptionHandler.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/SecurityConfig.java
@@ -8,6 +6,7 @@
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/controller/AuthController.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/UserDetailsServiceImpl.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/CorsConfig.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/PasswordHashGenerator.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/JanesJeansApplication.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/dto/LoginRequest.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/service/JwtService.java
