@@ -1,199 +1,71 @@
-import { AuthResponse, LoginRequest, RegisterRequest, UserDTO, UserRole, ApiError } from '@/types/auth';
+/**
+ * @deprecated Use imports from '@/services' instead.
+ * This file re-exports for backward compatibility.
+ */
+import { authService } from '@/services/auth.service';
+import { userService } from '@/services/user.service';
+import { jwtService } from '@/services/jwt.service';
+import { AuthResponse, LoginRequest, RegisterRequest, UserDTO, UserRole } from '@/types/auth';
 
-// Configure your Spring Boot backend URL here
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
+/**
+ * Legacy API facade that delegates to the new service layer.
+ */
 class AuthApiService {
-  private getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
-  private getRefreshToken(): string | null {
-    return localStorage.getItem('refreshToken');
-  }
-
-  private setTokens(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-  }
-
-  private clearTokens(): void {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-  }
-
-  private getAuthHeaders(): HeadersInit {
-    const token = this.getAccessToken();
-    return {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-    };
-  }
-
-  private async handleResponse<T>(response: Response): Promise<T> {
-    if (!response.ok) {
-      const error: ApiError = await response.json().catch(() => ({
-        timestamp: new Date().toISOString(),
-        status: response.status,
-        error: response.statusText,
-        message: 'An error occurred',
-      }));
-      throw error;
-    }
-    return response.json();
-  }
-
   async register(request: RegisterRequest): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request),
-    });
-
-    const data = await this.handleResponse<AuthResponse>(response);
-    this.setTokens(data.accessToken, data.refreshToken);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
+    return authService.register(request);
   }
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await this.handleResponse<AuthResponse>(response);
-    this.setTokens(data.accessToken, data.refreshToken);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
+    return authService.login(credentials);
   }
 
   async adminLogin(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/admin/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-    });
-
-    const data = await this.handleResponse<AuthResponse>(response);
-    this.setTokens(data.accessToken, data.refreshToken);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
+    return authService.adminLogin(credentials);
   }
 
   async refreshToken(): Promise<AuthResponse> {
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-
-    const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
-
-    const data = await this.handleResponse<AuthResponse>(response);
-    this.setTokens(data.accessToken, data.refreshToken);
-    localStorage.setItem('user', JSON.stringify(data.user));
-    return data;
+    return authService.refreshToken();
   }
 
   async validateToken(): Promise<boolean> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/validate`, {
-        headers: this.getAuthHeaders(),
-      });
-      return response.ok;
-    } catch {
-      return false;
-    }
+    return authService.validateToken();
   }
 
   logout(): void {
-    this.clearTokens();
+    authService.logout();
   }
 
-  // User Management APIs
+  // User Management - delegates to userService
   async getAllUsers(): Promise<UserDTO[]> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
-      headers: this.getAuthHeaders(),
-    });
-    return this.handleResponse<UserDTO[]>(response);
+    return userService.getAllUsers();
   }
 
   async getUserById(id: string): Promise<UserDTO> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}`, {
-      headers: this.getAuthHeaders(),
-    });
-    return this.handleResponse<UserDTO>(response);
+    return userService.getUserById(id);
   }
 
   async updateUser(id: string, userData: Partial<UserDTO>): Promise<UserDTO> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}`, {
-      method: 'PUT',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(userData),
-    });
-    return this.handleResponse<UserDTO>(response);
+    return userService.updateUser(id, userData);
   }
 
   async updateUserRole(id: string, role: UserRole): Promise<UserDTO> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}/role`, {
-      method: 'PATCH',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify({ role }),
-    });
-    return this.handleResponse<UserDTO>(response);
+    return userService.updateUserRole(id, role);
   }
 
   async deactivateUser(id: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}/deactivate`, {
-      method: 'PATCH',
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw error;
-    }
+    return userService.deactivateUser(id);
   }
 
   async activateUser(id: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}/activate`, {
-      method: 'PATCH',
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw error;
-    }
+    return userService.activateUser(id);
   }
 
   async deleteUser(id: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}`, {
-      method: 'DELETE',
-      headers: this.getAuthHeaders(),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw error;
-    }
+    return userService.deleteUser(id);
   }
 
   async resetPassword(id: string, newPassword: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/${id}/reset-password`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify({ newPassword }),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw error;
-    }
+    return userService.resetPassword(id, newPassword);
   }
 
   async createAdminUser(
@@ -202,28 +74,15 @@ class AuthApiService {
     firstName: string,
     lastName: string
   ): Promise<UserDTO> {
-    const response = await fetch(`${API_BASE_URL}/api/admin/users/create-admin`, {
-      method: 'POST',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify({ email, password, firstName, lastName }),
-    });
-    return this.handleResponse<UserDTO>(response);
+    return userService.createAdminUser(email, password, firstName, lastName);
   }
 
   getStoredUser(): AuthResponse['user'] | null {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      try {
-        return JSON.parse(userStr);
-      } catch {
-        return null;
-      }
-    }
-    return null;
+    return authService.getStoredUser();
   }
 
   isAuthenticated(): boolean {
-    return !!this.getAccessToken() && !!this.getStoredUser();
+    return authService.isAuthenticated();
   }
 }
 

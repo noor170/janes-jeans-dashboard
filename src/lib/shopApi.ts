@@ -1,132 +1,17 @@
-import { ShopProduct } from '@/data/shopProducts';
+/**
+ * @deprecated Use imports from '@/services' instead.
+ * This file re-exports for backward compatibility.
+ */
+export {
+  fetchShopProducts,
+  fetchShopProductById,
+  checkStockAvailability,
+  createGuestOrder,
+} from '@/services/shop.service';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-
-const handleResponse = async <T>(response: Response): Promise<T> => {
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      message: response.statusText,
-    }));
-    throw error;
-  }
-  return response.json();
-};
-
-// ============= SHOP PRODUCTS (Public - No Auth) =============
-
-export const fetchShopProducts = async (category?: string): Promise<ShopProduct[]> => {
-  const params = category && category !== 'all' ? `?category=${category}` : '';
-  const response = await fetch(`${API_BASE_URL}/api/shop/products${params}`, {
-    headers: { 'Content-Type': 'application/json' },
-  });
-  const data = await handleResponse<any[]>(response);
-  return data.map(mapShopProduct);
-};
-
-export const fetchShopProductById = async (id: string): Promise<ShopProduct | null> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/shop/products/${id}`, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const data = await handleResponse<any>(response);
-    return mapShopProduct(data);
-  } catch {
-    return null;
-  }
-};
-
-// ============= STOCK CHECK (Public - No Auth) =============
-
-export interface StockCheckItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  size: string;
-  price: number;
-}
-
-export interface StockCheckResult {
-  available: boolean;
-  issues: {
-    productId: string;
-    productName: string;
-    requestedQuantity?: number;
-    availableStock?: number;
-    error?: string;
-  }[];
-}
-
-export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {
-  const response = await fetch(`${API_BASE_URL}/api/shop/check-stock`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(items),
-  });
-  return handleResponse<StockCheckResult>(response);
-};
-
-// ============= GUEST ORDERS (Public - No Auth) =============
-
-export interface GuestOrderPayload {
-  items: {
-    productId: string;
-    productName: string;
-    quantity: number;
-    size: string;
-    price: number;
-  }[];
-  shipmentDetails: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-    city: string;
-    postalCode: string;
-  };
-  payment: {
-    type: string;
-    status: string;
-  };
-  totalAmount: number;
-}
-
-export interface GuestOrderResponse {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalAmount: number;
-  customerName: string;
-  customerEmail: string;
-  createdAt: string;
-}
-
-export const createGuestOrder = async (payload: GuestOrderPayload): Promise<GuestOrderResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/shop/orders`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (response.status === 409) {
-    const error = await response.json();
-    throw { stockError: true, message: error.message, stockErrors: error.stockErrors };
-  }
-
-  return handleResponse<GuestOrderResponse>(response);
-};
-
-// ============= MAPPER =============
-
-const mapShopProduct = (p: any): ShopProduct => ({
-  id: p.id,
-  name: p.name,
-  description: p.description || '',
-  price: Number(p.price),
-  category: p.category || 'jeans',
-  sizes: p.sizes || [],
-  colors: p.colors || [],
-  images: p.images || ['/placeholder.svg'],
-  inStock: p.inStock ?? true,
-  rating: p.rating || 4.5,
-  reviews: p.reviews || 100,
-});
+export type {
+  StockCheckItem,
+  StockCheckResult,
+  GuestOrderPayload,
+  GuestOrderResponse,
+} from '@/services/shop.service';
