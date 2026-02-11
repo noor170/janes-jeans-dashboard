@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: com.janesjeans.api.service.EmailServiceTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.187 s <<< FAILURE! -- in com.janesjeans.api.service.EmailServiceTest
-com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSendEmail -- Time elapsed: 0.176 s <<< ERROR!
+Tests run: 3, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.189 s <<< FAILURE! -- in com.janesjeans.api.service.EmailServiceTest
+com.janesjeans.api.service.EmailServiceTest.sendOrderConfirmation_shouldSendEmail -- Time elapsed: 0.177 s <<< ERROR!
 java.lang.IllegalArgumentException: From address must not be null
 	at org.springframework.util.Assert.notNull(Assert.java:181)
 	at org.springframework.mail.javamail.MimeMessageHelper.setFrom(MimeMessageHelper.java:572)
