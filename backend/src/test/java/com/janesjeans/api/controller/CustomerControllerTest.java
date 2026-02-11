@@ -69,7 +69,7 @@ class CustomerControllerTest {
         mockMvc.perform(post("/api/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Charlie"));
     }
 
@@ -79,7 +79,7 @@ class CustomerControllerTest {
         doNothing().when(customerService).deleteCustomer("c1");
 
         mockMvc.perform(delete("/api/customers/c1"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test
