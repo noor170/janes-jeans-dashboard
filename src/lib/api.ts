@@ -1,302 +1,400 @@
 import { ProductDTO, OrderDTO, DashboardStats, GenderFilter, OrderStatus, CustomerDTO, ShippingVendorDTO, ShipmentDTO, ShipmentStatus } from '@/types';
-import { mockProducts, mockOrders, mockSalesData, getCategoryDistribution, mockCustomers, mockShippingVendors, mockShipments } from '@/data/mockData';
 
-// Simulating API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
-// In-memory store for orders (simulating database)
-let ordersStore = [...mockOrders];
-
-// GET /api/products?gender={category}
-export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]> => {
-  await delay(200);
-  if (gender === 'All') {
-    return mockProducts;
-  }
-  return mockProducts.filter(p => p.gender === gender);
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('accessToken');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
 };
 
-// GET /api/dashboard/stats?gender={category}
-export const fetchDashboardStats = async (gender: GenderFilter): Promise<DashboardStats> => {
-  await delay(150);
-  const products = gender === 'All' 
-    ? mockProducts 
-    : mockProducts.filter(p => p.gender === gender);
-  
-  const relevantOrders = ordersStore.filter(order => {
-    if (gender === 'All') return true;
-    return order.items.some(item => {
-      const product = mockProducts.find(p => p.id === item.productId);
-      return product?.gender === gender;
-    });
+const handleResponse = async <T>(response: Response): Promise<T> => {
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({
+      message: response.statusText,
+    }));
+    throw error;
+  }
+  return response.json();
+};
+
+// ============= PRODUCTS API =============
+
+export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]> => {
+  const params = gender !== 'All' ? `?gender=${gender}` : '';
+  const response = await fetch(`${API_BASE_URL}/api/products${params}`, {
+    headers: getAuthHeaders(),
   });
+  const data = await handleResponse<any[]>(response);
+  return data.map(p => ({
+    id: p.id,
+    name: p.name,
+    gender: p.gender,
+    fit: p.fit,
+    size: p.size,
+    wash: p.wash || '',
+    price: Number(p.price),
+    stockLevel: p.stockLevel,
+  }));
+};
+
+// GET /api/dashboard/stats - computed from products & orders
+export const fetchDashboardStats = async (gender: GenderFilter): Promise<DashboardStats> => {
+  const [products, orders] = await Promise.all([
+    fetchProducts(gender),
+    fetchOrders(),
+  ]);
+
+  const relevantOrders = gender === 'All'
+    ? orders
+    : orders.filter(order => order.items.some(item => {
+        const product = products.find(p => p.id === item.productId);
+        return product?.gender === gender;
+      }));
 
   const totalSales = relevantOrders.reduce((sum, order) => sum + order.totalAmount, 0);
   const activeOrders = relevantOrders.filter(o => o.status === 'Pending' || o.status === 'Processing').length;
   const lowStockAlerts = products.filter(p => p.stockLevel < 10).length;
   const totalCustomers = new Set(relevantOrders.map(o => o.customerEmail)).size;
 
-  return {
-    totalSales,
-    activeOrders,
-    lowStockAlerts,
-    totalCustomers,
-  };
+  return { totalSales, activeOrders, lowStockAlerts, totalCustomers };
 };
 
-// GET /api/sales?gender={category}
+// Sales data - computed from orders
 export const fetchSalesData = async (gender: GenderFilter) => {
-  await delay(150);
-  if (gender === 'All') {
-    return mockSalesData;
-  }
-  return mockSalesData.map(data => ({
-    month: data.month,
-    men: gender === 'Men' ? data.men : 0,
-    women: gender === 'Women' ? data.women : 0,
-    total: gender === 'Men' ? data.men : data.women,
+  const orders = await fetchOrders();
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthData: Record<string, { men: number; women: number }> = {};
+
+  monthNames.forEach(m => { monthData[m] = { men: 0, women: 0 }; });
+
+  orders.forEach(order => {
+    const date = new Date(order.orderDate);
+    const month = monthNames[date.getMonth()];
+    if (month) {
+      // Simplified: split evenly between men/women for now
+      monthData[month].men += order.totalAmount / 2;
+      monthData[month].women += order.totalAmount / 2;
+    }
+  });
+
+  return monthNames.map(month => ({
+    month,
+    men: Math.round(monthData[month].men),
+    women: Math.round(monthData[month].women),
+    total: Math.round(monthData[month].men + monthData[month].women),
   }));
 };
 
-// GET /api/categories?gender={category}
+// Category distribution - computed from products
 export const fetchCategoryDistribution = async (gender: GenderFilter) => {
-  await delay(150);
-  return getCategoryDistribution(gender);
+  const products = await fetchProducts(gender);
+  const fitCounts: Record<string, number> = {};
+  products.forEach(p => {
+    fitCounts[p.fit] = (fitCounts[p.fit] || 0) + 1;
+  });
+
+  const colors = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
+  return Object.entries(fitCounts).map(([name, value], i) => ({
+    name,
+    value,
+    fill: colors[i % colors.length],
+  }));
 };
 
-// GET /api/orders
+// ============= ORDERS API =============
+
 export const fetchOrders = async (): Promise<OrderDTO[]> => {
-  await delay(200);
-  return [...ordersStore].sort((a, b) => 
-    new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
-  );
+  const response = await fetch(`${API_BASE_URL}/api/orders`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await handleResponse<any[]>(response);
+  return data.map(mapOrder);
 };
 
-// GET /api/orders/:id
 export const fetchOrderById = async (id: string): Promise<OrderDTO | undefined> => {
-  await delay(150);
-  return ordersStore.find(o => o.id === id);
-};
-
-// POST /api/orders
-export const createOrder = async (order: Omit<OrderDTO, 'id' | 'orderDate'>): Promise<OrderDTO> => {
-  await delay(300);
-  const newOrder: OrderDTO = {
-    ...order,
-    id: `ORD${String(ordersStore.length + 1).padStart(3, '0')}`,
-    orderDate: new Date().toISOString(),
-  };
-  ordersStore.push(newOrder);
-  return newOrder;
-};
-
-// PUT /api/orders/:id
-export const updateOrder = async (id: string, updates: Partial<OrderDTO>): Promise<OrderDTO | undefined> => {
-  await delay(300);
-  const index = ordersStore.findIndex(o => o.id === id);
-  if (index === -1) return undefined;
-  
-  ordersStore[index] = { ...ordersStore[index], ...updates };
-  return ordersStore[index];
-};
-
-// PUT /api/orders/:id/status
-export const updateOrderStatus = async (id: string, status: OrderStatus): Promise<OrderDTO | undefined> => {
-  await delay(200);
-  const index = ordersStore.findIndex(o => o.id === id);
-  if (index === -1) return undefined;
-  
-  const updates: Partial<OrderDTO> = { status };
-  if (status === 'Shipped') {
-    updates.shippedDate = new Date().toISOString();
-  } else if (status === 'Delivered') {
-    updates.deliveredDate = new Date().toISOString();
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    const data = await handleResponse<any>(response);
+    return mapOrder(data);
+  } catch {
+    return undefined;
   }
-  
-  ordersStore[index] = { ...ordersStore[index], ...updates };
-  return ordersStore[index];
 };
 
-// DELETE /api/orders/:id
+export const createOrder = async (order: Omit<OrderDTO, 'id' | 'orderDate'>): Promise<OrderDTO> => {
+  const response = await fetch(`${API_BASE_URL}/api/orders`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      status: order.status,
+      totalAmount: order.totalAmount,
+      shippingAddress: order.shippingAddress,
+      notes: order.notes,
+      items: order.items.map(item => ({
+        productId: item.productId,
+        productName: item.productName,
+        quantity: item.quantity,
+        price: item.price,
+        size: item.size,
+      })),
+    }),
+  });
+  return mapOrder(await handleResponse<any>(response));
+};
+
+export const updateOrder = async (id: string, updates: Partial<OrderDTO>): Promise<OrderDTO | undefined> => {
+  const response = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates),
+  });
+  return mapOrder(await handleResponse<any>(response));
+};
+
+export const updateOrderStatus = async (id: string, status: OrderStatus): Promise<OrderDTO | undefined> => {
+  const response = await fetch(`${API_BASE_URL}/api/orders/${id}/status`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ status }),
+  });
+  return mapOrder(await handleResponse<any>(response));
+};
+
 export const deleteOrder = async (id: string): Promise<boolean> => {
-  await delay(200);
-  const index = ordersStore.findIndex(o => o.id === id);
-  if (index === -1) return false;
-  
-  ordersStore.splice(index, 1);
-  return true;
+  const response = await fetch(`${API_BASE_URL}/api/orders/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return response.ok;
 };
 
-// In-memory store for customers
-let customersStore = [...mockCustomers];
+// ============= CUSTOMERS API =============
 
-// GET /api/customers
 export const fetchCustomers = async (): Promise<CustomerDTO[]> => {
-  await delay(200);
-  return [...customersStore].sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const response = await fetch(`${API_BASE_URL}/api/customers`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await handleResponse<any[]>(response);
+  return data.map(mapCustomer);
 };
 
-// GET /api/customers/:id
 export const fetchCustomerById = async (id: string): Promise<CustomerDTO | undefined> => {
-  await delay(150);
-  return customersStore.find(c => c.id === id);
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/customers/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    return mapCustomer(await handleResponse<any>(response));
+  } catch {
+    return undefined;
+  }
 };
 
-// POST /api/customers
 export const createCustomer = async (customer: Omit<CustomerDTO, 'id' | 'createdAt' | 'totalOrders' | 'totalSpent'>): Promise<CustomerDTO> => {
-  await delay(300);
-  const newCustomer: CustomerDTO = {
-    ...customer,
-    id: `CUS${String(customersStore.length + 1).padStart(3, '0')}`,
-    createdAt: new Date().toISOString(),
-    totalOrders: 0,
-    totalSpent: 0,
-  };
-  customersStore.push(newCustomer);
-  return newCustomer;
+  const response = await fetch(`${API_BASE_URL}/api/customers`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(customer),
+  });
+  return mapCustomer(await handleResponse<any>(response));
 };
 
-// PUT /api/customers/:id
 export const updateCustomer = async (id: string, updates: Partial<CustomerDTO>): Promise<CustomerDTO | undefined> => {
-  await delay(300);
-  const index = customersStore.findIndex(c => c.id === id);
-  if (index === -1) return undefined;
-  
-  customersStore[index] = { ...customersStore[index], ...updates };
-  return customersStore[index];
+  const response = await fetch(`${API_BASE_URL}/api/customers/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates),
+  });
+  return mapCustomer(await handleResponse<any>(response));
 };
 
-// DELETE /api/customers/:id
 export const deleteCustomer = async (id: string): Promise<boolean> => {
-  await delay(200);
-  const index = customersStore.findIndex(c => c.id === id);
-  if (index === -1) return false;
-  
-  customersStore.splice(index, 1);
-  return true;
+  const response = await fetch(`${API_BASE_URL}/api/customers/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return response.ok;
 };
 
 // ============= SHIPPING VENDORS API =============
 
-let vendorsStore = [...mockShippingVendors];
-
-// GET /api/vendors
 export const fetchShippingVendors = async (): Promise<ShippingVendorDTO[]> => {
-  await delay(200);
-  return [...vendorsStore].sort((a, b) => a.name.localeCompare(b.name));
+  const response = await fetch(`${API_BASE_URL}/api/vendors`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await handleResponse<any[]>(response);
+  return data.map(mapVendor);
 };
 
-// GET /api/vendors/:id
 export const fetchShippingVendorById = async (id: string): Promise<ShippingVendorDTO | undefined> => {
-  await delay(150);
-  return vendorsStore.find(v => v.id === id);
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/vendors/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    return mapVendor(await handleResponse<any>(response));
+  } catch {
+    return undefined;
+  }
 };
 
-// POST /api/vendors
 export const createShippingVendor = async (vendor: Omit<ShippingVendorDTO, 'id' | 'createdAt'>): Promise<ShippingVendorDTO> => {
-  await delay(300);
-  const newVendor: ShippingVendorDTO = {
-    ...vendor,
-    id: `VND${String(vendorsStore.length + 1).padStart(3, '0')}`,
-    createdAt: new Date().toISOString(),
-  };
-  vendorsStore.push(newVendor);
-  return newVendor;
+  const response = await fetch(`${API_BASE_URL}/api/vendors`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(vendor),
+  });
+  return mapVendor(await handleResponse<any>(response));
 };
 
-// PUT /api/vendors/:id
 export const updateShippingVendor = async (id: string, updates: Partial<ShippingVendorDTO>): Promise<ShippingVendorDTO | undefined> => {
-  await delay(300);
-  const index = vendorsStore.findIndex(v => v.id === id);
-  if (index === -1) return undefined;
-  
-  vendorsStore[index] = { ...vendorsStore[index], ...updates };
-  return vendorsStore[index];
+  const response = await fetch(`${API_BASE_URL}/api/vendors/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates),
+  });
+  return mapVendor(await handleResponse<any>(response));
 };
 
-// DELETE /api/vendors/:id
 export const deleteShippingVendor = async (id: string): Promise<boolean> => {
-  await delay(200);
-  const index = vendorsStore.findIndex(v => v.id === id);
-  if (index === -1) return false;
-  
-  vendorsStore.splice(index, 1);
-  return true;
+  const response = await fetch(`${API_BASE_URL}/api/vendors/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return response.ok;
 };
 
 // ============= SHIPMENTS API =============
 
-let shipmentsStore = [...mockShipments];
-
-// GET /api/shipments
 export const fetchShipments = async (): Promise<ShipmentDTO[]> => {
-  await delay(200);
-  return [...shipmentsStore].sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const response = await fetch(`${API_BASE_URL}/api/shipments`, {
+    headers: getAuthHeaders(),
+  });
+  const data = await handleResponse<any[]>(response);
+  return data.map(mapShipment);
 };
 
-// GET /api/shipments/:id
 export const fetchShipmentById = async (id: string): Promise<ShipmentDTO | undefined> => {
-  await delay(150);
-  return shipmentsStore.find(s => s.id === id);
-};
-
-// GET /api/shipments/order/:orderId
-export const fetchShipmentByOrderId = async (orderId: string): Promise<ShipmentDTO | undefined> => {
-  await delay(150);
-  return shipmentsStore.find(s => s.orderId === orderId);
-};
-
-// POST /api/shipments
-export const createShipment = async (shipment: Omit<ShipmentDTO, 'id' | 'createdAt'>): Promise<ShipmentDTO> => {
-  await delay(300);
-  const newShipment: ShipmentDTO = {
-    ...shipment,
-    id: `SHP${String(shipmentsStore.length + 1).padStart(3, '0')}`,
-    createdAt: new Date().toISOString(),
-  };
-  shipmentsStore.push(newShipment);
-  return newShipment;
-};
-
-// PUT /api/shipments/:id
-export const updateShipment = async (id: string, updates: Partial<ShipmentDTO>): Promise<ShipmentDTO | undefined> => {
-  await delay(300);
-  const index = shipmentsStore.findIndex(s => s.id === id);
-  if (index === -1) return undefined;
-  
-  shipmentsStore[index] = { ...shipmentsStore[index], ...updates };
-  return shipmentsStore[index];
-};
-
-// PUT /api/shipments/:id/status
-export const updateShipmentStatus = async (id: string, status: ShipmentStatus): Promise<ShipmentDTO | undefined> => {
-  await delay(200);
-  const index = shipmentsStore.findIndex(s => s.id === id);
-  if (index === -1) return undefined;
-  
-  const updates: Partial<ShipmentDTO> = { status };
-  if (status === 'picked_up' || status === 'in_transit') {
-    if (!shipmentsStore[index].shippedAt) {
-      updates.shippedAt = new Date().toISOString();
-    }
-  } else if (status === 'delivered') {
-    updates.deliveredAt = new Date().toISOString();
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/shipments/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    return mapShipment(await handleResponse<any>(response));
+  } catch {
+    return undefined;
   }
-  
-  shipmentsStore[index] = { ...shipmentsStore[index], ...updates };
-  return shipmentsStore[index];
 };
 
-// DELETE /api/shipments/:id
-export const deleteShipment = async (id: string): Promise<boolean> => {
-  await delay(200);
-  const index = shipmentsStore.findIndex(s => s.id === id);
-  if (index === -1) return false;
-  
-  shipmentsStore.splice(index, 1);
-  return true;
+export const fetchShipmentByOrderId = async (orderId: string): Promise<ShipmentDTO | undefined> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/shipments/order/${orderId}`, {
+      headers: getAuthHeaders(),
+    });
+    if (response.status === 404) return undefined;
+    return mapShipment(await handleResponse<any>(response));
+  } catch {
+    return undefined;
+  }
 };
+
+export const createShipment = async (shipment: Omit<ShipmentDTO, 'id' | 'createdAt'>): Promise<ShipmentDTO> => {
+  const response = await fetch(`${API_BASE_URL}/api/shipments`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(shipment),
+  });
+  return mapShipment(await handleResponse<any>(response));
+};
+
+export const updateShipment = async (id: string, updates: Partial<ShipmentDTO>): Promise<ShipmentDTO | undefined> => {
+  const response = await fetch(`${API_BASE_URL}/api/shipments/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updates),
+  });
+  return mapShipment(await handleResponse<any>(response));
+};
+
+export const updateShipmentStatus = async (id: string, status: ShipmentStatus): Promise<ShipmentDTO | undefined> => {
+  const response = await fetch(`${API_BASE_URL}/api/shipments/${id}/status`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ status }),
+  });
+  return mapShipment(await handleResponse<any>(response));
+};
+
+export const deleteShipment = async (id: string): Promise<boolean> => {
+  const response = await fetch(`${API_BASE_URL}/api/shipments/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  return response.ok;
+};
+
+// ============= MAPPERS =============
+
+const mapOrder = (o: any): OrderDTO => ({
+  id: o.id,
+  customerName: o.customerName,
+  customerEmail: o.customerEmail,
+  items: (o.items || []).map((item: any) => ({
+    productId: item.productId,
+    productName: item.productName,
+    quantity: item.quantity,
+    price: Number(item.price),
+    size: item.size,
+  })),
+  status: o.status as OrderStatus,
+  orderDate: o.orderDate,
+  shippedDate: o.shippedDate,
+  deliveredDate: o.deliveredDate,
+  totalAmount: Number(o.totalAmount),
+  shippingAddress: o.shippingAddress,
+  notes: o.notes,
+});
+
+const mapCustomer = (c: any): CustomerDTO => ({
+  id: c.id,
+  name: c.name,
+  email: c.email,
+  phone: c.phone || '',
+  address: c.address || '',
+  status: c.status as 'active' | 'inactive' | 'vip',
+  totalOrders: c.totalOrders || 0,
+  totalSpent: Number(c.totalSpent) || 0,
+  createdAt: c.createdAt,
+  notes: c.notes,
+});
+
+const mapVendor = (v: any): ShippingVendorDTO => ({
+  id: v.id,
+  name: v.name,
+  code: v.code,
+  contactEmail: v.contactEmail || '',
+  contactPhone: v.contactPhone || '',
+  website: v.website,
+  trackingUrlTemplate: v.trackingUrlTemplate,
+  status: v.status as 'active' | 'inactive',
+  avgDeliveryDays: v.avgDeliveryDays || 0,
+  createdAt: v.createdAt,
+});
+
+const mapShipment = (s: any): ShipmentDTO => ({
+  id: s.id,
+  orderId: s.orderId,
+  vendorId: s.vendorId,
+  trackingNumber: s.trackingNumber,
+  status: s.status as ShipmentStatus,
+  shippingAddress: s.shippingAddress,
+  shippedAt: s.shippedAt,
+  estimatedDelivery: s.estimatedDelivery,
+  deliveredAt: s.deliveredAt,
+  notes: s.notes,
+  createdAt: s.createdAt,
+});

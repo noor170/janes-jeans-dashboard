@@ -1,4 +1,4 @@
-import { AuthResponse, LoginRequest, UserDTO, UserRole, ApiError } from '@/types/auth';
+import { AuthResponse, LoginRequest, RegisterRequest, UserDTO, UserRole, ApiError } from '@/types/auth';
 
 // Configure your Spring Boot backend URL here
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -42,6 +42,19 @@ class AuthApiService {
       throw error;
     }
     return response.json();
+  }
+
+  async register(request: RegisterRequest): Promise<AuthResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+
+    const data = await this.handleResponse<AuthResponse>(response);
+    this.setTokens(data.accessToken, data.refreshToken);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    return data;
   }
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
