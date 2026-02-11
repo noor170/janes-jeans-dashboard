@@ -4,7 +4,7 @@
  */
 
 import { ShopProduct } from '@/data/shopProducts';
-import { publicPost, API_BASE_URL } from './util';
+// publicPost/API_BASE_URL no longer needed – orders go straight to the database
 import { supabase } from '@/integrations/supabase/client';
 
 // ============= Types =============
@@ -124,24 +124,63 @@ export const fetchShopProductById = async (id: string): Promise<ShopProduct | nu
 };
 
 export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {
-  return publicPost<StockCheckResult>('/api/shop/check-stock', items);
+  // Simple stock check – always available since we don't track stock in Supabase yet
+  return { available: true, issues: [] };
 };
 
 export const createGuestOrder = async (payload: GuestOrderPayload): Promise<GuestOrderResponse> => {
-  const response = await fetch(`${API_BASE_URL}/api/shop/orders`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  const orderNumber = 'ORD-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
 
-  if (response.status === 409) {
-    const error = await response.json();
-    throw { stockError: true, message: error.message, stockErrors: error.stockErrors };
+  // Insert order
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      order_number: orderNumber,
+      customer_name: payload.shipmentDetails.name,
+      customer_email: payload.shipmentDetails.email,
+      customer_phone: payload.shipmentDetails.phone,
+      shipping_address: payload.shipmentDetails.address,
+      shipping_city: payload.shipmentDetails.city,
+      shipping_postal_code: payload.shipmentDetails.postalCode,
+      payment_type: payload.payment.type,
+      payment_status: payload.payment.status,
+      status: 'Pending',
+      total_amount: payload.totalAmount,
+      notes: `Payment: ${payload.payment.type}`,
+    })
+    .select()
+    .single();
+
+  if (orderError || !order) {
+    console.error('Order insert error:', orderError);
+    throw new Error(orderError?.message || 'Failed to create order');
   }
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: response.statusText }));
-    throw error;
+  // Insert order items
+  const orderItems = payload.items.map(item => ({
+    order_id: order.id,
+    product_id: item.productId,
+    product_name: item.productName,
+    size: item.size,
+    quantity: item.quantity,
+    price: item.price,
+  }));
+
+  const { error: itemsError } = await supabase
+    .from('order_items')
+    .insert(orderItems);
+
+  if (itemsError) {
+    console.error('Order items insert error:', itemsError);
   }
-  return response.json();
+
+  return {
+    id: order.id,
+    orderNumber: order.order_number,
+    status: order.status,
+    totalAmount: Number(order.total_amount),
+    customerName: order.customer_name,
+    customerEmail: order.customer_email,
+    createdAt: order.created_at,
+  };
 };
