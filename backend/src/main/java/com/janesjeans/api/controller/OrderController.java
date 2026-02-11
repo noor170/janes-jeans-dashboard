@@ -21,7 +21,6 @@ import java.util.Map;
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 @Tag(name = "Orders", description = "Order management (authenticated)")
-@SecurityRequirement(name = "bearerAuth")
 public class OrderController {
 
     private final OrderService orderService;
@@ -41,7 +40,11 @@ public class OrderController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable String id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
+        try {
+            return ResponseEntity.ok(orderService.getOrderById(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 
     @Operation(summary = "Create an order")
@@ -51,6 +54,8 @@ public class OrderController {
     })
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+
+//        log.error("Received request to create order for customer: {}", order.getCustomerEmail());
         return ResponseEntity.ok(orderService.createOrder(order));
     }
 
@@ -92,7 +97,13 @@ public class OrderController {
     })
     @PostMapping("/{id}/confirm-email")
     public ResponseEntity<Void> confirmOrderByEmail(@PathVariable String id) {
-        emailSender.confirmOrderByEmail(id);
-        return ResponseEntity.accepted().build();
+        try {
+            emailSender.confirmOrderByEmail(id);
+            return ResponseEntity.accepted().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

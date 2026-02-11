@@ -8,6 +8,7 @@ import com.janesjeans.api.entity.OrderItem;
 import com.janesjeans.api.entity.Product;
 import com.janesjeans.api.service.EmailService;
 import com.janesjeans.api.service.OrderService;
+import com.janesjeans.api.service.OtpService;
 import com.janesjeans.api.service.ProductService;
 import com.janesjeans.api.service.PaymentService;
 import com.janesjeans.api.service.ShipmentService;
@@ -42,6 +43,7 @@ public class ShopController {
     private final PaymentService paymentService;
     private final ShipmentService shipmentService;
     private final ShippingVendorService shippingVendorService;
+    private final OtpService otpService;
 
     @Operation(summary = "List shop products", description = "Returns all products grouped by name with aggregated sizes. Optionally filter by category.")
     @ApiResponses({

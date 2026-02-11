@@ -28,36 +28,71 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                // 1. Core Protections
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+//
+//                // 2. Authorization Rules
+//                .authorizeHttpRequests(auth -> auth
+//                        // Consolidated Whitelist
+//                        .requestMatchers(
+//                            "/api/auth/**",
+//                            "/api/health",
+//                            "/h2-console/**",
+//                            "/actuator/**",
+//                            "/swagger-ui/**",
+//                            "/v3/api-docs/**",
+//                            "/api/shop/**"
+//                        ).permitAll()
+//
+//                        // Public order-related endpoints (guest flows)
+//                        .requestMatchers(
+//                            "/api/orders/*/confirm-email",
+//                            "/api/orders/*/request-otp",
+//                            "/api/orders/*/verify-otp",
+//                            "/api/orders/*/skip-verify",
+//                            "/api/orders/guest-checkout/**"
+//                        ).permitAll()
+//
+//                        // Guest Checkout flow (Steps 4 & 5 of your activity flow)
+//                        .requestMatchers("/api/orders/guest-checkout/**").permitAll()
+//
+//                        // If you want specific POST methods to be authenticated, place them ABOVE anyRequest()
+//                        // Example: .requestMatchers(HttpMethod.POST, "/api/orders/place").authenticated()
+//
+//                        // 3. Catch-all: Everything else requires login
+//                        .anyRequest().authenticated()
+//                )
+//
+//                // 4. Session & JWT Configuration
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .authenticationProvider(authenticationProvider())
+//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//
+//                // 5. H2 Console & Browser Frame Support
+//                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+//
+//        return http.build();
+//    }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/**",
-                    "/api/shop/**",
-                    "/api/health",
-                    "/h2-console/**",
-                    "/actuator/**",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**"
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            // Allow H2 console frames
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
-
+                .csrf(csrf -> csrf.disable()) // This is the crucial line for Postman
+                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers( "/api/orders/**").permitAll()
+                        .requestMatchers("/api/orders/**", "/error").permitAll()
+                        .anyRequest().permitAll()
+                );
         return http.build();
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
