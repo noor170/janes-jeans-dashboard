@@ -7,12 +7,14 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
+import { useShopCustomer } from '@/contexts/ShopCustomerContext';
 import { createGuestOrder, checkStockAvailability, GuestOrderResponse, StockCheckResult } from '@/lib/shopApi';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
   const navigate = useNavigate();
   const { items, shipmentDetails, paymentDetails, getCartTotal, resetCheckout } = useCart();
+  const { customer, isLoggedIn } = useShopCustomer();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -20,6 +22,10 @@ export default function OrderSuccessPage() {
   const [stockIssues, setStockIssues] = useState<StockCheckResult['issues']>([]);
 
   useEffect(() => {
+    if (!orderPlaced && !isLoggedIn) {
+      navigate('/shop/register', { state: { from: '/shop/order-success' } });
+      return;
+    }
     if (!orderPlaced && (items.length === 0 || !shipmentDetails || !paymentDetails)) {
       navigate('/shop/cart');
       return;
@@ -45,7 +51,7 @@ export default function OrderSuccessPage() {
         .catch((err) => console.error('Stock check failed:', err))
         .finally(() => setIsCheckingStock(false));
     }
-  }, [items.length, shipmentDetails, paymentDetails, navigate, orderPlaced]);
+  }, [items.length, shipmentDetails, paymentDetails, navigate, orderPlaced, isLoggedIn]);
 
   if (!shipmentDetails || !paymentDetails) {
     return null;
@@ -145,25 +151,6 @@ export default function OrderSuccessPage() {
               </CardContent>
             </Card>
             <div className="flex gap-4 justify-center">
-              <Button size="lg" onClick={async () => {
-                try {
-                  await fetch(`/api/orders/${orderResponse.orderId}/confirm-email`, { method: 'POST' });
-                  toast.success('Confirmation email sent');
-                } catch (e) { toast.error('Failed to send confirmation email'); }
-              }}>
-                Confirm Order (send email)
-              </Button>
-
-              <Button size="lg" variant="outline" onClick={async () => {
-                try {
-                  const res = await fetch(`/api/orders/${orderResponse.orderId}/skip-verify`, { method: 'POST' });
-                  if (res.ok) toast.success('Order finalized without email verification');
-                  else toast.error('Unable to skip verification');
-                } catch (e) { toast.error('Failed to skip verification'); }
-              }}>
-                Skip Email Confirmation
-              </Button>
-
               <Button size="lg" asChild>
                 <Link to="/shop">
                   Continue Shopping

@@ -109,6 +109,39 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_customers: {
+        Row: {
+          city: string
+          created_at: string
+          email: string
+          first_name: string
+          gender: string
+          id: string
+          last_name: string
+          mobile: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          email: string
+          first_name: string
+          gender: string
+          id?: string
+          last_name: string
+          mobile: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          gender?: string
+          id?: string
+          last_name?: string
+          mobile?: string
+        }
+        Relationships: []
+      }
       shop_products: {
         Row: {
           category: string
