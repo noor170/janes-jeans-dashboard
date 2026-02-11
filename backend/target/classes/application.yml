@@ -95,6 +95,7 @@ spring:
   
   liquibase:
     contexts: dev
+    enabled: false
 
 ---
 # Docker Profile
