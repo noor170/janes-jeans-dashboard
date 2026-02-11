@@ -10,6 +10,7 @@
         <version>3.2.0</version>
         <relativePath/>
     </parent>
+    <packaging>jar</packaging>
     
     <groupId>com.janesjeans</groupId>
     <artifactId>janes-jeans-api</artifactId>
@@ -58,6 +59,11 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
         

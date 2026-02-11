@@ -1,0 +1,16 @@
+[Unit]
+Description=My Java Application
+After=network.target
+
+[Service]
+User=ubuntu
+# The directory where your jar is located
+WorkingDirectory=/home/ubuntu/app
+# Full path to java and your jar
+ExecStart=/usr/bin/java -jar /root/snap/com.jar
+SuccessExitStatus=143`
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
