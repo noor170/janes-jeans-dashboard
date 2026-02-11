@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.math.BigDecimal;
@@ -31,7 +32,10 @@ class EmailServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+        // make stub lenient so unused stubbings in wider test-suite don't fail
+        lenient().when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+        // @Value won't be processed for @InjectMocks; ensure a valid from address for tests
+        ReflectionTestUtils.setField(emailService, "fromEmail", "noreply@janesjeans.com");
     }
 
     @Test
