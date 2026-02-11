@@ -39,4 +39,13 @@ public class OrderOtpController {
         if (ok) return ResponseEntity.ok(Map.of("message", "OTP verified", "orderId", id));
         return ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired OTP"));
     }
+
+    @Operation(summary = "Finalize pending order without OTP (skip verification)")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Finalized"), @ApiResponse(responseCode = "404", description = "Not found")})
+    @PostMapping("/{id}/skip-verify")
+    public ResponseEntity<Map<String, Object>> skipVerify(@PathVariable("id") String id) {
+        boolean ok = otpService.finalizePending(id);
+        if (ok) return ResponseEntity.ok(Map.of("message", "Order finalized without OTP", "orderId", id));
+        return ResponseEntity.status(404).body(Map.of("message", "No pending verification found for order"));
+    }
 }

@@ -145,6 +145,25 @@ export default function OrderSuccessPage() {
               </CardContent>
             </Card>
             <div className="flex gap-4 justify-center">
+              <Button size="lg" onClick={async () => {
+                try {
+                  await fetch(`/api/orders/${orderResponse.orderId}/confirm-email`, { method: 'POST' });
+                  toast.success('Confirmation email sent');
+                } catch (e) { toast.error('Failed to send confirmation email'); }
+              }}>
+                Confirm Order (send email)
+              </Button>
+
+              <Button size="lg" variant="outline" onClick={async () => {
+                try {
+                  const res = await fetch(`/api/orders/${orderResponse.orderId}/skip-verify`, { method: 'POST' });
+                  if (res.ok) toast.success('Order finalized without email verification');
+                  else toast.error('Unable to skip verification');
+                } catch (e) { toast.error('Failed to skip verification'); }
+              }}>
+                Skip Email Confirmation
+              </Button>
+
               <Button size="lg" asChild>
                 <Link to="/shop">
                   Continue Shopping

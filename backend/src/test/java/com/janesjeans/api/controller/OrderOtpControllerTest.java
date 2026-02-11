@@ -15,7 +15,7 @@ public class OrderOtpControllerTest {
     @Test
     void requestOtp_returnsAccepted() throws Exception {
         OtpService mock = Mockito.mock(OtpService.class);
-        Mockito.when(mock.requestOtp(Mockito.eq("order1"), Mockito.anyString(), Mockito.eq(300), Mockito.anyString())).thenReturn("123456");
+        Mockito.when(mock.requestOtp(Mockito.eq("order1"), Mockito.anyString(), Mockito.eq(300), Mockito.anyString(), Mockito.any())).thenReturn("123456");
 
         OrderOtpController controller = new OrderOtpController(mock);
         MockMvc mvc = MockMvcBuilders.standaloneSetup(controller).build();
