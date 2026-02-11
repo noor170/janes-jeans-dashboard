@@ -740,66 +740,290 @@ Password: admin123
 
 ## 📚 API Documentation
 
-### Public Endpoints (No Auth Required)
+Below is a concise API reference for the backend controllers with request and response examples. Use the Swagger UI at `/swagger-ui.html` or `/swagger-ui/index.html` for full interactive docs and schemas.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/shop/products` | List all shop products |
-| `GET` | `/api/shop/products/{id}` | Get product details |
-| `POST` | `/api/shop/check-stock` | Verify stock availability |
-| `POST` | `/api/shop/orders` | Place a guest order |
-| `POST` | `/api/auth/login` | User login |
-| `POST` | `/api/auth/admin/login` | Admin login |
-| `POST` | `/api/auth/register` | Register user |
-| `GET` | `/api/auth/validate` | Validate JWT token |
+### Auth ( /api/auth )
 
-### Protected Admin Endpoints (JWT Required)
+- POST /api/auth/register
+  - Description: Register a new user.
+  - Request JSON:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/products` | List all products (admin view) |
-| `POST` | `/api/products` | Create product |
-| `PUT` | `/api/products/{id}` | Update product |
-| `DELETE` | `/api/products/{id}` | Delete product |
-| `GET` | `/api/orders` | List all orders |
-| `PUT` | `/api/orders/{id}` | Update order |
-| `GET` | `/api/customers` | List customers |
-| `GET` | `/api/admin/users` | List users |
-| `POST` | `/api/admin/users/create-admin` | Create admin |
-| `GET` | `/api/audit-logs` | View audit logs |
-| `GET` | `/api/shipments` | List shipments |
-| `GET` | `/api/vendors` | List shipping vendors |
+```json
+{
+  "email": "alice@example.com",
+  "password": "P@ssw0rd",
+  "firstName": "Alice",
+  "lastName": "Cooper"
+}
+```
+  - Responses:
+    - 201 Created: { "id": "uuid", "email": "alice@example.com" }
+    - 400 Bad Request: validation errors
 
-### Example: Place a Guest Order
+- POST /api/auth/login
+  - Description: Authenticate user and return JWT.
+  - Request JSON:
+
+```json
+{ "email": "alice@example.com", "password": "P@ssw0rd" }
+```
+  - Responses:
+    - 200 OK: { "token": "<jwt>", "expiresIn": 3600, "user": { "id": "uuid", "email": "..." } }
+    - 401 Unauthorized: invalid credentials
+
+- POST /api/auth/admin/login
+  - Description: Admin authentication (separate endpoint behavior for admin users).
+  - Responses: same as `/login`.
+
+- GET /api/auth/validate
+  - Description: Validate JWT token (returns 200 if valid).
+  - Responses: 200 OK or 401 Unauthorized.
+
+### Shop ( /api/shop )
+
+- GET /api/shop/products
+  - Description: List public products with basic fields and stock info.
+  - Responses:
+    - 200 OK: [ { "id":"...", "name":"...", "price": 49.99, "stock": 10 } ]
+
+- GET /api/shop/products/{id}
+  - Description: Product details.
+  - Responses:
+    - 200 OK: { "id":"...", "name":"...", "description":"...", "price": 49.99, "images":["..."], "sizes": ["S","M","L"] }
+    - 404 Not Found
+
+- POST /api/shop/check-stock
+  - Description: Check availability for a list of items.
+  - Request JSON:
+
+```json
+{ "items": [ { "productId":"prod-001", "size":"32", "quantity": 2 } ] }
+```
+  - Responses:
+    - 200 OK: { "available": true, "items": [ { "productId":"prod-001", "available": true, "availableQuantity": 5 } ] }
+
+- POST /api/shop/orders
+  - Description: Place a guest order (returns 201 on success).
+  - Request JSON (example):
+
+```json
+{
+  "items": [ { "productId":"prod-001", "productName":"Slim Fit", "size":"32", "quantity":1, "price":89.99 } ],
+  "shipmentDetails": { "name":"John Doe", "email":"john@example.com", "address":"123 Main St" },
+  "payment": { "type":"CARD", "status":"SUCCESS" },
+  "totalAmount": 89.99
+}
+```
+  - Responses:
+    - 201 Created: { "orderId": "uuid", "status": "PLACED", "totalAmount": 89.99 }
+    - 400 Bad Request
+
+### Products ( /api/products ) — Admin
+
+- GET /api/products
+  - Description: Admin product list (paginated).
+  - Responses: 200 OK: { "content": [ {product}, ... ], "page": {"size":20,"number":0} }
+
+- POST /api/products
+  - Description: Create a product.
+  - Request JSON (example):
+
+```json
+{
+  "name":"Slim Fit Dark Wash",
+  "description":"Comfortable slim fit",
+  "price":89.99,
+  "gender":"UNISEX",
+  "sizes":["30","32","34"],
+  "stock": 50
+}
+```
+  - Responses:
+    - 201 Created: { "id":"uuid", "name":"Slim Fit Dark Wash", "price":89.99 }
+    - 400 Bad Request
+
+- PUT /api/products/{id}
+  - Description: Update product fields.
+  - Responses: 200 OK: updated product, 404 Not Found
+
+- DELETE /api/products/{id}
+  - Description: Delete product.
+  - Responses: 204 No Content (success) or 404 Not Found
+
+### Customers ( /api/customers )
+
+- GET /api/customers
+  - Description: List customers (admin).
+  - Responses: 200 OK: [ { "id":"...", "name":"...", "email":"..." } ]
+
+- GET /api/customers/{id}
+  - Responses: 200 OK: customer details or 404
+
+- POST /api/customers
+  - Create customer, 201 Created
+
+### Orders ( /api/orders )
+
+- GET /api/orders
+  - Description: List orders (admin).
+  - Responses: 200 OK: paginated orders
+
+- GET /api/orders/{id}
+  - Responses: 200 OK: order details (items, shipment, status)
+
+- PUT /api/orders/{id}
+  - Description: Update order (status updates, notes).
+  - Request JSON example: { "status": "SHIPPED" }
+  - Responses: 200 OK on success
+
+### Admin Users ( /api/admin/users )
+
+- GET /api/admin/users
+  - Description: List all users.
+  - Responses: 200 OK: [ { "id":"...", "email":"...", "role":"ADMIN" } ]
+
+- POST /api/admin/users/create-admin
+  - Description: Create a new admin user.
+  - Request JSON: { "email":"admin@example.com", "password":"...", "firstName":"..." }
+  - Responses: 201 Created
+
+- PATCH /api/admin/users/{id}/role
+  - Description: Change a user's role.
+  - Request JSON: { "role": "ADMIN" }
+  - Responses: 200 OK
+
+### Audit Logs ( /api/audit-logs )
+
+- GET /api/audit-logs
+  - Description: Retrieve audit trail entries.
+  - Responses: 200 OK: [ { "id":"...", "action":"CREATE_PRODUCT", "entityType":"PRODUCT", "userEmail":"...", "details":"..." } ]
+
+### Shipments ( /api/shipments )
+
+- GET /api/shipments
+  - Description: List shipments.
+  - Responses: 200 OK: [ { "id":"...", "orderId":"...", "status":"IN_TRANSIT", "trackingNumber":"..." } ]
+
+- POST /api/shipments
+  - Create shipment for an order. 201 Created with shipment details.
+
+### Shipping Vendors ( /api/vendors )
+
+- GET /api/vendors
+  - Description: List shipping vendors.
+  - Responses: 200 OK: [ { "id":"...", "name":"DHL", "contact":"..." } ]
+
+---
+
+## **Frontend API (usage via src/lib wrappers)**
+
+The frontend includes typed wrapper functions in `src/lib` that call the backend endpoints. Use these helpers in the React app instead of raw `fetch` where possible. Below are examples mapping wrapper calls to the backend endpoints, with request/response shapes.
+
+### Auth (use `src/lib/authApi.ts` via `authApi`)
+
+- Register: `authApi.register(request)` → calls `POST /api/auth/register`
+  - Request: `{ email, password, firstName, lastName }`
+  - Response: `AuthResponse` includes `accessToken`, `refreshToken`, `user` (id, email, role)
+
+- Login: `authApi.login({ email, password })` → `POST /api/auth/login`
+  - Response: `{ accessToken, refreshToken, user }`
+
+- Admin login: `authApi.adminLogin(credentials)` → `POST /api/auth/admin/login`
+
+- Token refresh: `authApi.refreshToken()` → `POST /api/auth/refresh`
+
+- Validate: `authApi.validateToken()` → `GET /api/auth/validate` returns boolean
+
+- User management (admin): `authApi.getAllUsers()`, `authApi.getUserById(id)`, `authApi.updateUser(id, data)`, `authApi.updateUserRole(id, role)`, `authApi.createAdminUser(...)` → maps to `/api/admin/users/*` endpoints. Responses return `UserDTO` objects.
+
+Example usage:
+
+```ts
+import { authApi } from '@/lib/authApi';
+
+const resp = await authApi.login({ email: 'admin@...', password: '...' });
+console.log(resp.accessToken, resp.user.email);
+```
+
+### Shop (public) — `src/lib/shopApi.ts`
+
+- List public products: `fetchShopProducts(category?)` → `GET /api/shop/products`
+  - Response: `ShopProduct[]` (id, name, description, price, sizes, images, inStock)
+
+- Product details: `fetchShopProductById(id)` → `GET /api/shop/products/{id}`
+
+- Check stock: `checkStockAvailability(items)` → `POST /api/shop/check-stock`
+  - Request (array): `[ { productId, productName, quantity, size, price } ]`
+  - Response: `{ available: boolean, issues: [...] }`
+
+- Create guest order: `createGuestOrder(payload)` → `POST /api/shop/orders`
+  - Request `GuestOrderPayload` (items, shipmentDetails, payment, totalAmount)
+  - Response `GuestOrderResponse` (`id`, `orderNumber`, `status`, `totalAmount`, `createdAt`)
+
+Example:
+
+```ts
+import { createGuestOrder } from '@/lib/shopApi';
+
+await createGuestOrder({
+  items: [{ productId: 'prod-001', productName: 'Slim Fit', quantity: 1, size: '32', price: 89.99 }],
+  shipmentDetails: { name: 'John', email: 'john@example.com', phone: '...', address: '123 St', city: 'Dhaka', postalCode: '1200' },
+  payment: { type: 'CARD', status: 'SUCCESS' },
+  totalAmount: 89.99,
+});
+```
+
+### Products / Orders / Customers / Shipments (use `src/lib/api.ts`)
+
+The `src/lib/api.ts` file contains admin-protected helpers that automatically attach the JWT from `localStorage`.
+
+- Products (admin):
+  - `fetchProducts(gender)` → `GET /api/products` (returns `ProductDTO[]` mapped)
+  - Creating a product via UI uses `POST /api/products` (request shape shown in backend docs).
+
+- Orders:
+  - `fetchOrders()` → `GET /api/orders` (returns mapped `OrderDTO[]`)
+  - `fetchOrderById(id)` → `GET /api/orders/{id}`
+  - `createOrder(order)` → `POST /api/orders` (admin order creation)
+  - `updateOrder(id, updates)` → `PUT /api/orders/{id}`
+  - `updateOrderStatus(id, status)` → `PUT /api/orders/{id}/status` (body: `{ status }`)
+
+- Customers:
+  - `fetchCustomers()` → `GET /api/customers`
+  - `createCustomer(customer)` → `POST /api/customers` (returns `CustomerDTO`)
+
+- Shipments & Vendors:
+  - `fetchShippingVendors()` → `GET /api/vendors`
+  - `createShippingVendor(vendor)` → `POST /api/vendors`
+  - `fetchShipments()` → `GET /api/shipments`
+  - `createShipment(shipment)` → `POST /api/shipments`
+  - `updateShipmentStatus(id, status)` → `PUT /api/shipments/{id}/status` (body: `{ status }`)
+
+### Quick copyable frontend examples
+
+Fetch product list (public):
 
 ```bash
-curl -X POST http://localhost:8080/api/shop/orders \
-  -H "Content-Type: application/json" \
-  -d '{
-    "items": [
-      {
-        "productId": "prod-001",
-        "productName": "Slim Fit Dark Wash",
-        "size": "32",
-        "quantity": 1,
-        "price": 89.99
-      }
-    ],
-    "shipmentDetails": {
-      "name": "John Doe",
-      "email": "john@example.com",
-      "phone": "+880 1700-000000",
-      "address": "123 Main Street",
-      "city": "Dhaka",
-      "postalCode": "1200"
-    },
-    "payment": {
-      "type": "CARD",
-      "status": "SUCCESS"
-    },
-    "totalAmount": 89.99
-  }'
+curl -sS "$VITE_API_URL/api/shop/products"
 ```
+
+Call wrapper from code (example):
+
+```ts
+import { fetchProducts } from '@/lib/api';
+
+const products = await fetchProducts('All');
+```
+
+Create guest order (curl):
+
+```bash
+curl -X POST "$VITE_API_URL/api/shop/orders" -H "Content-Type: application/json" -d '{"items":[{"productId":"prod-001","productName":"Slim Fit","quantity":1,"size":"32","price":89.99}],"shipmentDetails":{"name":"John","email":"john@example.com","address":"123 St","city":"Dhaka","postalCode":"1200"},"payment":{"type":"CARD","status":"SUCCESS"},"totalAmount":89.99}'
+```
+
+Notes:
+- The wrappers in `src/lib` already map backend fields to frontend DTOs; prefer them over raw fetch calls.
+- Auth-protected helpers read `accessToken` from `localStorage`. Use `authApi.login()` to populate tokens.
 
 ---
 
