@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Minus, Plus, ShoppingCart, Loader2 } from 'lucide-react';
+import { ArrowLeft, Star, Minus, Plus, ShoppingCart, Loader2, Expand } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { CartIcon } from '@/components/shop/CartIcon';
+import { ImageLightbox } from '@/components/shop/ImageLightbox';
 import { ShopProduct } from '@/data/shopProducts';
 import { fetchShopProductById } from '@/lib/shopApi';
 import { useCart } from '@/contexts/CartContext';
@@ -21,6 +22,7 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     if (!productId) return;
@@ -54,6 +56,10 @@ export default function ProductDetails() {
   }
 
   const handleAddToCart = () => {
+    if (!product.inStock) {
+      toast.error('This product is currently out of stock');
+      return;
+    }
     addToCart(
       {
         id: product.id,
@@ -93,14 +99,24 @@ export default function ProductDetails() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          <div className="aspect-square rounded-lg overflow-hidden bg-muted cursor-zoom-in group">
+          {/* Product Image with Lightbox trigger */}
+          <div
+            className="relative aspect-square rounded-lg overflow-hidden bg-muted cursor-zoom-in group"
+            onClick={() => setLightboxOpen(true)}
+          >
             <img
               src={product.images[0]}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-150"
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+              <div className="bg-background/80 backdrop-blur rounded-full p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <Expand className="h-6 w-6" />
+              </div>
+            </div>
           </div>
 
+          {/* Product Info */}
           <div className="space-y-6">
             <div>
               <Badge variant="secondary" className="mb-2">{getCategoryLabel(product.category)}</Badge>
@@ -162,9 +178,14 @@ export default function ProductDetails() {
               </div>
 
               <div className="flex gap-4">
-                <Button size="lg" className="flex-1" onClick={handleAddToCart}>
+                <Button
+                  size="lg"
+                  className="flex-1"
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock}
+                >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart
+                  {product.inStock ? 'Add to Cart' : 'Out of Stock'}
                 </Button>
                 <Button size="lg" variant="secondary" asChild>
                   <Link to="/shop/cart">View Cart</Link>
@@ -173,12 +194,20 @@ export default function ProductDetails() {
             </div>
 
             <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-red-500'}`} />
+              <div className={`h-2 w-2 rounded-full ${product.inStock ? 'bg-green-500' : 'bg-destructive'}`} />
               <span className="text-sm text-muted-foreground">{product.inStock ? 'In Stock' : 'Out of Stock'}</span>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Lightbox Modal */}
+      <ImageLightbox
+        src={product.images[0]}
+        alt={product.name}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </div>
   );
 }

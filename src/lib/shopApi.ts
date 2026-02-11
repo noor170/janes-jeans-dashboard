@@ -35,6 +35,36 @@ export const fetchShopProductById = async (id: string): Promise<ShopProduct | nu
   }
 };
 
+// ============= STOCK CHECK (Public - No Auth) =============
+
+export interface StockCheckItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  size: string;
+  price: number;
+}
+
+export interface StockCheckResult {
+  available: boolean;
+  issues: {
+    productId: string;
+    productName: string;
+    requestedQuantity?: number;
+    availableStock?: number;
+    error?: string;
+  }[];
+}
+
+export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {
+  const response = await fetch(`${API_BASE_URL}/api/shop/check-stock`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(items),
+  });
+  return handleResponse<StockCheckResult>(response);
+};
+
 // ============= GUEST ORDERS (Public - No Auth) =============
 
 export interface GuestOrderPayload {
@@ -76,6 +106,12 @@ export const createGuestOrder = async (payload: GuestOrderPayload): Promise<Gues
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
+
+  if (response.status === 409) {
+    const error = await response.json();
+    throw { stockError: true, message: error.message, stockErrors: error.stockErrors };
+  }
+
   return handleResponse<GuestOrderResponse>(response);
 };
 

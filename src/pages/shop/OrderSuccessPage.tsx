@@ -1,24 +1,49 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, Package, ArrowRight, Loader2 } from 'lucide-react';
+import { CheckCircle2, Package, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
-import { createGuestOrder, GuestOrderResponse } from '@/lib/shopApi';
+import { createGuestOrder, checkStockAvailability, GuestOrderResponse, StockCheckResult } from '@/lib/shopApi';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
   const navigate = useNavigate();
   const { items, shipmentDetails, paymentDetails, getCartTotal, resetCheckout } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderResponse, setOrderResponse] = useState<GuestOrderResponse | null>(null);
+  const [stockIssues, setStockIssues] = useState<StockCheckResult['issues']>([]);
 
   useEffect(() => {
     if (!orderPlaced && (items.length === 0 || !shipmentDetails || !paymentDetails)) {
       navigate('/shop/cart');
+      return;
+    }
+
+    // Check stock on page load
+    if (items.length > 0 && !orderPlaced) {
+      setIsCheckingStock(true);
+      checkStockAvailability(
+        items.map((item) => ({
+          productId: item.id,
+          productName: item.name,
+          quantity: item.quantity,
+          size: item.size,
+          price: item.price,
+        }))
+      )
+        .then((result) => {
+          if (!result.available) {
+            setStockIssues(result.issues);
+          }
+        })
+        .catch((err) => console.error('Stock check failed:', err))
+        .finally(() => setIsCheckingStock(false));
     }
   }, [items.length, shipmentDetails, paymentDetails, navigate, orderPlaced]);
 
@@ -33,6 +58,7 @@ export default function OrderSuccessPage() {
 
   const handlePlaceOrder = async () => {
     setIsSubmitting(true);
+    setStockIssues([]);
 
     try {
       const response = await createGuestOrder({
@@ -62,9 +88,19 @@ export default function OrderSuccessPage() {
       setOrderPlaced(true);
       toast.success('Order placed successfully!');
       resetCheckout();
-    } catch (error) {
-      console.error('Failed to place order:', error);
-      toast.error('Failed to place order. Please try again.');
+    } catch (error: any) {
+      if (error?.stockError) {
+        toast.error(error.message || 'Some items are out of stock');
+        setStockIssues(
+          (error.stockErrors || []).map((msg: string) => ({
+            productId: '',
+            productName: msg,
+          }))
+        );
+      } else {
+        console.error('Failed to place order:', error);
+        toast.error('Failed to place order. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -137,6 +173,26 @@ export default function OrderSuccessPage() {
         <CheckoutSteps currentStep={4} />
 
         <div className="max-w-3xl mx-auto mt-8">
+          {/* Stock warnings */}
+          {stockIssues.length > 0 && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Stock Availability Issue</AlertTitle>
+              <AlertDescription>
+                <ul className="mt-2 space-y-1">
+                  {stockIssues.map((issue, i) => (
+                    <li key={i} className="text-sm">
+                      {issue.availableStock !== undefined
+                        ? `${issue.productName}: only ${issue.availableStock} available (you requested ${issue.requestedQuantity})`
+                        : issue.productName}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-sm font-medium">Please update your cart before placing the order.</p>
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle>Review Your Order</CardTitle>
@@ -211,13 +267,20 @@ export default function OrderSuccessPage() {
                 size="lg"
                 className="w-full"
                 onClick={handlePlaceOrder}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isCheckingStock || stockIssues.length > 0}
               >
-                {isSubmitting ? (
+                {isCheckingStock ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Checking stock...
+                  </>
+                ) : isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Processing...
                   </>
+                ) : stockIssues.length > 0 ? (
+                  'Update Cart to Continue'
                 ) : (
                   <>
                     Place Order
