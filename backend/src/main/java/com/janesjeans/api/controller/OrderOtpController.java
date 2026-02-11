@@ -17,17 +17,18 @@ public class OrderOtpController {
 
     private final OtpService otpService;
 
-    public static record RequestOtpRequest(String phoneNumber) {}
+    public static record RequestOtpRequest(String phoneNumber, String method) {}
     public static record VerifyOtpRequest(String phoneNumber, String otp) {}
 
     @Operation(summary = "Request OTP for order confirmation")
     @ApiResponses({@ApiResponse(responseCode = "202", description = "OTP sent/accepted"), @ApiResponse(responseCode = "400", description = "Invalid input")})
     @PostMapping("/{id}/request-otp")
     public ResponseEntity<Map<String, Object>> requestOtp(@PathVariable("id") String id, @RequestBody RequestOtpRequest body) {
-        String phone = body.phoneNumber();
+        String to = body.phoneNumber();
+        String method = body.method() == null ? "sms" : body.method();
         // default ttl 300s
-        String otp = otpService.requestOtp(id, phone, 300);
-        return ResponseEntity.accepted().body(Map.of("message", "OTP requested", "orderId", id));
+        String otp = otpService.requestOtp(id, to, 300, method);
+        return ResponseEntity.accepted().body(Map.of("message", "OTP requested", "orderId", id, "method", method));
     }
 
     @Operation(summary = "Verify OTP for order confirmation")
