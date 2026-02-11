@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      shop_products: {
+        Row: {
+          category: string
+          colors: string[]
+          created_at: string
+          description: string
+          id: string
+          images: string[]
+          in_stock: boolean
+          name: string
+          price: number
+          rating: number
+          reviews: number
+          sizes: string[]
+        }
+        Insert: {
+          category?: string
+          colors?: string[]
+          created_at?: string
+          description?: string
+          id: string
+          images?: string[]
+          in_stock?: boolean
+          name: string
+          price: number
+          rating?: number
+          reviews?: number
+          sizes?: string[]
+        }
+        Update: {
+          category?: string
+          colors?: string[]
+          created_at?: string
+          description?: string
+          id?: string
+          images?: string[]
+          in_stock?: boolean
+          name?: string
+          price?: number
+          rating?: number
+          reviews?: number
+          sizes?: string[]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

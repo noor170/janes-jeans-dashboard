@@ -3,7 +3,7 @@ export interface ShopProduct {
   name: string;
   description: string;
   price: number;
-  category: 'tshirts' | 'hoodies' | 'jeans';
+  category: string;
   sizes: string[];
   colors: string[];
   images: string[];
