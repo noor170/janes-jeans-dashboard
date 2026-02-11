@@ -23,6 +23,6 @@ services:
     volumes:
       - ./backend:/app
     
-  postgres:
+  mysql:
     ports:
-      - "5432:5432"
+      - "3306:3306"
