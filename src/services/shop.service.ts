@@ -4,7 +4,8 @@
  */
 
 import { ShopProduct } from '@/data/shopProducts';
-import { publicGet, publicPost, API_BASE_URL } from './util';
+import { publicPost, API_BASE_URL } from './util';
+import { supabase } from '@/integrations/supabase/client';
 
 // ============= Types =============
 
@@ -79,18 +80,47 @@ const mapShopProduct = (p: any): ShopProduct => ({
 // ============= API Functions =============
 
 export const fetchShopProducts = async (category?: string): Promise<ShopProduct[]> => {
-  const params = category && category !== 'all' ? `?category=${category}` : '';
-  const data = await publicGet<any[]>(`/api/shop/products${params}`);
-  return data.map(mapShopProduct);
+  let query = supabase.from('shop_products').select('*');
+  if (category && category !== 'all') {
+    query = query.eq('category', category);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    price: Number(p.price),
+    category: p.category,
+    sizes: p.sizes || [],
+    colors: p.colors || [],
+    images: p.images || ['/placeholder.svg'],
+    inStock: p.in_stock ?? true,
+    rating: Number(p.rating) || 4.5,
+    reviews: p.reviews || 0,
+  }));
 };
 
 export const fetchShopProductById = async (id: string): Promise<ShopProduct | null> => {
-  try {
-    const data = await publicGet<any>(`/api/shop/products/${id}`);
-    return mapShopProduct(data);
-  } catch {
-    return null;
-  }
+  const { data, error } = await supabase
+    .from('shop_products')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  if (error || !data) return null;
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    price: Number(data.price),
+    category: data.category,
+    sizes: data.sizes || [],
+    colors: data.colors || [],
+    images: data.images || ['/placeholder.svg'],
+    inStock: data.in_stock ?? true,
+    rating: Number(data.rating) || 4.5,
+    reviews: data.reviews || 0,
+  };
 };
 
 export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {

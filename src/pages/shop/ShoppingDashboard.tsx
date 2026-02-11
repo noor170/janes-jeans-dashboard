@@ -6,7 +6,7 @@ import { ProductCard } from '@/components/shop/ProductCard';
 import { ProductFilters } from '@/components/shop/ProductFilters';
 import { CartIcon } from '@/components/shop/CartIcon';
 import { ShopProduct } from '@/data/shopProducts';
-import { fetchShopProducts } from '@/lib/shopApi';
+import { fetchShopProducts } from '@/services/shop.service';
 import { toast } from 'sonner';
 
 export default function ShoppingDashboard() {
