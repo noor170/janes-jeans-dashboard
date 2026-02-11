@@ -6,52 +6,26 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="data-004-demo-shipping-vendors" author="janesjeans" context="dev,docker">
-        <insert tableName="shipping_vendors">
-            <column name="id" value="VND001"/>
-            <column name="name" value="Pathao"/>
-            <column name="code" value="PATHAO"/>
-            <column name="contact_email" value="business@pathao.com"/>
-            <column name="contact_phone" value="+880 9666-777777"/>
-            <column name="website" value="https://pathao.com"/>
-            <column name="tracking_url_template" value="https://pathao.com/track/{tracking_number}"/>
-            <column name="status" value="active"/>
-            <column name="avg_delivery_days" valueNumeric="3"/>
-        </insert>
-        
-        <insert tableName="shipping_vendors">
-            <column name="id" value="VND002"/>
-            <column name="name" value="Steadfast"/>
-            <column name="code" value="STEADFAST"/>
-            <column name="contact_email" value="support@steadfast.com.bd"/>
-            <column name="contact_phone" value="+880 9612-123456"/>
-            <column name="website" value="https://steadfast.com.bd"/>
-            <column name="tracking_url_template" value="https://steadfast.com.bd/track/{tracking_number}"/>
-            <column name="status" value="active"/>
-            <column name="avg_delivery_days" valueNumeric="2"/>
-        </insert>
-        
-        <insert tableName="shipping_vendors">
-            <column name="id" value="VND003"/>
-            <column name="name" value="Redx"/>
-            <column name="code" value="REDX"/>
-            <column name="contact_email" value="info@redx.com.bd"/>
-            <column name="contact_phone" value="+880 9613-789012"/>
-            <column name="website" value="https://redx.com.bd"/>
-            <column name="tracking_url_template" value="https://redx.com.bd/track/{tracking_number}"/>
-            <column name="status" value="active"/>
-            <column name="avg_delivery_days" valueNumeric="4"/>
-        </insert>
-        
-        <insert tableName="shipping_vendors">
-            <column name="id" value="VND004"/>
-            <column name="name" value="Paperfly"/>
-            <column name="code" value="PAPERFLY"/>
-            <column name="contact_email" value="contact@paperfly.com.bd"/>
-            <column name="contact_phone" value="+880 9614-456789"/>
-            <column name="website" value="https://paperfly.com.bd"/>
-            <column name="status" value="inactive"/>
-            <column name="avg_delivery_days" valueNumeric="5"/>
-        </insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND001"/><column name="name" value="Pathao"/><column name="code" value="PATHAO"/><column name="contact_email" value="business@pathao.com"/><column name="contact_phone" value="+880 9666-777777"/><column name="website" value="https://pathao.com"/><column name="tracking_url_template" value="https://pathao.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND002"/><column name="name" value="Steadfast"/><column name="code" value="STEADFAST"/><column name="contact_email" value="support@steadfast.com.bd"/><column name="contact_phone" value="+880 9612-123456"/><column name="website" value="https://steadfast.com.bd"/><column name="tracking_url_template" value="https://steadfast.com.bd/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="2"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND003"/><column name="name" value="Redx"/><column name="code" value="REDX"/><column name="contact_email" value="info@redx.com.bd"/><column name="contact_phone" value="+880 9613-789012"/><column name="website" value="https://redx.com.bd"/><column name="tracking_url_template" value="https://redx.com.bd/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="4"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND004"/><column name="name" value="Paperfly"/><column name="code" value="PAPERFLY"/><column name="contact_email" value="contact@paperfly.com.bd"/><column name="contact_phone" value="+880 9614-456789"/><column name="website" value="https://paperfly.com.bd"/><column name="status" value="inactive"/><column name="avg_delivery_days" valueNumeric="5"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND005"/><column name="name" value="Sundarban Courier"/><column name="code" value="SUNDARBAN"/><column name="contact_email" value="info@sundarban.com"/><column name="contact_phone" value="+880 9615-111222"/><column name="website" value="https://sundarban.com"/><column name="tracking_url_template" value="https://sundarban.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="5"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND006"/><column name="name" value="SA Paribahan"/><column name="code" value="SAPARIBAHAN"/><column name="contact_email" value="info@saparibahan.com"/><column name="contact_phone" value="+880 9616-333444"/><column name="website" value="https://saparibahan.com"/><column name="tracking_url_template" value="https://saparibahan.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="4"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND007"/><column name="name" value="Continental Courier"/><column name="code" value="CONTINENTAL"/><column name="contact_email" value="info@continental.com.bd"/><column name="contact_phone" value="+880 9617-555666"/><column name="website" value="https://continental.com.bd"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND008"/><column name="name" value="E-Courier"/><column name="code" value="ECOURIER"/><column name="contact_email" value="support@ecourier.com.bd"/><column name="contact_phone" value="+880 9618-777888"/><column name="website" value="https://ecourier.com.bd"/><column name="tracking_url_template" value="https://ecourier.com.bd/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="2"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND009"/><column name="name" value="Delhivery"/><column name="code" value="DELHIVERY"/><column name="contact_email" value="support@delhivery.com"/><column name="contact_phone" value="+91 1800-345-6789"/><column name="website" value="https://delhivery.com"/><column name="tracking_url_template" value="https://delhivery.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND010"/><column name="name" value="FedEx Express"/><column name="code" value="FEDEX"/><column name="contact_email" value="support@fedex.com"/><column name="contact_phone" value="+1 800-463-3339"/><column name="website" value="https://fedex.com"/><column name="tracking_url_template" value="https://fedex.com/track?trknbr={tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="2"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND011"/><column name="name" value="DHL Global"/><column name="code" value="DHL"/><column name="contact_email" value="express@dhl.com"/><column name="contact_phone" value="+1 800-225-5345"/><column name="website" value="https://dhl.com"/><column name="tracking_url_template" value="https://dhl.com/track?id={tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND012"/><column name="name" value="UPS Worldwide"/><column name="code" value="UPS"/><column name="contact_email" value="support@ups.com"/><column name="contact_phone" value="+1 800-742-5877"/><column name="website" value="https://ups.com"/><column name="tracking_url_template" value="https://ups.com/track?tracknum={tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND013"/><column name="name" value="Aramex"/><column name="code" value="ARAMEX"/><column name="contact_email" value="info@aramex.com"/><column name="contact_phone" value="+971 600-544000"/><column name="website" value="https://aramex.com"/><column name="tracking_url_template" value="https://aramex.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="5"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND014"/><column name="name" value="BlueDart"/><column name="code" value="BLUEDART"/><column name="contact_email" value="support@bluedart.com"/><column name="contact_phone" value="+91 1860-233-1234"/><column name="website" value="https://bluedart.com"/><column name="tracking_url_template" value="https://bluedart.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="2"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND015"/><column name="name" value="DTDC"/><column name="code" value="DTDC"/><column name="contact_email" value="care@dtdc.com"/><column name="contact_phone" value="+91 1800-111-0500"/><column name="website" value="https://dtdc.com"/><column name="tracking_url_template" value="https://dtdc.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="4"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND016"/><column name="name" value="TNT Express"/><column name="code" value="TNT"/><column name="contact_email" value="info@tnt.com"/><column name="contact_phone" value="+31 800-1234567"/><column name="website" value="https://tnt.com"/><column name="status" value="inactive"/><column name="avg_delivery_days" valueNumeric="6"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND017"/><column name="name" value="J&amp;T Express"/><column name="code" value="JNT"/><column name="contact_email" value="support@jtexpress.com"/><column name="contact_phone" value="+62 021-80661888"/><column name="website" value="https://jtexpress.com"/><column name="tracking_url_template" value="https://jtexpress.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND018"/><column name="name" value="Ninja Van"/><column name="code" value="NINJAVAN"/><column name="contact_email" value="support@ninjavan.co"/><column name="contact_phone" value="+65 6602-8271"/><column name="website" value="https://ninjavan.co"/><column name="tracking_url_template" value="https://ninjavan.co/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="3"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND019"/><column name="name" value="GLS Courier"/><column name="code" value="GLS"/><column name="contact_email" value="info@gls-group.eu"/><column name="contact_phone" value="+49 6677-2098"/><column name="website" value="https://gls-group.eu"/><column name="tracking_url_template" value="https://gls-group.eu/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="4"/></insert>
+        <insert tableName="shipping_vendors"><column name="id" value="VND020"/><column name="name" value="Royal Mail"/><column name="code" value="ROYALMAIL"/><column name="contact_email" value="support@royalmail.com"/><column name="contact_phone" value="+44 345-774-0740"/><column name="website" value="https://royalmail.com"/><column name="tracking_url_template" value="https://royalmail.com/track/{tracking_number}"/><column name="status" value="active"/><column name="avg_delivery_days" valueNumeric="5"/></insert>
     </changeSet>
 
 </databaseChangeLog>

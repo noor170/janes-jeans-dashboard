@@ -6,6 +6,18 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="data-001-demo-users" author="janesjeans" context="dev,docker">
+        <!-- Root Admin: admin@gmail.com / Admin@123456 -->
+        <!-- BCrypt hash generated for: Admin@123456 -->
+        <insert tableName="users">
+            <column name="id" value="usr-root-admin-001"/>
+            <column name="email" value="admin@gmail.com"/>
+            <column name="password" value="$2a$10$Wv3wxZnVTkOKpEclr4JCauFBwyMrPX2rJSKfGxN1FJqcOqsKqWqXO"/>
+            <column name="first_name" value="Root"/>
+            <column name="last_name" value="Admin"/>
+            <column name="role" value="SUPER_ADMIN"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
         <!-- Super Admin: admin@janesjeans.com / admin123 -->
         <insert tableName="users">
             <column name="id" value="usr-super-admin-001"/>
@@ -17,7 +29,6 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         
-        <!-- Admin: manager@janesjeans.com / manager123 -->
         <insert tableName="users">
             <column name="id" value="usr-admin-001"/>
             <column name="email" value="manager@janesjeans.com"/>
@@ -28,7 +39,16 @@
             <column name="is_active" valueBoolean="true"/>
         </insert>
         
-        <!-- Staff: staff@janesjeans.com / staff123 -->
+        <insert tableName="users">
+            <column name="id" value="usr-admin-002"/>
+            <column name="email" value="warehouse@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Warehouse"/>
+            <column name="last_name" value="Admin"/>
+            <column name="role" value="ADMIN"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
         <insert tableName="users">
             <column name="id" value="usr-staff-001"/>
             <column name="email" value="staff@janesjeans.com"/>
@@ -38,8 +58,57 @@
             <column name="role" value="USER"/>
             <column name="is_active" valueBoolean="true"/>
         </insert>
-        
-        <!-- User: user@janesjeans.com / user123 -->
+
+        <insert tableName="users">
+            <column name="id" value="usr-staff-002"/>
+            <column name="email" value="support@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Customer"/>
+            <column name="last_name" value="Support"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-staff-003"/>
+            <column name="email" value="marketing@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Marketing"/>
+            <column name="last_name" value="Team"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-staff-004"/>
+            <column name="email" value="shipping@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Shipping"/>
+            <column name="last_name" value="Coordinator"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-staff-005"/>
+            <column name="email" value="finance@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Finance"/>
+            <column name="last_name" value="Officer"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-staff-006"/>
+            <column name="email" value="designer@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Product"/>
+            <column name="last_name" value="Designer"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
         <insert tableName="users">
             <column name="id" value="usr-user-001"/>
             <column name="email" value="user@janesjeans.com"/>
@@ -49,14 +118,93 @@
             <column name="role" value="USER"/>
             <column name="is_active" valueBoolean="true"/>
         </insert>
-        
-        <!-- Inactive User -->
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-002"/>
+            <column name="email" value="buyer1@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Alice"/>
+            <column name="last_name" value="Buyer"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-003"/>
+            <column name="email" value="buyer2@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Bob"/>
+            <column name="last_name" value="Shopper"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-004"/>
+            <column name="email" value="buyer3@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Carol"/>
+            <column name="last_name" value="Consumer"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-005"/>
+            <column name="email" value="buyer4@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Daniel"/>
+            <column name="last_name" value="Client"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-006"/>
+            <column name="email" value="buyer5@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Eva"/>
+            <column name="last_name" value="Patron"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-007"/>
+            <column name="email" value="buyer6@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Frank"/>
+            <column name="last_name" value="Purchaser"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-user-008"/>
+            <column name="email" value="buyer7@gmail.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Grace"/>
+            <column name="last_name" value="Customer"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
         <insert tableName="users">
             <column name="id" value="usr-inactive-001"/>
             <column name="email" value="inactive@janesjeans.com"/>
             <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
             <column name="first_name" value="Inactive"/>
             <column name="last_name" value="User"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="usr-inactive-002"/>
+            <column name="email" value="suspended@janesjeans.com"/>
+            <column name="password" value="$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGP6QIVtxQFpxXvLZZCJR1Fn.PAi"/>
+            <column name="first_name" value="Suspended"/>
+            <column name="last_name" value="Account"/>
             <column name="role" value="USER"/>
             <column name="is_active" valueBoolean="false"/>
         </insert>
