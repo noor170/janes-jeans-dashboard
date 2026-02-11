@@ -93,8 +93,12 @@ export default function ProductDetails() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          <div className="aspect-square rounded-lg overflow-hidden bg-muted">
-            <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+          <div className="aspect-square rounded-lg overflow-hidden bg-muted cursor-zoom-in group">
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-150"
+            />
           </div>
 
           <div className="space-y-6">
