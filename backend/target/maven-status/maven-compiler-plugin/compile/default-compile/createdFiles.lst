@@ -1,2 +1,4 @@
+
+com/janesjeans/api/JanesJeansApplication.class
 com/janesjeans/api/config/JwtAuthenticationFilter.class
 com/janesjeans/api/config/SecurityConfig.class

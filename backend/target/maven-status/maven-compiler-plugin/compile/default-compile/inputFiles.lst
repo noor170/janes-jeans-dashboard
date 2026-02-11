@@ -1,3 +1,5 @@
+
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/JanesJeansApplication.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/repository/UserRepository.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/exception/GlobalExceptionHandler.java
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/SecurityConfig.java
