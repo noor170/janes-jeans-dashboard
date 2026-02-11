@@ -64,6 +64,15 @@ logging:
     com.janesjeans: DEBUG
     org.springframework.security: INFO
 
+# SpringDoc / Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
 # CORS Configuration
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://denim-dash-toggle.lovable.app,https://id-preview--37f53d35-c044-4b63-ac19-6e8475db5f06.lovable.app,https://37f53d35-c044-4b63-ac19-6e8475db5f06.lovableproject.com}
