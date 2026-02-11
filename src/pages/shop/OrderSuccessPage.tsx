@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
+import { createGuestOrder, GuestOrderResponse } from '@/lib/shopApi';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
@@ -13,9 +14,8 @@ export default function OrderSuccessPage() {
   const { items, shipmentDetails, paymentDetails, getCartTotal, resetCheckout } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [orderResponse, setOrderResponse] = useState<GuestOrderResponse | null>(null);
 
-  // Redirect if no items or missing checkout data
   useEffect(() => {
     if (!orderPlaced && (items.length === 0 || !shipmentDetails || !paymentDetails)) {
       navigate('/shop/cart');
@@ -34,47 +34,33 @@ export default function OrderSuccessPage() {
   const handlePlaceOrder = async () => {
     setIsSubmitting(true);
 
-    // Prepare order payload for Spring Boot backend
-    const orderPayload = {
-      items: items.map((item) => ({
-        productId: item.id,
-        productName: item.name,
-        quantity: item.quantity,
-        size: item.size,
-        price: item.price,
-      })),
-      shipmentDetails: {
-        name: shipmentDetails.name,
-        email: shipmentDetails.email,
-        phone: shipmentDetails.phone,
-        address: `${shipmentDetails.address}, ${shipmentDetails.city} ${shipmentDetails.postalCode}`,
-      },
-      payment: {
-        type: paymentDetails.type,
-        status: 'SUCCESS',
-      },
-      totalAmount: grandTotal,
-    };
-
     try {
-      // In production, this would POST to Spring Boot backend
-      // const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(orderPayload),
-      // });
-      // const data = await response.json();
-      
-      // Mock API call for demo
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const mockOrderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
-      
-      console.log('Order payload:', orderPayload);
-      setOrderId(mockOrderId);
+      const response = await createGuestOrder({
+        items: items.map((item) => ({
+          productId: item.id,
+          productName: item.name,
+          quantity: item.quantity,
+          size: item.size,
+          price: item.price,
+        })),
+        shipmentDetails: {
+          name: shipmentDetails.name,
+          email: shipmentDetails.email,
+          phone: shipmentDetails.phone,
+          address: shipmentDetails.address,
+          city: shipmentDetails.city,
+          postalCode: shipmentDetails.postalCode,
+        },
+        payment: {
+          type: paymentDetails.type,
+          status: 'SUCCESS',
+        },
+        totalAmount: grandTotal,
+      });
+
+      setOrderResponse(response);
       setOrderPlaced(true);
       toast.success('Order placed successfully!');
-      
-      // Clear cart after successful order
       resetCheckout();
     } catch (error) {
       console.error('Failed to place order:', error);
@@ -84,7 +70,7 @@ export default function OrderSuccessPage() {
     }
   };
 
-  if (orderPlaced) {
+  if (orderPlaced && orderResponse) {
     return (
       <div className="min-h-screen bg-background">
         <main className="container mx-auto px-4 py-16">
@@ -95,7 +81,7 @@ export default function OrderSuccessPage() {
               Thank you for your purchase. Your order has been received.
             </p>
             <p className="text-xl font-semibold mb-8">
-              Order ID: <span className="text-primary">{orderId}</span>
+              Order ID: <span className="text-primary">{orderResponse.orderNumber}</span>
             </p>
             <Card className="text-left mb-8">
               <CardHeader>
@@ -106,26 +92,22 @@ export default function OrderSuccessPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Shipping To:</p>
-                  <p>{shipmentDetails.name}</p>
-                  <p className="text-muted-foreground">{shipmentDetails.address}</p>
-                  <p className="text-muted-foreground">{shipmentDetails.city}, {shipmentDetails.postalCode}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Customer:</p>
+                  <p>{orderResponse.customerName}</p>
+                  <p className="text-muted-foreground">{orderResponse.customerEmail}</p>
                 </div>
                 <Separator />
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Payment Method:</p>
-                  <p className="capitalize">{paymentDetails.type === 'bkash' ? 'bKash' : 'Credit Card'}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Status:</p>
+                  <p>{orderResponse.status}</p>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total Paid:</span>
-                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                  <span>Total:</span>
+                  <span className="text-primary">${Number(orderResponse.totalAmount).toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
-            <p className="text-muted-foreground mb-6">
-              A confirmation email has been sent to <strong>{shipmentDetails.email}</strong>
-            </p>
             <div className="flex gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link to="/shop">
@@ -161,7 +143,6 @@ export default function OrderSuccessPage() {
               <CardDescription>Please review your order details before placing</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Order Items */}
               <div>
                 <h3 className="font-semibold mb-3">Items ({items.length})</h3>
                 <div className="space-y-3">
@@ -184,7 +165,6 @@ export default function OrderSuccessPage() {
 
               <Separator />
 
-              {/* Shipping Info */}
               <div>
                 <h3 className="font-semibold mb-2">Shipping Information</h3>
                 <div className="text-muted-foreground">
@@ -198,7 +178,6 @@ export default function OrderSuccessPage() {
 
               <Separator />
 
-              {/* Payment Info */}
               <div>
                 <h3 className="font-semibold mb-2">Payment Method</h3>
                 <p className="text-muted-foreground capitalize">
@@ -208,7 +187,6 @@ export default function OrderSuccessPage() {
 
               <Separator />
 
-              {/* Total */}
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
