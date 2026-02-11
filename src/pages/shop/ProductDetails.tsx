@@ -32,7 +32,7 @@ export default function ProductDetails() {
         setProduct(p);
         if (p && p.sizes.length > 0) setSelectedSize(p.sizes[0]);
       })
-      .catch(() => toast.error('Failed to load product'))
+      .catch(() => toast.error('Failed to load product!'))
       .finally(() => setLoading(false));
   }, [productId]);
 

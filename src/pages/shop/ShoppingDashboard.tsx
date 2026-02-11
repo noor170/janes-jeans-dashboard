@@ -21,7 +21,7 @@ export default function ShoppingDashboard() {
       .then(setProducts)
       .catch((err) => {
         console.error('Failed to fetch products:', err);
-        toast.error('Failed to load products');
+        toast.error('Failed to load products!!');
       })
       .finally(() => setLoading(false));
   }, []);
