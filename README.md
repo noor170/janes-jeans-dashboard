@@ -7,6 +7,7 @@
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=flat-square&logo=spring)](https://spring.io/projects/spring-boot)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
@@ -25,12 +26,18 @@
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Installation](#-installation)
-- [Docker Deployment](#-docker-deployment)
-- [Usage](#-usage)
+- [Prerequisites](#-prerequisites)
+- [Option 1: Manual Localhost Deployment](#-option-1-manual-localhost-deployment)
+  - [Step 1: MySQL Setup](#step-1-mysql-database-setup-port-3306)
+  - [Step 2: Backend Setup](#step-2-spring-boot-backend-port-8080)
+  - [Step 3: Frontend Setup](#step-3-react-frontend-port-5173)
+- [Option 2: Docker Deployment (One Command)](#-option-2-docker-deployment-one-command)
+- [Option 3: Production Nginx Deployment](#-option-3-production-nginx-server-deployment)
+- [Environment Variables](#-environment-variables)
+- [Usage Guide](#-usage-guide)
 - [API Documentation](#-api-documentation)
 - [Database Schema](#-database-schema)
-- [Resources Used](#-resources-used)
+- [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -43,7 +50,7 @@
 ### Key Highlights
 
 - 🛒 **Guest Checkout Flow** - Customers can browse and purchase without creating an account
-- 👔 **Product Catalog** - Dynamic product listings with filtering and search
+- 👔 **Product Catalog** - Dynamic product listings with filtering, search, and image zoom
 - 📊 **Admin Dashboard** - Comprehensive analytics and user management
 - 🔐 **JWT Authentication** - Secure admin access with role-based permissions
 - 📧 **Email Notifications** - Automated order confirmation emails
@@ -58,11 +65,12 @@
 | Feature | Description |
 |---------|-------------|
 | 🏪 **Shopping Dashboard** | Browse clothing items with category and price filters |
-| 📦 **Product Details** | View high-quality images, descriptions, sizes, and colors |
+| 📦 **Product Details** | View high-quality images with hover-to-zoom and lightbox |
 | 🛒 **Shopping Cart** | Add, remove, and manage items with real-time price updates |
 | 📝 **Checkout Flow** | Multi-step checkout with shipment details collection |
 | 💳 **Payment Options** | Support for Card and bKash payment methods |
 | ✅ **Order Confirmation** | Success page with order summary and email confirmation |
+| 📦 **Stock Validation** | Real-time inventory check before and during checkout |
 
 ### Admin Features
 
@@ -70,22 +78,11 @@
 |---------|-------------|
 | 📊 **Dashboard Analytics** | User statistics, growth charts, and activity feeds |
 | 👥 **User Management** | Create, edit, deactivate, and manage admin users |
-| 📋 **Order Management** | View and process customer orders |
+| 📋 **Order Management** | View and process customer orders (Pending → Shipped → Delivered) |
 | 📦 **Inventory Control** | Manage product stock and details |
 | 🚚 **Shipment Tracking** | Track and manage shipments |
 | 📈 **Audit Logs** | Complete activity logging for compliance |
 | 🌐 **Multi-language** | Support for English and Bengali |
-
-### Technical Features
-
-| Feature | Description |
-|---------|-------------|
-| 🔐 **JWT Authentication** | Secure token-based authentication |
-| 🛡️ **Role-Based Access** | USER, ADMIN, and SUPER_ADMIN roles |
-| 📱 **Responsive Design** | Mobile-first, works on all devices |
-| 🌙 **Dark Mode** | Toggle between light and dark themes |
-| ⚡ **Real-time Updates** | React Query for efficient data fetching |
-| 🐳 **Docker Ready** | Containerized deployment support |
 
 ---
 
@@ -102,24 +99,21 @@
 | [shadcn/ui](https://ui.shadcn.com/) | Latest | Component Library |
 | [React Router](https://reactrouter.com/) | 6.x | Routing |
 | [TanStack Query](https://tanstack.com/query) | 5.x | Data Fetching |
-| [React Hook Form](https://react-hook-form.com/) | 7.x | Form Management |
-| [Zod](https://zod.dev/) | 3.x | Schema Validation |
 | [Recharts](https://recharts.org/) | 2.x | Charts & Analytics |
-| [Lucide React](https://lucide.dev/) | Latest | Icons |
-| [Sonner](https://sonner.emilkowal.ski/) | 1.x | Toast Notifications |
 
 ### Backend
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | [Java](https://openjdk.org/) | 17 | Programming Language |
-| [Spring Boot](https://spring.io/projects/spring-boot) | 3.x | Framework |
-| [Spring Security](https://spring.io/projects/spring-security) | 6.x | Authentication |
-| [Spring Data JPA](https://spring.io/projects/spring-data-jpa) | 3.x | Database Access |
-| [PostgreSQL](https://www.postgresql.org/) | 15.x | Database |
+| [Spring Boot](https://spring.io/projects/spring-boot) | 3.2.x | Framework |
+| [Spring Security](https://spring.io/projects/spring-security) | 6.x | Authentication & Authorization |
+| [Spring Data JPA](https://spring.io/projects/spring-data-jpa) | 3.x | Database Access (Hibernate) |
+| [MySQL](https://www.mysql.com/) | 8.0 | Relational Database |
+| [Liquibase](https://www.liquibase.org/) | Latest | Database Migration & Seeding |
 | [JWT (jjwt)](https://github.com/jwtk/jjwt) | 0.11.x | Token Authentication |
-| [Lombok](https://projectlombok.org/) | Latest | Boilerplate Reduction |
 | [Spring Mail](https://spring.io/guides/gs/sending-email/) | 3.x | Email Service |
+| [Lombok](https://projectlombok.org/) | Latest | Boilerplate Reduction |
 
 ### DevOps & Tools
 
@@ -128,9 +122,7 @@
 | [Docker](https://www.docker.com/) | Containerization |
 | [Docker Compose](https://docs.docker.com/compose/) | Multi-container Orchestration |
 | [Nginx](https://nginx.org/) | Web Server / Reverse Proxy |
-| [GitHub Actions](https://github.com/features/actions) | CI/CD Pipeline |
-| [ESLint](https://eslint.org/) | Code Linting |
-| [Vitest](https://vitest.dev/) | Testing Framework |
+| [phpMyAdmin](https://www.phpmyadmin.net/) | Database Management UI |
 
 ---
 
@@ -138,397 +130,659 @@
 
 ```
 janes-jeans/
-├── 📂 public/                    # Static assets
-│   ├── favicon.ico
-│   ├── placeholder.svg
-│   └── robots.txt
+├── 📂 backend/                    # Spring Boot Backend
+│   ├── 📂 src/main/java/com/janesjeans/api/
+│   │   ├── 📂 config/            # Security, CORS, JWT filter
+│   │   ├── 📂 controller/        # REST API controllers
+│   │   ├── 📂 dto/               # Data Transfer Objects
+│   │   ├── 📂 entity/            # JPA Entities (User, Product, Order...)
+│   │   ├── 📂 repository/        # Spring Data JPA repositories
+│   │   ├── 📂 service/           # Business logic + EmailService
+│   │   └── JanesJeansApplication.java
+│   ├── 📂 src/main/resources/
+│   │   ├── 📂 db/changelog/      # Liquibase migrations & seed data
+│   │   └── application.yml       # App configuration
+│   ├── 📂 target/
+│   │   └── janes-jeans-api-1.0.0.jar  # Compiled JAR file
+│   ├── Dockerfile
+│   └── pom.xml
 │
-├── 📂 src/                       # Frontend source code
-│   ├── 📂 components/            # React components
-│   │   ├── 📂 admin/             # Admin-specific components
-│   │   │   ├── CreateAdminDialog.tsx
-│   │   │   ├── EditUserDialog.tsx
-│   │   │   └── ResetPasswordDialog.tsx
-│   │   ├── 📂 shop/              # E-commerce components
-│   │   │   ├── CartIcon.tsx
-│   │   │   ├── CartItem.tsx
-│   │   │   ├── CheckoutSteps.tsx
-│   │   │   ├── ProductCard.tsx
-│   │   │   └── ProductFilters.tsx
-│   │   ├── 📂 ui/                # shadcn/ui components
-│   │   │   ├── button.tsx
-│   │   │   ├── card.tsx
-│   │   │   ├── dialog.tsx
-│   │   │   └── ... (50+ components)
-│   │   ├── AdminButton.tsx
-│   │   ├── AppSidebar.tsx
-│   │   ├── DashboardLayout.tsx
-│   │   └── ...
-│   │
-│   ├── 📂 contexts/              # React Context providers
-│   │   ├── AuthContext.tsx       # Authentication state
-│   │   ├── CartContext.tsx       # Shopping cart state
-│   │   ├── GenderFilterContext.tsx
-│   │   ├── LanguageContext.tsx   # i18n support
-│   │   └── NotificationContext.tsx
-│   │
-│   ├── 📂 data/                  # Static data & mocks
-│   │   ├── mockData.ts           # Dashboard mock data
-│   │   └── shopProducts.ts       # Product catalog
-│   │
-│   ├── 📂 hooks/                 # Custom React hooks
-│   │   ├── use-mobile.tsx
-│   │   ├── use-toast.ts
-│   │   ├── usePagination.ts
-│   │   └── useSorting.ts
-│   │
-│   ├── 📂 lib/                   # Utilities & services
-│   │   ├── api.ts                # API client
-│   │   ├── authApi.ts            # Auth API service
-│   │   ├── auditLogService.ts    # Audit logging
-│   │   ├── exportCsv.ts          # CSV export utility
-│   │   ├── translations.ts       # i18n translations
-│   │   └── utils.ts              # Helper functions
-│   │
-│   ├── 📂 pages/                 # Page components
-│   │   ├── 📂 shop/              # E-commerce pages
-│   │   │   ├── ShoppingDashboard.tsx
-│   │   │   ├── ProductDetails.tsx
-│   │   │   ├── CartPage.tsx
-│   │   │   ├── CheckoutPage.tsx
-│   │   │   ├── PaymentPage.tsx
-│   │   │   └── OrderSuccessPage.tsx
-│   │   ├── AdminDashboard.tsx    # Admin analytics
-│   │   ├── AdminLogin.tsx        # Login page
-│   │   ├── Analytics.tsx
-│   │   ├── Customers.tsx
-│   │   ├── Dashboard.tsx
-│   │   ├── Inventory.tsx
-│   │   ├── Orders.tsx
-│   │   ├── Settings.tsx
-│   │   ├── Shipments.tsx
-│   │   └── UserManagement.tsx
-│   │
+├── 📂 src/                        # React Frontend
+│   ├── 📂 components/            # UI components (admin, shop, ui)
+│   ├── 📂 contexts/              # Auth, Cart, Language, Notification
+│   ├── 📂 pages/                 # Page components (shop + admin)
+│   ├── 📂 lib/                   # API clients & utilities
 │   ├── 📂 types/                 # TypeScript definitions
-│   │   ├── auth.ts
-│   │   ├── auditLog.ts
-│   │   ├── index.ts
-│   │   └── notifications.ts
-│   │
-│   ├── App.tsx                   # Main App component
-│   ├── App.css                   # Global styles
-│   ├── index.css                 # Tailwind imports
 │   └── main.tsx                  # Entry point
 │
-├── 📂 docs/                      # Documentation
-│   └── 📂 spring-boot-backend/   # Backend implementation docs
-│       ├── 📂 config/            # Security configuration
-│       ├── 📂 controller/        # REST controllers
-│       ├── 📂 dto/               # Data transfer objects
-│       ├── 📂 entity/            # JPA entities
-│       ├── 📂 repository/        # Data repositories
-│       ├── 📂 service/           # Business logic
-│       ├── Application.java
-│       ├── application.yml
-│       └── README.md
-│
-├── 📂 scripts/                   # Utility scripts
-│   └── init-db.sql               # Database initialization
-│
-├── 📂 supabase/                  # Supabase configuration
-│   └── config.toml
-│
-├── 📄 Dockerfile                 # Frontend container
-├── 📄 docker-compose.yml         # Production orchestration
-├── 📄 docker-compose.dev.yml     # Development override
-├── 📄 nginx.conf                 # Nginx configuration
-├── 📄 .dockerignore              # Docker ignore rules
-├── 📄 .env.example               # Environment template
-├── 📄 package.json               # Node dependencies
-├── 📄 tailwind.config.ts         # Tailwind configuration
-├── 📄 vite.config.ts             # Vite configuration
-├── 📄 tsconfig.json              # TypeScript configuration
-└── 📄 README.md                  # This file
+├── 📂 public/images/products/     # Product images
+├── 📂 scripts/init-db.sql        # Manual DB init script
+├── Dockerfile                     # Frontend Docker build
+├── docker-compose.yml             # Full-stack Docker orchestration
+├── nginx.conf                     # Nginx configuration
+├── .env.example                   # Environment variables template
+└── README.md                      # This file
 ```
 
 ---
 
-## 🚀 Installation
+## 📦 Prerequisites
 
-### Prerequisites
+Before starting, make sure you have the following installed:
 
-- **Node.js** 18.x or higher
-- **npm** 9.x or higher (or **bun** 1.x)
-- **Java** 17 or higher (for backend)
-- **PostgreSQL** 15.x (or use Docker)
-- **Docker** & **Docker Compose** (optional, for containerized deployment)
+| Software | Version | Download Link | Check Command |
+|----------|---------|--------------|---------------|
+| **Java JDK** | 17+ | [Download](https://adoptium.net/) | `java -version` |
+| **Maven** | 3.9+ | [Download](https://maven.apache.org/download.cgi) | `mvn -version` |
+| **Node.js** | 18+ | [Download](https://nodejs.org/) | `node -v` |
+| **npm** | 9+ | Comes with Node.js | `npm -v` |
+| **MySQL** | 8.0 | [Download](https://dev.mysql.com/downloads/mysql/) | `mysql --version` |
+| **Git** | Any | [Download](https://git-scm.com/) | `git --version` |
 
-### Quick Start (Frontend Only)
+> 💡 **Optional**: Install [Docker](https://www.docker.com/products/docker-desktop/) if you prefer the one-command setup (Option 2).
+
+---
+
+## 🖥 Option 1: Manual Localhost Deployment
+
+This is the simplest approach — run everything on your local machine step by step.
+
+### Step 1: MySQL Database Setup (Port 3306)
+
+#### 1.1 Install MySQL
+
+**Windows:**
+- Download MySQL Installer from https://dev.mysql.com/downloads/installer/
+- Run installer → Choose "MySQL Server 8.0" + "MySQL Workbench" (optional)
+- Set root password during installation (remember it!)
+
+**macOS:**
+```bash
+brew install mysql
+brew services start mysql
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl enable mysql
+```
+
+#### 1.2 Verify MySQL is Running
 
 ```bash
-# 1. Clone the repository
+# Check if MySQL is running on port 3306
+mysql -u root -p -e "SELECT VERSION();"
+```
+
+You should see something like: `8.0.xx`
+
+#### 1.3 Create the Database
+
+```bash
+# Login to MySQL
+mysql -u root -p
+
+# Inside MySQL prompt, run:
+CREATE DATABASE janesjeans CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+SHOW DATABASES;  -- Verify 'janesjeans' appears
+EXIT;
+```
+
+> ✅ **That's it for the database!** Liquibase (built into the backend) will automatically create all tables and seed demo data when you start the backend.
+
+---
+
+### Step 2: Spring Boot Backend (Port 8080)
+
+#### 2.1 Clone the Project
+
+```bash
 git clone https://github.com/your-username/janes-jeans.git
 cd janes-jeans
-
-# 2. Install dependencies
-npm install
-
-# 3. Create environment file
-cp .env.example .env
-
-# 4. Start development server
-npm run dev
 ```
 
-The application will be available at `http://localhost:8080`
+#### 2.2 Configure Database Connection
 
-### Full Stack Setup
+Open `backend/src/main/resources/application.yml` and verify the dev profile settings match your MySQL:
 
-#### Step 1: Database Setup
-
-```bash
-# Using Docker (recommended)
-docker run -d \
-  --name janes-jeans-db \
-  -e POSTGRES_DB=janesjeans \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -p 5432:5432 \
-  postgres:15-alpine
-
-# Or install PostgreSQL locally and create database
-psql -U postgres -c "CREATE DATABASE janesjeans;"
+```yaml
+# The defaults are already set — only change if your MySQL password is different
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/janesjeans?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root          # Your MySQL username
+    password: 12345678      # Your MySQL password ← CHANGE THIS
 ```
 
-#### Step 2: Backend Setup
+Or set via environment variables (recommended):
 
 ```bash
-# Navigate to backend directory
-cd docs/spring-boot-backend
+export DB_HOST=localhost
+export DB_PORT=3306
+export DB_NAME=janesjeans
+export DB_USERNAME=root
+export DB_PASSWORD=your_mysql_password
+```
 
-# Build the project (if using Maven)
-mvn clean install
+#### 2.3 Build the JAR File
 
-# Run the application
+```bash
+cd backend
+
+# Build (this downloads dependencies and compiles the JAR)
+mvn clean package -DskipTests
+
+# The JAR file will be at:
+# backend/target/janes-jeans-api-1.0.0.jar
+```
+
+> ⏱ First build takes 2-5 minutes (downloads dependencies). Subsequent builds are faster.
+
+#### 2.4 Run the Backend
+
+**Option A: Run with Maven (Development)**
+```bash
 mvn spring-boot:run
+```
 
-# Or using the JAR
+**Option B: Run the JAR directly (Production-like)**
+```bash
 java -jar target/janes-jeans-api-1.0.0.jar
 ```
 
-#### Step 3: Frontend Setup
+**Option C: Run with custom environment variables**
+```bash
+java -jar target/janes-jeans-api-1.0.0.jar \
+  --spring.datasource.password=your_mysql_password \
+  --jwt.secret=your-super-secret-jwt-key-at-least-32-characters
+```
+
+#### 2.5 Verify Backend is Running
 
 ```bash
-# Return to project root
-cd ../..
+# Health check
+curl http://localhost:8080/actuator/health
+# Expected: {"status":"UP"}
 
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+# Test product API
+curl http://localhost:8080/api/shop/products
+# Expected: JSON array of products
 ```
 
-### Environment Variables
-
-Create a `.env` file in the project root:
-
-```env
-# Frontend
-VITE_API_URL=http://localhost:8080
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key
-
-# Backend (set in application.yml or environment)
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-JWT_SECRET=your-256-bit-secret-key-here
-MAIL_USERNAME=your-email@gmail.com
-MAIL_PASSWORD=your-app-password
-```
+> ✅ **Backend is ready!** Liquibase has automatically created tables and seeded demo data (products, users, etc.).
 
 ---
 
-## 🐳 Docker Deployment
+### Step 3: React Frontend (Port 5173)
 
-### Production Deployment
+#### 3.1 Install Dependencies
 
 ```bash
-# 1. Clone and navigate to project
+# Go back to project root
+cd ..
+
+# Install Node.js dependencies
+npm install
+```
+
+#### 3.2 Configure API URL
+
+Create a `.env` file in the project root:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set:
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+#### 3.3 Start the Frontend
+
+```bash
+npm run dev
+```
+
+#### 3.4 Open in Browser
+
+```
+🛒 Shop:     http://localhost:5173/shop
+🔐 Admin:    http://localhost:5173/admin-login
+📊 Dashboard: http://localhost:5173/dashboard  (after login)
+```
+
+### ✅ You're Done! Full Stack Running Locally
+
+| Service | URL | Port |
+|---------|-----|------|
+| **Frontend** | http://localhost:5173 | 5173 |
+| **Backend API** | http://localhost:8080 | 8080 |
+| **MySQL** | localhost | 3306 |
+
+---
+
+## 🐳 Option 2: Docker Deployment (One Command)
+
+If you have Docker installed, this is the fastest way:
+
+```bash
+# 1. Clone the project
 git clone https://github.com/your-username/janes-jeans.git
 cd janes-jeans
 
 # 2. Create environment file
 cp .env.example .env
-# Edit .env with your production values
+# Edit .env with your preferred passwords
 
-# 3. Build and start all services
+# 3. Start everything (MySQL + Backend + Frontend)
 docker-compose up -d --build
 
-# 4. Check service status
+# 4. Wait ~60 seconds for MySQL + Backend to initialize, then check:
 docker-compose ps
-
-# 5. View logs
-docker-compose logs -f
 ```
 
-### Service URLs (Production)
+### Service URLs (Docker)
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| Frontend | http://localhost:3000 | React application |
-| Backend API | http://localhost:8080 | Spring Boot API |
-| PostgreSQL | localhost:5432 | Database |
-| pgAdmin | http://localhost:5050 | Database management (optional) |
+| **Frontend** | http://localhost:3000 | React app served by Nginx |
+| **Backend API** | http://localhost:8080 | Spring Boot API |
+| **MySQL** | localhost:3306 | Database |
+| **phpMyAdmin** | http://localhost:5050 | DB management (optional) |
 
-### Development with Docker
+> To enable phpMyAdmin: `docker-compose --profile tools up -d`
 
-```bash
-# Start with development overrides
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
-
-# This enables:
-# - Hot reloading for frontend
-# - Volume mounts for live code changes
-# - Debug logging
-```
-
-### Docker Commands Reference
+### Useful Docker Commands
 
 ```bash
-# Build containers
-docker-compose build
-
-# Start services
-docker-compose up -d
-
-# Stop services
-docker-compose down
-
 # View logs
-docker-compose logs -f [service_name]
+docker-compose logs -f backend     # Backend logs
+docker-compose logs -f frontend    # Frontend logs
 
 # Restart a service
-docker-compose restart [service_name]
+docker-compose restart backend
 
-# Remove volumes (WARNING: deletes data)
+# Stop everything
+docker-compose down
+
+# Stop + delete all data (fresh start)
 docker-compose down -v
-
-# Start with pgAdmin tool
-docker-compose --profile tools up -d
-
-# Scale services
-docker-compose up -d --scale backend=3
-```
-
-### Backend Dockerfile (for `backend/` directory)
-
-Create `backend/Dockerfile`:
-
-```dockerfile
-FROM eclipse-temurin:17-jdk-alpine AS builder
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
-
-FROM eclipse-temurin:17-jre-alpine
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
 ```
 
 ---
 
-## 📖 Usage
+## 🌐 Option 3: Production Nginx Server Deployment
+
+This guide shows how to deploy on a Linux server (Ubuntu/Debian) using Nginx as a reverse proxy for the frontend and backend.
+
+### Architecture
+
+```
+Internet
+   │
+   ▼
+┌──────────────┐
+│   Nginx      │  Port 80/443
+│  (Reverse    │
+│   Proxy)     │
+├──────┬───────┤
+│      │       │
+│  /   │ /api/ │
+│      │       │
+▼      ▼       ▼
+┌─────┐ ┌──────────┐ ┌───────┐
+│React│ │Spring    │ │MySQL  │
+│Files│ │Boot JAR  │ │Server │
+│     │ │Port 8080 │ │Port   │
+│     │ │          │ │3306   │
+└─────┘ └──────────┘ └───────┘
+```
+
+### Step 1: Server Preparation
+
+```bash
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install required packages
+sudo apt install -y nginx mysql-server openjdk-17-jre-headless nodejs npm git ufw
+```
+
+### Step 2: MySQL Setup on Server
+
+```bash
+# Secure MySQL installation
+sudo mysql_secure_installation
+# → Set root password, remove anonymous users, disable remote root login
+
+# Create database
+sudo mysql -u root -p
+```
+
+```sql
+CREATE DATABASE janesjeans CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'janesjeans'@'localhost' IDENTIFIED BY 'YourStrongPassword123!';
+GRANT ALL PRIVILEGES ON janesjeans.* TO 'janesjeans'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+### Step 3: Deploy Backend JAR
+
+```bash
+# Create app directory
+sudo mkdir -p /opt/janesjeans
+sudo chown $USER:$USER /opt/janesjeans
+
+# Copy your JAR file to the server
+# (from your local machine)
+scp backend/target/janes-jeans-api-1.0.0.jar user@your-server:/opt/janesjeans/
+
+# Or build on the server:
+cd /opt/janesjeans
+git clone https://github.com/your-username/janes-jeans.git .
+cd backend
+mvn clean package -DskipTests
+cp target/janes-jeans-api-1.0.0.jar /opt/janesjeans/app.jar
+```
+
+### Step 4: Create Systemd Service for Backend
+
+This makes the backend start automatically on server boot.
+
+```bash
+sudo nano /etc/systemd/system/janesjeans.service
+```
+
+Paste the following:
+
+```ini
+[Unit]
+Description=Jane's Jeans Spring Boot Application
+After=mysql.service
+Requires=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/janesjeans
+
+# ─── IMPORTANT: Update these values ───
+Environment=SPRING_PROFILES_ACTIVE=prod
+Environment=DB_HOST=localhost
+Environment=DB_PORT=3306
+Environment=DB_NAME=janesjeans
+Environment=DB_USERNAME=janesjeans
+Environment=DB_PASSWORD=YourStrongPassword123!
+Environment=JWT_SECRET=generate-a-long-random-secret-key-at-least-32-characters-long
+Environment=MAIL_HOST=smtp.gmail.com
+Environment=MAIL_PORT=587
+Environment=MAIL_USERNAME=your-email@gmail.com
+Environment=MAIL_PASSWORD=your-app-password
+Environment=CORS_ALLOWED_ORIGINS=https://yourdomain.com
+
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -jar /opt/janesjeans/app.jar
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+# Enable and start the service
+sudo systemctl daemon-reload
+sudo systemctl enable janesjeans
+sudo systemctl start janesjeans
+
+# Check status
+sudo systemctl status janesjeans
+
+# View logs
+sudo journalctl -u janesjeans -f
+```
+
+### Step 5: Build Frontend for Production
+
+```bash
+cd /opt/janesjeans
+
+# Install dependencies
+npm install
+
+# Create production .env
+echo "VITE_API_URL=https://yourdomain.com" > .env
+
+# Build static files
+npm run build
+
+# Copy built files to Nginx directory
+sudo mkdir -p /var/www/janesjeans
+sudo cp -r dist/* /var/www/janesjeans/
+sudo chown -R www-data:www-data /var/www/janesjeans
+```
+
+### Step 6: Configure Nginx
+
+```bash
+sudo nano /etc/nginx/sites-available/janesjeans
+```
+
+Paste this configuration:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    # After setting up SSL with certbot, this block will auto-redirect to HTTPS
+
+    root /var/www/janesjeans;
+    index index.html;
+
+    # ─── Gzip Compression ───
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript
+               application/javascript application/xml application/json;
+
+    # ─── Security Headers ───
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # ─── Cache Static Assets (JS, CSS, Images) ───
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # ─── Proxy API Requests to Spring Boot Backend ───
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+
+    # ─── Proxy Actuator Health Check ───
+    location /actuator/ {
+        proxy_pass http://127.0.0.1:8080/actuator/;
+        proxy_set_header Host $host;
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    # ─── React SPA: Send all other routes to index.html ───
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+```bash
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/janesjeans /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default    # Remove default site
+
+# Test config
+sudo nginx -t
+
+# Restart Nginx
+sudo systemctl restart nginx
+```
+
+### Step 7: Enable HTTPS with Let's Encrypt (Recommended)
+
+```bash
+# Install certbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Get SSL certificate (auto-configures Nginx)
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+# Auto-renewal is set up automatically. Test it:
+sudo certbot renew --dry-run
+```
+
+### Step 8: Configure Firewall
+
+```bash
+sudo ufw allow 22/tcp      # SSH
+sudo ufw allow 80/tcp      # HTTP
+sudo ufw allow 443/tcp     # HTTPS
+sudo ufw enable
+sudo ufw status
+```
+
+> ⚠️ **Do NOT expose port 3306 (MySQL) or 8080 (backend) to the internet.** Nginx handles all public traffic on port 80/443 and proxies API requests internally to port 8080.
+
+### ✅ Production Deployment Complete!
+
+| Component | Location | Notes |
+|-----------|----------|-------|
+| **Frontend** | `/var/www/janesjeans/` | Static files served by Nginx |
+| **Backend JAR** | `/opt/janesjeans/app.jar` | Managed by systemd |
+| **Backend Service** | `/etc/systemd/system/janesjeans.service` | Auto-starts on boot |
+| **Nginx Config** | `/etc/nginx/sites-available/janesjeans` | Reverse proxy |
+| **MySQL** | localhost:3306 | Internal only |
+| **Logs** | `journalctl -u janesjeans -f` | Backend logs |
+
+---
+
+## 🔧 Environment Variables
+
+### Complete Reference
+
+| Variable | Default | Where Used | Description |
+|----------|---------|------------|-------------|
+| `DB_HOST` | `localhost` | Backend | MySQL host |
+| `DB_PORT` | `3306` | Backend | MySQL port |
+| `DB_NAME` | `janesjeans` | Backend | Database name |
+| `DB_USERNAME` | `root` | Backend | MySQL username |
+| `DB_PASSWORD` | `12345678` | Backend | MySQL password |
+| `JWT_SECRET` | (default key) | Backend | JWT signing key (change in prod!) |
+| `MAIL_HOST` | `smtp.gmail.com` | Backend | SMTP server |
+| `MAIL_PORT` | `587` | Backend | SMTP port |
+| `MAIL_USERNAME` | (empty) | Backend | Email sender address |
+| `MAIL_PASSWORD` | (empty) | Backend | Email app password |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173,...` | Backend | Allowed frontend origins |
+| `SPRING_PROFILES_ACTIVE` | `dev` | Backend | Active profile: `dev`, `docker`, `prod` |
+| `VITE_API_URL` | `http://localhost:8080` | Frontend | Backend API base URL |
+
+### Gmail SMTP Setup (for order confirmation emails)
+
+1. Go to https://myaccount.google.com/security
+2. Enable **2-Step Verification**
+3. Go to **App passwords** → Generate one for "Mail"
+4. Use the 16-character password as `MAIL_PASSWORD`
+
+---
+
+## 📖 Usage Guide
 
 ### Customer Flow
 
-1. **Browse Products**: Visit `/shop` to see the product catalog
-2. **Filter & Search**: Use category and price filters
-3. **View Details**: Click on any product for full details
-4. **Add to Cart**: Select size and add items to cart
-5. **Checkout**: Fill in shipping details
-6. **Payment**: Choose Card or bKash payment
-7. **Confirmation**: Receive order confirmation
+1. Visit `http://yourdomain.com/shop` to browse products
+2. Click any product to see details, hover to zoom, click to open lightbox
+3. Select size → **Add to Cart**
+4. Click cart icon → **Proceed to Checkout**
+5. Fill shipping details → Choose payment method → **Place Order**
+6. Receive order confirmation email ✉️
 
 ### Admin Flow
 
-1. **Login**: Navigate to `/admin-login`
-2. **Dashboard**: View analytics at `/admin`
-3. **Manage Users**: Access `/user-management`
-4. **View Orders**: Check `/orders`
-5. **Inventory**: Manage products at `/inventory`
-6. **Audit Logs**: Review activity at `/audit-logs`
+1. Navigate to `/admin-login`
+2. Login with admin credentials
+3. Access Dashboard, Orders, Inventory, Users, Audit Logs, Shipments
 
 ### Default Admin Credentials
 
 ```
-Email: admin@janesjeans.com
+Email:    admin@janesjeans.com
 Password: admin123
 ```
 
-⚠️ **Important**: Change these credentials immediately in production!
+⚠️ **Change these immediately in production!**
 
 ---
 
 ## 📚 API Documentation
 
-### Authentication Endpoints
+### Public Endpoints (No Auth Required)
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/auth/register` | Register new user | ❌ |
-| POST | `/api/auth/login` | User login | ❌ |
-| POST | `/api/auth/admin/login` | Admin login | ❌ |
-| POST | `/api/auth/refresh` | Refresh token | 🔄 |
-| GET | `/api/auth/validate` | Validate token | ✅ |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/shop/products` | List all shop products |
+| `GET` | `/api/shop/products/{id}` | Get product details |
+| `POST` | `/api/shop/check-stock` | Verify stock availability |
+| `POST` | `/api/shop/orders` | Place a guest order |
+| `POST` | `/api/auth/login` | User login |
+| `POST` | `/api/auth/admin/login` | Admin login |
+| `POST` | `/api/auth/register` | Register user |
+| `GET` | `/api/auth/validate` | Validate JWT token |
 
-### Product Endpoints
+### Protected Admin Endpoints (JWT Required)
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| GET | `/api/products` | List all products | ❌ |
-| GET | `/api/products/{id}` | Get product by ID | ❌ |
-| GET | `/api/products?category=JEANS` | Filter by category | ❌ |
-| GET | `/api/products?minPrice=20&maxPrice=100` | Filter by price | ❌ |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/products` | List all products (admin view) |
+| `POST` | `/api/products` | Create product |
+| `PUT` | `/api/products/{id}` | Update product |
+| `DELETE` | `/api/products/{id}` | Delete product |
+| `GET` | `/api/orders` | List all orders |
+| `PUT` | `/api/orders/{id}` | Update order |
+| `GET` | `/api/customers` | List customers |
+| `GET` | `/api/admin/users` | List users |
+| `POST` | `/api/admin/users/create-admin` | Create admin |
+| `GET` | `/api/audit-logs` | View audit logs |
+| `GET` | `/api/shipments` | List shipments |
+| `GET` | `/api/vendors` | List shipping vendors |
 
-### Order Endpoints
-
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/orders` | Create new order | ❌ |
-| GET | `/api/orders/{orderNumber}` | Get order details | ❌ |
-
-### Admin Endpoints
-
-| Method | Endpoint | Description | Role |
-|--------|----------|-------------|------|
-| GET | `/api/admin/users` | List all users | ADMIN |
-| GET | `/api/admin/users/{id}` | Get user by ID | ADMIN |
-| PUT | `/api/admin/users/{id}` | Update user | ADMIN |
-| PATCH | `/api/admin/users/{id}/role` | Change role | SUPER_ADMIN |
-| PATCH | `/api/admin/users/{id}/deactivate` | Deactivate user | ADMIN |
-| PATCH | `/api/admin/users/{id}/activate` | Activate user | ADMIN |
-| DELETE | `/api/admin/users/{id}` | Delete user | SUPER_ADMIN |
-| POST | `/api/admin/users/create-admin` | Create admin | SUPER_ADMIN |
-
-### Request/Response Examples
-
-#### Create Order
+### Example: Place a Guest Order
 
 ```bash
-curl -X POST http://localhost:8080/api/orders \
+curl -X POST http://localhost:8080/api/shop/orders \
   -H "Content-Type: application/json" \
   -d '{
     "items": [
       {
         "productId": "prod-001",
-        "productName": "Classic Cotton T-Shirt",
-        "size": "M",
-        "quantity": 2,
-        "price": 29.99
+        "productName": "Slim Fit Dark Wash",
+        "size": "32",
+        "quantity": 1,
+        "price": 89.99
       }
     ],
     "shipmentDetails": {
@@ -542,18 +796,8 @@ curl -X POST http://localhost:8080/api/orders \
     "payment": {
       "type": "CARD",
       "status": "SUCCESS"
-    }
-  }'
-```
-
-#### Admin Login
-
-```bash
-curl -X POST http://localhost:8080/api/auth/admin/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@janesjeans.com",
-    "password": "admin123"
+    },
+    "totalAmount": 89.99
   }'
 ```
 
@@ -561,211 +805,132 @@ curl -X POST http://localhost:8080/api/auth/admin/login \
 
 ## 🗄 Database Schema
 
-### Entity Relationship Diagram
+Liquibase automatically manages migrations. Tables are created on first backend startup.
 
 ```
 ┌──────────────────┐       ┌──────────────────┐
 │      users       │       │     products     │
 ├──────────────────┤       ├──────────────────┤
-│ id (PK)          │       │ id (PK)          │
+│ id (PK, UUID)    │       │ id (PK, UUID)    │
 │ email            │       │ name             │
 │ password         │       │ description      │
 │ first_name       │       │ price            │
-│ last_name        │       │ category         │
-│ role             │       │ sizes            │
-│ is_active        │       │ colors           │
+│ last_name        │       │ gender           │
+│ role             │       │ fit, size, wash  │
+│ is_active        │       │ stock_level      │
 │ created_at       │       │ image_url        │
-│ updated_at       │       │ in_stock         │
-└──────────────────┘       │ rating           │
-                           │ reviews          │
-                           └──────────────────┘
+└──────────────────┘       └──────────────────┘
 
 ┌──────────────────┐       ┌──────────────────┐
 │      orders      │       │   order_items    │
 ├──────────────────┤       ├──────────────────┤
-│ id (PK)          │───┐   │ id (PK)          │
-│ order_number     │   │   │ order_id (FK)    │──┐
-│ status           │   └──▶│ product_id       │  │
-│ total_amount     │       │ product_name     │  │
-│ payment_type     │       │ size             │  │
-│ payment_status   │       │ quantity         │  │
-│ created_at       │       │ price            │  │
-└────────┬─────────┘       └──────────────────┘  │
-         │                                        │
-         │  ┌──────────────────┐                 │
-         │  │ shipment_details │                 │
-         │  ├──────────────────┤                 │
-         └─▶│ id (PK)          │                 │
-            │ order_id (FK)    │◀────────────────┘
-            │ name             │
-            │ email            │
-            │ phone            │
-            │ address          │
-            │ city             │
-            │ postal_code      │
-            └──────────────────┘
+│ id (PK, UUID)    │       │ id (PK, UUID)    │
+│ customer_name    │       │ order_id (FK)    │
+│ customer_email   │       │ product_id       │
+│ status           │       │ product_name     │
+│ total_amount     │       │ size, quantity   │
+│ shipping_address │       │ price            │
+│ notes            │       └──────────────────┘
+│ order_date       │
+│ shipped_date     │
+│ delivered_date   │
+└──────────────────┘
+
+┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
+│    customers     │    │    shipments     │    │ shipping_vendors │
+├──────────────────┤    ├──────────────────┤    ├──────────────────┤
+│ id, name, email  │    │ id, order_id     │    │ id, name         │
+│ phone, address   │    │ tracking_number  │    │ contact, email   │
+│ city, country    │    │ vendor_id, status│    │ phone, website   │
+└──────────────────┘    └──────────────────┘    └──────────────────┘
 
 ┌──────────────────┐
 │    audit_logs    │
 ├──────────────────┤
-│ id (PK)          │
-│ action           │
+│ id, action       │
 │ entity_type      │
-│ entity_id        │
-│ user_id          │
 │ user_email       │
-│ details          │
-│ ip_address       │
+│ details, ip      │
 │ created_at       │
 └──────────────────┘
 ```
 
-### Enum Types
-
-```sql
--- User Roles
-CREATE TYPE user_role AS ENUM ('USER', 'ADMIN', 'SUPER_ADMIN');
-
--- Order Status
-CREATE TYPE order_status AS ENUM (
-  'PENDING', 'CONFIRMED', 'PROCESSING', 
-  'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED'
-);
-
--- Payment Type
-CREATE TYPE payment_type AS ENUM ('CARD', 'BKASH', 'CASH_ON_DELIVERY');
-
--- Payment Status
-CREATE TYPE payment_status AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED');
-
--- Product Category
-CREATE TYPE product_category AS ENUM ('TSHIRTS', 'HOODIES', 'JEANS');
-
--- Audit Action
-CREATE TYPE audit_action AS ENUM (
-  'LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'DELETE', 'VIEW', 'EXPORT'
-);
-```
-
 ---
 
-## 📚 Resources Used
+## 🔥 Troubleshooting
 
-### Documentation & Tutorials
+### Backend won't start
 
-- [React Documentation](https://react.dev/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Spring Boot Reference](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [shadcn/ui Components](https://ui.shadcn.com/)
-- [Docker Documentation](https://docs.docker.com/)
+```bash
+# Check if MySQL is running
+sudo systemctl status mysql
 
-### Libraries & Tools
+# Check if port 3306 is in use
+sudo lsof -i :3306
 
-- [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
-- [TanStack Query](https://tanstack.com/query/latest) - Powerful Data Synchronization
-- [React Hook Form](https://react-hook-form.com/) - Performant Form Library
-- [Zod](https://zod.dev/) - TypeScript-first Schema Validation
-- [Recharts](https://recharts.org/) - Composable Charting Library
-- [Lucide Icons](https://lucide.dev/) - Beautiful & Consistent Icons
-- [date-fns](https://date-fns.org/) - Modern JavaScript Date Utility
+# Check backend logs
+journalctl -u janesjeans -n 50
+# or
+java -jar app.jar 2>&1 | tail -50
+```
 
-### Design Resources
+### "Connection refused" to MySQL
 
-- [Radix UI Primitives](https://www.radix-ui.com/) - Unstyled, Accessible Components
-- [Heroicons](https://heroicons.com/) - Icon Set
-- [Tailwind UI](https://tailwindui.com/) - UI Component Inspiration
+```bash
+# Verify MySQL is listening on 3306
+sudo netstat -tlnp | grep 3306
+
+# Test MySQL connection
+mysql -u root -p -h localhost -P 3306 -e "SHOW DATABASES;"
+```
+
+### Frontend can't reach Backend API
+
+```bash
+# Check if backend is running on 8080
+curl http://localhost:8080/actuator/health
+
+# Verify VITE_API_URL in .env matches the backend URL
+cat .env | grep VITE_API_URL
+
+# Check CORS settings in application.yml
+# Make sure your frontend origin is listed in cors.allowed-origins
+```
+
+### Port already in use
+
+```bash
+# Find and kill process on port 8080
+sudo lsof -i :8080
+sudo kill -9 <PID>
+
+# Or change the backend port in application.yml:
+# server.port: 8081
+```
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'feat(cart): add quantity update'`
+4. Push: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-### Getting Started
-
-1. **Fork the repository**
-2. **Clone your fork**
-   ```bash
-   git clone https://github.com/your-username/janes-jeans.git
-   ```
-3. **Create a branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-4. **Make your changes**
-5. **Commit your changes**
-   ```bash
-   git commit -m 'Add some amazing feature'
-   ```
-6. **Push to your branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-7. **Open a Pull Request**
-
-### Coding Standards
-
-- Follow the existing code style
-- Write meaningful commit messages
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting
-
-### Commit Message Convention
+### Commit Convention
 
 ```
 type(scope): description
 
-[optional body]
-
-[optional footer]
+Types: feat, fix, docs, style, refactor, test, chore
 ```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
-Examples:
-```
-feat(cart): add quantity update functionality
-fix(auth): resolve token refresh issue
-docs(readme): update installation instructions
-```
-
-### Pull Request Process
-
-1. Update the README.md with details of changes if applicable
-2. Update the documentation with any new environment variables
-3. The PR will be merged once you have approval from maintainers
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2024 Jane's Jeans
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
 
 ---
 
