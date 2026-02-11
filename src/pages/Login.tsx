@@ -3,14 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Lock, Mail, Eye, EyeOff, LogIn, AlertCircle, UserPlus, User } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, LogIn, AlertCircle, UserPlus, User, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ApiError } from '@/types/auth';
 
 const loginSchema = z.object({
@@ -39,6 +39,7 @@ const Login = () => {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const isCheckoutReturn = from === '/shop/order-success';
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -104,6 +105,16 @@ const Login = () => {
         </CardHeader>
 
         <CardContent className="pt-4">
+          {isCheckoutReturn && (
+            <Alert className="mb-6 border-primary/50 bg-primary/5">
+              <ShoppingCart className="h-4 w-4" />
+              <AlertTitle>Complete your purchase</AlertTitle>
+              <AlertDescription>
+                Sign in or create an account to place your order. Your cart and shipping details have been saved.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {error && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-4 w-4" />

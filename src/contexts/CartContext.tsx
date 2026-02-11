@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 
 export interface CartItem {
   id: string;
@@ -41,14 +41,49 @@ interface CartContextType {
   setShipmentDetails: (details: ShipmentDetails) => void;
   setPaymentDetails: (details: PaymentDetails) => void;
   resetCheckout: () => void;
+  pendingCheckout: boolean;
+  setPendingCheckout: (pending: boolean) => void;
+}
+
+const CART_STORAGE_KEY = 'jj_cart_items';
+const SHIPMENT_STORAGE_KEY = 'jj_shipment_details';
+const PAYMENT_STORAGE_KEY = 'jj_payment_details';
+const PENDING_CHECKOUT_KEY = 'jj_pending_checkout';
+
+function loadFromStorage<T>(key: string): T | null {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveToStorage(key: string, value: unknown) {
+  try {
+    if (value === null || value === undefined) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  } catch {
+    // silent
+  }
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
-  const [shipmentDetails, setShipmentDetailsState] = useState<ShipmentDetails | null>(null);
-  const [paymentDetails, setPaymentDetailsState] = useState<PaymentDetails | null>(null);
+  const [items, setItems] = useState<CartItem[]>(() => loadFromStorage<CartItem[]>(CART_STORAGE_KEY) || []);
+  const [shipmentDetails, setShipmentDetailsState] = useState<ShipmentDetails | null>(() => loadFromStorage<ShipmentDetails>(SHIPMENT_STORAGE_KEY));
+  const [paymentDetails, setPaymentDetailsState] = useState<PaymentDetails | null>(() => loadFromStorage<PaymentDetails>(PAYMENT_STORAGE_KEY));
+  const [pendingCheckout, setPendingCheckoutState] = useState<boolean>(() => loadFromStorage<boolean>(PENDING_CHECKOUT_KEY) || false);
+
+  // Persist to localStorage on change
+  useEffect(() => { saveToStorage(CART_STORAGE_KEY, items); }, [items]);
+  useEffect(() => { saveToStorage(SHIPMENT_STORAGE_KEY, shipmentDetails); }, [shipmentDetails]);
+  useEffect(() => { saveToStorage(PAYMENT_STORAGE_KEY, paymentDetails); }, [paymentDetails]);
+  useEffect(() => { saveToStorage(PENDING_CHECKOUT_KEY, pendingCheckout); }, [pendingCheckout]);
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantity = 1) => {
     setItems(prev => {
@@ -96,10 +131,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setPaymentDetailsState(details);
   }, []);
 
+  const setPendingCheckout = useCallback((pending: boolean) => {
+    setPendingCheckoutState(pending);
+  }, []);
+
   const resetCheckout = useCallback(() => {
     setItems([]);
     setShipmentDetailsState(null);
     setPaymentDetailsState(null);
+    setPendingCheckoutState(false);
+    localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(SHIPMENT_STORAGE_KEY);
+    localStorage.removeItem(PAYMENT_STORAGE_KEY);
+    localStorage.removeItem(PENDING_CHECKOUT_KEY);
   }, []);
 
   return (
@@ -116,6 +160,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setShipmentDetails,
       setPaymentDetails,
       resetCheckout,
+      pendingCheckout,
+      setPendingCheckout,
     }}>
       {children}
     </CartContext.Provider>
