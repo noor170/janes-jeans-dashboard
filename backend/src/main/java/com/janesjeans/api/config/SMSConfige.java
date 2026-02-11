@@ -65,16 +65,21 @@ public class SMSConfige {
          */
         public String sendOtp(String phoneNumber) {
             String otp = generateOtp();
-            if (!props.isEnabled()) {
-                log.info("SMS disabled - OTP for {} is {} (not sent)", phoneNumber, otp);
-                return otp;
-            }
-
-            // Placeholder: integrate with an SMS provider (Twilio, SNS, etc.) here.
-            // Example (pseudo): twilioClient.messages.create(...)
-            log.info("Sending OTP {} to {} via provider {}", otp, phoneNumber, props.getProvider());
-
+            sendOtpWithMessage(phoneNumber, otp);
             return otp;
+        }
+
+        /**
+         * Send a provided OTP with a nicely formatted SMS message body.
+         */
+        public void sendOtpWithMessage(String phoneNumber, String otp) {
+            String msg = String.format("Jane's Jeans — Your verification code is %s. It expires in %d minutes. Thank you for shopping with us!", otp, props.getOtpTtlSeconds() / 60);
+            if (!props.isEnabled()) {
+                log.info("SMS disabled - would send to {}: {}", phoneNumber, msg);
+                return;
+            }
+            // Placeholder: integrate with SMS provider SDK here.
+            log.info("Sending SMS to {} via {}: {}", phoneNumber, props.getProvider(), msg);
         }
     }
 }

@@ -203,4 +203,25 @@ public class EmailService {
 
         return html;
     }
+
+    /**
+     * Build a concise OTP email used to verify order confirmation.
+     */
+    public String buildOtpEmailMessage(Order order, String orderNumber, String otp) {
+        String customer = order.getCustomerName() != null ? order.getCustomerName() : "Customer";
+        String html = "<!DOCTYPE html><html><head><meta charset='UTF-8'></head><body style='margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;'>" +
+            "<div style='max-width:600px;margin:24px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 8px 30px rgba(2,6,23,0.06);'>" +
+            "<div style='background:#0ea5a4;padding:28px;text-align:center;color:#fff;'><h2 style='margin:0;font-size:20px;'>Verify your order</h2></div>" +
+            "<div style='padding:24px;color:#374151;'>" +
+            "<p style='margin:0 0 12px;'>Hi " + customer + ",</p>" +
+            "<p style='margin:0 0 16px;color:#374151;'>To confirm your order <strong>" + orderNumber + "</strong>, please enter the verification code below. This code will expire in 5 minutes.</p>" +
+            "<div style='text-align:center;margin:18px 0;'><div style='display:inline-block;padding:16px 22px;background:#f1fdfb;border-radius:8px;font-size:22px;font-weight:700;color:#065f46;letter-spacing:4px;'>" + otp + "</div></div>" +
+            "<p style='color:#6b7280;font-size:13px;margin-top:12px;'>Order amount: <strong>$" + String.format("%.2f", order.getTotalAmount()) + "</strong></p>" +
+            "<hr style='border:none;border-top:1px solid #eef2f7;margin:18px 0;' />" +
+            "<p style='margin:0;font-size:13px;color:#6b7280;'>Shipping to:</p>" +
+            "<p style='margin:6px 0 0;color:#374151;font-size:14px;'>" + (order.getShippingAddress() != null ? order.getShippingAddress().replace(",","<br>") : "-") + "</p>" +
+            "<p style='margin-top:18px;color:#9ca3af;font-size:12px;'>If you did not request this code, please ignore this email.</p>" +
+            "</div></div></body></html>";
+        return html;
+    }
 }
