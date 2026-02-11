@@ -27,7 +27,7 @@ public class OrderOtpController {
         String to = body.phoneNumber();
         String method = body.method() == null ? "sms" : body.method();
         // default ttl 300s
-        String otp = otpService.requestOtp(id, to, 300, method);
+        String otp = otpService.requestOtp(id, to, 300, method, null);
         return ResponseEntity.accepted().body(Map.of("message", "OTP requested", "orderId", id, "method", method));
     }
 

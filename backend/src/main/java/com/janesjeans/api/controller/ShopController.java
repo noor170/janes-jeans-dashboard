@@ -272,6 +272,78 @@ public class ShopController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Initiate guest order with OTP confirmation", description = "Places a new order as pending verification and sends an OTP by SMS or email. Payment and shipment are created after OTP verification.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "202", description = "Order created and OTP sent"),
+        @ApiResponse(responseCode = "409", description = "Some items are out of stock", content = @Content)
+    })
+    @PostMapping("/orders/confirm-with-otp")
+    public ResponseEntity<?> confirmGuestOrderWithOtp(@RequestBody GuestOrderRequest request,
+                                                     @RequestParam(required = false) String method,
+                                                     @RequestParam(required = false) String contact) {
+        List<String> stockErrors = new ArrayList<>();
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            try {
+                Product product = productService.getProductById(item.getProductId());
+                if (product.getStockLevel() < item.getQuantity()) {
+                    stockErrors.add(String.format("%s: only %d available (requested %d)",
+                            item.getProductName(), product.getStockLevel(), item.getQuantity()));
+                }
+            } catch (Exception e) {
+                stockErrors.add(item.getProductName() + ": product not found");
+            }
+        }
+        if (!stockErrors.isEmpty()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Some items are out of stock");
+            error.put("stockErrors", stockErrors);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            Product product = productService.getProductById(item.getProductId());
+            product.setStockLevel(product.getStockLevel() - item.getQuantity());
+            productService.updateProduct(product.getId(), product);
+        }
+        String shippingAddress = String.format("%s, %s %s",
+                request.getShipmentDetails().getAddress(),
+                request.getShipmentDetails().getCity(),
+                request.getShipmentDetails().getPostalCode());
+        Order order = Order.builder()
+                .customerName(request.getShipmentDetails().getName())
+                .customerEmail(request.getShipmentDetails().getEmail())
+                .status("PendingVerification")
+                .totalAmount(request.getTotalAmount())
+                .shippingAddress(shippingAddress)
+                .notes("Payment: " + request.getPayment().getType() + " | Phone: " + request.getShipmentDetails().getPhone())
+                .items(new ArrayList<>())
+                .build();
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            OrderItem orderItem = OrderItem.builder()
+                    .productId(item.getProductId())
+                    .productName(item.getProductName())
+                    .size(item.getSize())
+                    .quantity(item.getQuantity())
+                    .price(item.getPrice())
+                    .build();
+            order.getItems().add(orderItem);
+        }
+        Order saved = orderService.createOrder(order);
+
+        String usedMethod = method == null ? "sms" : method;
+        String dest = contact;
+        if (dest == null) {
+            dest = "email".equalsIgnoreCase(usedMethod) ? request.getShipmentDetails().getEmail() : request.getShipmentDetails().getPhone();
+        }
+        otpService.requestOtp(saved.getId(), dest, 300, usedMethod, request);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", saved.getId());
+        response.put("status", saved.getStatus());
+        response.put("orderNumber", "ORD-" + saved.getId().substring(0, 8).toUpperCase());
+        response.put("message", "Order created and OTP sent");
+        return ResponseEntity.accepted().body(response);
+    }
+
     private ShopProductDTO buildShopProductDTO(List<Product> variants) {
         Product first = variants.get(0);
         List<String> sizes = variants.stream().map(Product::getSize).distinct().sorted().collect(Collectors.toList());

@@ -9,12 +9,24 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-
-@Service
+            this.phone = phone;
+            this.otp = otp;
+            this.expiresAt = expiresAt;
+            this.pendingRequest = pendingRequest;
+        }
+        public final com.janesjeans.api.dto.GuestOrderRequest pendingRequest;
+        public OtpEntry(String destination, String otp, long expiresAt, com.janesjeans.api.dto.GuestOrderRequest pendingRequest) {
+            this.destination = destination;
+            this.otp = otp;
+            this.expiresAt = expiresAt;
+            this.pendingRequest = pendingRequest;
+        }
 @RequiredArgsConstructor
 @Slf4j
 public class OtpService {
+    private final com.janesjeans.api.service.PaymentService paymentService;
+    private final com.janesjeans.api.service.ShipmentService shipmentService;
+    private final com.janesjeans.api.service.ShippingVendorService shippingVendorService;
 
     private final OrderService orderService;
     private final SMSConfige.SmsService smsService;
@@ -27,7 +39,7 @@ public class OtpService {
         public final String phone;
         public final String otp;
         public final long expiresAt;
-
+        store.put(orderId, new OtpEntry(normalized, otp, expiresAt, pendingRequest));
         public OtpEntry(String phone, String otp, long expiresAt) {
             this.phone = phone;
             this.otp = otp;
@@ -47,7 +59,7 @@ public class OtpService {
         String otp = smsService.generateOtp();
         long expiresAt = Instant.now().getEpochSecond() + Math.max(60, ttlSeconds);
         store.put(orderId, new OtpEntry(normalized, otp, expiresAt));
-
+        if (!entry.destination.equals(phoneNumber)) return false;
         String orderNumber = "ORD-" + order.getId().substring(0, Math.min(8, order.getId().length())).toUpperCase();
 
         if ("email".equalsIgnoreCase(method)) {
