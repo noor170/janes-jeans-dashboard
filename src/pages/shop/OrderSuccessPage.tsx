@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, Package, ArrowRight, Loader2, AlertTriangle, LogIn } from 'lucide-react';
+import { CheckCircle2, Package, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
 import { createGuestOrder, checkStockAvailability, GuestOrderResponse, StockCheckResult } from '@/lib/shopApi';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
   const navigate = useNavigate();
-  const { items, shipmentDetails, paymentDetails, getCartTotal, resetCheckout, setPendingCheckout } = useCart();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { items, shipmentDetails, paymentDetails, getCartTotal, resetCheckout } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCheckingStock, setIsCheckingStock] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -59,14 +57,6 @@ export default function OrderSuccessPage() {
   const grandTotal = total + shipping + tax;
 
   const handlePlaceOrder = async () => {
-    // Late authentication interceptor
-    if (!isAuthenticated) {
-      setPendingCheckout(true);
-      toast.info('Please sign in or create an account to complete your order.');
-      navigate('/login', { state: { from: { pathname: '/shop/order-success' } } });
-      return;
-    }
-
     setIsSubmitting(true);
     setStockIssues([]);
 
@@ -183,17 +173,6 @@ export default function OrderSuccessPage() {
         <CheckoutSteps currentStep={4} />
 
         <div className="max-w-3xl mx-auto mt-8">
-          {/* Auth notice for unauthenticated users */}
-          {!authLoading && !isAuthenticated && (
-            <Alert className="mb-6 border-primary/50 bg-primary/5">
-              <LogIn className="h-4 w-4" />
-              <AlertTitle>Sign in required to place order</AlertTitle>
-              <AlertDescription>
-                You'll be asked to sign in or create an account when you click "Place Order". Your cart and shipping details will be preserved.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {/* Stock warnings */}
           {stockIssues.length > 0 && (
             <Alert variant="destructive" className="mb-6">
@@ -302,11 +281,6 @@ export default function OrderSuccessPage() {
                   </>
                 ) : stockIssues.length > 0 ? (
                   'Update Cart to Continue'
-                ) : !isAuthenticated ? (
-                  <>
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Sign In & Place Order
-                  </>
                 ) : (
                   <>
                     Place Order
