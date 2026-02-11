@@ -3,6 +3,11 @@ package com.janesjeans.api.controller;
 import com.janesjeans.api.entity.Order;
 import com.janesjeans.api.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,36 +27,57 @@ public class OrderController {
     private final OrderService orderService;
 
     @Operation(summary = "List all orders")
+    @ApiResponse(responseCode = "200", description = "Orders retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Order.class))))
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     @Operation(summary = "Get order by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order found", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable String id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     @Operation(summary = "Create an order")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order created", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid order data", content = @Content)
+    })
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         return ResponseEntity.ok(orderService.createOrder(order));
     }
 
     @Operation(summary = "Update an order")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order updated", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable String id, @RequestBody Order order) {
         return ResponseEntity.ok(orderService.updateOrder(id, order));
     }
 
-    @Operation(summary = "Update order status")
+    @Operation(summary = "Update order status", description = "Body: {\"status\": \"Shipped\"}")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Status updated", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
+    })
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable String id, @RequestBody Map<String, String> body) {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, body.get("status")));
     }
 
     @Operation(summary = "Delete an order")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order deleted"),
+        @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
         orderService.deleteOrder(id);
