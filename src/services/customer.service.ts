@@ -4,7 +4,7 @@
  */
 
 import { CustomerDTO } from '@/types';
-import { apiGet, apiPost, apiPut, apiDelete } from './api.client';
+import { apiGet, apiPost, apiPut, apiDelete } from './util';
 
 const mapCustomer = (c: any): CustomerDTO => ({
   id: c.id,

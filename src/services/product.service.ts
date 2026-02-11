@@ -4,7 +4,7 @@
  */
 
 import { ProductDTO, GenderFilter } from '@/types';
-import { apiGet } from './api.client';
+import { apiGet } from './util';
 
 export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]> => {
   const params = gender !== 'All' ? `?gender=${gender}` : '';

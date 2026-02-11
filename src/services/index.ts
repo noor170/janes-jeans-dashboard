@@ -3,13 +3,13 @@
  * Central export point for all service layers.
  */
 
-// Core services
-export { jwtService } from './jwt.service';
+// Util layer (JWT, API client)
+export { jwtService, API_BASE_URL, getAuthHeaders, handleResponse, apiGet, apiPost, apiPut, apiPatch, apiDelete } from './util';
+
+// Domain services
 export { authService } from './auth.service';
 export { userService } from './user.service';
 export { auditService } from './audit.service';
-
-// Domain services
 export { fetchProducts } from './product.service';
 export { fetchOrders, fetchOrderById, createOrder, updateOrder, updateOrderStatus, deleteOrder } from './order.service';
 export { fetchCustomers, fetchCustomerById, createCustomer, updateCustomer, deleteCustomer } from './customer.service';
@@ -22,6 +22,3 @@ export {
   fetchShopProducts, fetchShopProductById, checkStockAvailability, createGuestOrder,
 } from './shop.service';
 export type { StockCheckItem, StockCheckResult, GuestOrderPayload, GuestOrderResponse } from './shop.service';
-
-// API client (for advanced usage)
-export { API_BASE_URL, getAuthHeaders, handleResponse, apiGet, apiPost, apiPut, apiPatch, apiDelete } from './api.client';

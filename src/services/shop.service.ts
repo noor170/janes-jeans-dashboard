@@ -4,7 +4,7 @@
  */
 
 import { ShopProduct } from '@/data/shopProducts';
-import { publicGet, publicPost, API_BASE_URL } from './api.client';
+import { publicGet, publicPost, API_BASE_URL } from './util';
 
 // ============= Types =============
 

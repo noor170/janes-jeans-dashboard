@@ -4,8 +4,7 @@
  */
 
 import { AuditLog, AuditLogFilters, PaginatedAuditLogs, CreateAuditLogRequest, AuditAction } from '@/types/auditLog';
-import { apiPost, API_BASE_URL, getAuthHeaders } from './api.client';
-import { jwtService } from './jwt.service';
+import { apiPost, API_BASE_URL, getAuthHeaders, jwtService } from './util';
 
 class AuditService {
   private getCurrentUser(): { id: string; email: string; name: string } | null {
