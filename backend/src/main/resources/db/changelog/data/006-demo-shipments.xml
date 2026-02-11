@@ -6,41 +6,26 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="data-006-demo-shipments" author="janesjeans" context="dev,docker">
-        <!-- Shipment for Order 1: Delivered -->
-        <insert tableName="shipments">
-            <column name="id" value="SHP001"/>
-            <column name="order_id" value="ORD001"/>
-            <column name="vendor_id" value="VND001"/>
-            <column name="tracking_number" value="PTH123456789"/>
-            <column name="status" value="delivered"/>
-            <column name="shipping_address" value="123 Main St, New York, NY 10001"/>
-            <column name="shipped_at" valueDate="2024-01-16T14:00:00"/>
-            <column name="estimated_delivery" valueDate="2024-01-19T18:00:00"/>
-            <column name="delivered_at" valueDate="2024-01-19T11:00:00"/>
-        </insert>
-        
-        <!-- Shipment for Order 2: In Transit -->
-        <insert tableName="shipments">
-            <column name="id" value="SHP002"/>
-            <column name="order_id" value="ORD002"/>
-            <column name="vendor_id" value="VND002"/>
-            <column name="tracking_number" value="STF987654321"/>
-            <column name="status" value="in_transit"/>
-            <column name="shipping_address" value="456 Oak Ave, Los Angeles, CA 90001"/>
-            <column name="shipped_at" valueDate="2024-01-19T09:00:00"/>
-            <column name="estimated_delivery" valueDate="2024-01-21T18:00:00"/>
-        </insert>
-        
-        <!-- Shipment for Order 3: Pending -->
-        <insert tableName="shipments">
-            <column name="id" value="SHP003"/>
-            <column name="order_id" value="ORD003"/>
-            <column name="vendor_id" value="VND001"/>
-            <column name="tracking_number" value="PTH456789123"/>
-            <column name="status" value="pending"/>
-            <column name="shipping_address" value="789 Pine Rd, Chicago, IL 60601"/>
-            <column name="estimated_delivery" valueDate="2024-01-25T18:00:00"/>
-        </insert>
+        <insert tableName="shipments"><column name="id" value="SHP001"/><column name="order_id" value="ORD001"/><column name="vendor_id" value="VND001"/><column name="tracking_number" value="PTH123456789"/><column name="status" value="delivered"/><column name="shipping_address" value="123 Main St, New York, NY 10001"/><column name="shipped_at" valueDate="2024-01-16T14:00:00"/><column name="estimated_delivery" valueDate="2024-01-19T18:00:00"/><column name="delivered_at" valueDate="2024-01-19T11:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP002"/><column name="order_id" value="ORD002"/><column name="vendor_id" value="VND002"/><column name="tracking_number" value="STF987654321"/><column name="status" value="in_transit"/><column name="shipping_address" value="456 Oak Ave, Los Angeles, CA 90001"/><column name="shipped_at" valueDate="2024-01-19T09:00:00"/><column name="estimated_delivery" valueDate="2024-01-21T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP003"/><column name="order_id" value="ORD003"/><column name="vendor_id" value="VND001"/><column name="tracking_number" value="PTH456789123"/><column name="status" value="pending"/><column name="shipping_address" value="789 Pine Rd, Chicago, IL 60601"/><column name="estimated_delivery" valueDate="2024-01-25T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP004"/><column name="order_id" value="ORD007"/><column name="vendor_id" value="VND003"/><column name="tracking_number" value="RDX111222333"/><column name="status" value="delivered"/><column name="shipping_address" value="999 Birch Blvd, San Antonio, TX 78201"/><column name="shipped_at" valueDate="2024-01-11T10:00:00"/><column name="estimated_delivery" valueDate="2024-01-15T18:00:00"/><column name="delivered_at" valueDate="2024-01-14T15:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP005"/><column name="order_id" value="ORD008"/><column name="vendor_id" value="VND005"/><column name="tracking_number" value="SUN444555666"/><column name="status" value="in_transit"/><column name="shipping_address" value="111 Spruce Way, San Diego, CA 92101"/><column name="shipped_at" valueDate="2024-01-20T08:30:00"/><column name="estimated_delivery" valueDate="2024-01-25T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP006"/><column name="order_id" value="ORD010"/><column name="vendor_id" value="VND010"/><column name="tracking_number" value="FDX777888999"/><column name="status" value="delivered"/><column name="shipping_address" value="333 Ash Ave, San Jose, CA 95101"/><column name="shipped_at" valueDate="2024-01-08T16:00:00"/><column name="estimated_delivery" valueDate="2024-01-10T18:00:00"/><column name="delivered_at" valueDate="2024-01-10T12:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP007"/><column name="order_id" value="ORD012"/><column name="vendor_id" value="VND008"/><column name="tracking_number" value="ECR101112131"/><column name="status" value="in_transit"/><column name="shipping_address" value="555 Hickory Ln, Jacksonville, FL 32099"/><column name="shipped_at" valueDate="2024-01-18T15:00:00"/><column name="estimated_delivery" valueDate="2024-01-20T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP008"/><column name="order_id" value="ORD013"/><column name="vendor_id" value="VND006"/><column name="tracking_number" value="SAP141516171"/><column name="status" value="delivered"/><column name="shipping_address" value="666 Cypress Ct, Fort Worth, TX 76101"/><column name="shipped_at" valueDate="2024-01-06T09:00:00"/><column name="estimated_delivery" valueDate="2024-01-10T18:00:00"/><column name="delivered_at" valueDate="2024-01-09T14:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP009"/><column name="order_id" value="ORD015"/><column name="vendor_id" value="VND011"/><column name="tracking_number" value="DHL181920212"/><column name="status" value="delivered"/><column name="shipping_address" value="999 Sequoia Dr, San Francisco, CA 94101"/><column name="shipped_at" valueDate="2024-01-12T17:00:00"/><column name="estimated_delivery" valueDate="2024-01-15T18:00:00"/><column name="delivered_at" valueDate="2024-01-15T10:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP010"/><column name="order_id" value="ORD017"/><column name="vendor_id" value="VND012"/><column name="tracking_number" value="UPS222324252"/><column name="status" value="in_transit"/><column name="shipping_address" value="200 Olive Ave, Seattle, WA 98101"/><column name="shipped_at" valueDate="2024-01-20T11:00:00"/><column name="estimated_delivery" valueDate="2024-01-23T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP011"/><column name="order_id" value="ORD019"/><column name="vendor_id" value="VND007"/><column name="tracking_number" value="CNT262728293"/><column name="status" value="delivered"/><column name="shipping_address" value="400 Cherry Ln, Nashville, TN 37201"/><column name="shipped_at" valueDate="2024-01-08T09:00:00"/><column name="estimated_delivery" valueDate="2024-01-11T18:00:00"/><column name="delivered_at" valueDate="2024-01-11T16:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP012"/><column name="order_id" value="ORD006"/><column name="vendor_id" value="VND002"/><column name="tracking_number" value="STF303132333"/><column name="status" value="pending"/><column name="shipping_address" value="888 Cedar Ln, Philadelphia, PA 19101"/><column name="estimated_delivery" valueDate="2024-01-24T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP013"/><column name="order_id" value="ORD011"/><column name="vendor_id" value="VND009"/><column name="tracking_number" value="DLV343536373"/><column name="status" value="pending"/><column name="shipping_address" value="444 Poplar Dr, Austin, TX 73301"/><column name="estimated_delivery" valueDate="2024-01-26T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP014"/><column name="order_id" value="ORD014"/><column name="vendor_id" value="VND013"/><column name="tracking_number" value="ARX383940414"/><column name="status" value="pending"/><column name="shipping_address" value="888 Redwood Blvd, Charlotte, NC 28201"/><column name="estimated_delivery" valueDate="2024-01-28T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP015"/><column name="order_id" value="ORD018"/><column name="vendor_id" value="VND014"/><column name="tracking_number" value="BLD424344454"/><column name="status" value="pending"/><column name="shipping_address" value="300 Peach Rd, Denver, CO 80201"/><column name="estimated_delivery" valueDate="2024-01-25T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP016"/><column name="order_id" value="ORD004"/><column name="vendor_id" value="VND017"/><column name="tracking_number" value="JNT464748495"/><column name="status" value="pending"/><column name="shipping_address" value="321 Elm St, Houston, TX 77001"/><column name="estimated_delivery" valueDate="2024-01-26T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP017"/><column name="order_id" value="ORD005"/><column name="vendor_id" value="VND018"/><column name="tracking_number" value="NJV505152535"/><column name="status" value="pending"/><column name="shipping_address" value="555 Maple Dr, Phoenix, AZ 85001"/><column name="estimated_delivery" valueDate="2024-01-27T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP018"/><column name="order_id" value="ORD009"/><column name="vendor_id" value="VND015"/><column name="tracking_number" value="DTC545556575"/><column name="status" value="pending"/><column name="shipping_address" value="222 Walnut St, Dallas, TX 75201"/><column name="estimated_delivery" valueDate="2024-01-27T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP019"/><column name="order_id" value="ORD016"/><column name="vendor_id" value="VND019"/><column name="tracking_number" value="GLS585960616"/><column name="status" value="pending"/><column name="shipping_address" value="100 Palm St, Indianapolis, IN 46201"/><column name="estimated_delivery" valueDate="2024-01-28T18:00:00"/></insert>
+        <insert tableName="shipments"><column name="id" value="SHP020"/><column name="order_id" value="ORD020"/><column name="vendor_id" value="VND020"/><column name="tracking_number" value="RML626364656"/><column name="status" value="pending"/><column name="shipping_address" value="333 Ash Ave, San Jose, CA 95101"/><column name="estimated_delivery" valueDate="2024-01-29T18:00:00"/></insert>
     </changeSet>
 
 </databaseChangeLog>

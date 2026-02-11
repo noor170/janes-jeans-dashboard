@@ -1,1 +1,17 @@
+
 /Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/JanesJeansApplication.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/repository/UserRepository.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/exception/GlobalExceptionHandler.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/SecurityConfig.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/dto/AuthResponse.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/entity/Role.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/controller/AuthController.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/UserDetailsServiceImpl.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/CorsConfig.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/JanesJeansApplication.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/dto/LoginRequest.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/service/JwtService.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/config/JwtAuthenticationFilter.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/entity/User.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/service/AuthService.java
+/Users/macbookairm1/Documents/GitHub/janes-jeans-dashboard/backend/src/main/java/com/janesjeans/api/dto/UserDTO.java
