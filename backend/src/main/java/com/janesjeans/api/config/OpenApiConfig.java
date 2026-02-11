@@ -5,6 +5,50 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+        final String securitySchemeName = "bearerAuth";
+
+        Components components = new Components()
+                .addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                )
+                .addResponses("BadRequest", new ApiResponse().description("Bad Request"))
+                .addResponses("Unauthorized", new ApiResponse().description("Unauthorized"))
+                .addResponses("Forbidden", new ApiResponse().description("Forbidden"))
+                .addResponses("NotFound", new ApiResponse().description("Not Found"))
+                .addResponses("InternalError", new ApiResponse().description("Internal Server Error"));
+
+        return new OpenAPI()
+                .components(components)
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .info(new Info()
+                        .title("Jane's Jeans API")
+                        .version("1.0.0")
+                        .description("API documentation for Jane's Jeans backend (includes response details).")
+                        .contact(new Contact().name("Jane's Jeans API Team").email("devops@janesjeans.com"))
+                        .license(new License().name("MIT"))
+                );
+    }
+}
+package com.janesjeans.api.config;
+
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;

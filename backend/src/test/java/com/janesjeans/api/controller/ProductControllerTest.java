@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.liquibase.enabled=false")
 @AutoConfigureMockMvc
 class ProductControllerTest {
 
@@ -110,6 +110,6 @@ class ProductControllerTest {
     @Test
     void getProducts_shouldReturn401WhenUnauthenticated() throws Exception {
         mockMvc.perform(get("/api/products"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 }

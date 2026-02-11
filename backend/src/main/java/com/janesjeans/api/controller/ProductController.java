@@ -50,12 +50,13 @@ public class ProductController {
 
     @Operation(summary = "Create a product")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Product created", content = @Content(schema = @Schema(implementation = Product.class))),
+        @ApiResponse(responseCode = "201", description = "Product created", content = @Content(schema = @Schema(implementation = Product.class))),
         @ApiResponse(responseCode = "400", description = "Invalid product data", content = @Content)
     })
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.createProduct(product));
+        Product created = productService.createProduct(product);
+        return ResponseEntity.status(201).body(created);
     }
 
     @Operation(summary = "Update a product")
