@@ -9,6 +9,10 @@ import com.janesjeans.api.entity.Product;
 import com.janesjeans.api.service.EmailService;
 import com.janesjeans.api.service.OrderService;
 import com.janesjeans.api.service.ProductService;
+import com.janesjeans.api.service.PaymentService;
+import com.janesjeans.api.service.ShipmentService;
+import com.janesjeans.api.service.ShippingVendorService;
+import com.janesjeans.api.entity.Shipment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,6 +39,9 @@ public class ShopController {
     private final ProductService productService;
     private final OrderService orderService;
     private final EmailService emailService;
+    private final PaymentService paymentService;
+    private final ShipmentService shipmentService;
+    private final ShippingVendorService shippingVendorService;
 
     @Operation(summary = "List shop products", description = "Returns all products grouped by name with aggregated sizes. Optionally filter by category.")
     @ApiResponses({
@@ -155,6 +162,103 @@ public class ShopController {
         Order saved = orderService.createOrder(order);
         String orderNumber = "ORD-" + saved.getId().substring(0, 8).toUpperCase();
         log.info("Guest order created: {} ({})", saved.getId(), orderNumber);
+        emailService.sendOrderConfirmationAsync(saved, orderNumber);
+        GuestOrderResponse response = GuestOrderResponse.builder()
+                .id(saved.getId())
+                .orderNumber(orderNumber)
+                .status(saved.getStatus())
+                .totalAmount(saved.getTotalAmount())
+                .customerName(saved.getCustomerName())
+                .customerEmail(saved.getCustomerEmail())
+                .createdAt(saved.getCreatedAt())
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Confirm guest order (save order + payment + shipment)", description = "Places a new order as a guest and persists order, payment and shipment records")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Order confirmed", content = @Content(schema = @Schema(implementation = GuestOrderResponse.class))),
+        @ApiResponse(responseCode = "409", description = "Some items are out of stock", content = @Content)
+    })
+    @PostMapping("/orders/confirm")
+    public ResponseEntity<?> confirmGuestOrder(@RequestBody GuestOrderRequest request) {
+        List<String> stockErrors = new ArrayList<>();
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            try {
+                Product product = productService.getProductById(item.getProductId());
+                if (product.getStockLevel() < item.getQuantity()) {
+                    stockErrors.add(String.format("%s: only %d available (requested %d)",
+                            item.getProductName(), product.getStockLevel(), item.getQuantity()));
+                }
+            } catch (Exception e) {
+                stockErrors.add(item.getProductName() + ": product not found");
+            }
+        }
+        if (!stockErrors.isEmpty()) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Some items are out of stock");
+            error.put("stockErrors", stockErrors);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        }
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            Product product = productService.getProductById(item.getProductId());
+            product.setStockLevel(product.getStockLevel() - item.getQuantity());
+            productService.updateProduct(product.getId(), product);
+        }
+        String shippingAddress = String.format("%s, %s %s",
+                request.getShipmentDetails().getAddress(),
+                request.getShipmentDetails().getCity(),
+                request.getShipmentDetails().getPostalCode());
+        Order order = Order.builder()
+                .customerName(request.getShipmentDetails().getName())
+                .customerEmail(request.getShipmentDetails().getEmail())
+                .status("Confirmed")
+                .totalAmount(request.getTotalAmount())
+                .shippingAddress(shippingAddress)
+                .notes("Payment: " + request.getPayment().getType() + " | Phone: " + request.getShipmentDetails().getPhone())
+                .items(new ArrayList<>())
+                .build();
+        for (GuestOrderRequest.GuestOrderItem item : request.getItems()) {
+            OrderItem orderItem = OrderItem.builder()
+                    .productId(item.getProductId())
+                    .productName(item.getProductName())
+                    .size(item.getSize())
+                    .quantity(item.getQuantity())
+                    .price(item.getPrice())
+                    .build();
+            order.getItems().add(orderItem);
+        }
+        Order saved = orderService.createOrder(order);
+
+        // persist payment
+        com.janesjeans.api.entity.Payment payment = com.janesjeans.api.entity.Payment.builder()
+                .orderId(saved.getId())
+                .amount(request.getTotalAmount())
+                .method(request.getPayment() != null ? request.getPayment().getType() : "unknown")
+                .status(request.getPayment() != null ? request.getPayment().getStatus() : "PENDING")
+                .notes("Guest checkout")
+                .build();
+        paymentService.createPayment(payment);
+
+        // choose a shipping vendor if available
+        String vendorId = null;
+        try {
+            var vendors = shippingVendorService.getAllVendors();
+            if (!vendors.isEmpty()) vendorId = vendors.get(0).getId();
+        } catch (Exception ignored) {}
+
+        Shipment shipment = Shipment.builder()
+                .orderId(saved.getId())
+                .vendorId(vendorId != null ? vendorId : "")
+                .trackingNumber("")
+                .status("pending")
+                .shippingAddress(shippingAddress)
+                .notes(request.getShipmentDetails().getPhone())
+                .build();
+        shipmentService.createShipment(shipment);
+
+        String orderNumber = "ORD-" + saved.getId().substring(0, 8).toUpperCase();
+        log.info("Guest order confirmed: {} ({})", saved.getId(), orderNumber);
         emailService.sendOrderConfirmationAsync(saved, orderNumber);
         GuestOrderResponse response = GuestOrderResponse.builder()
                 .id(saved.getId())
