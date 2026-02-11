@@ -4,7 +4,7 @@
  */
 
 import { ShippingVendorDTO, ShipmentDTO, ShipmentStatus } from '@/types';
-import { apiGet, apiPost, apiPut, apiDelete, API_BASE_URL, getAuthHeaders } from './api.client';
+import { apiGet, apiPost, apiPut, apiDelete, API_BASE_URL, getAuthHeaders } from './util';
 
 // ============= MAPPERS =============
 

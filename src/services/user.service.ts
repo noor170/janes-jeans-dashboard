@@ -4,7 +4,7 @@
  */
 
 import { UserDTO, UserRole } from '@/types/auth';
-import { apiGet, apiPost, apiPut, apiPatch, apiDelete, API_BASE_URL, getAuthHeaders } from './api.client';
+import { apiGet, apiPost, apiPut, apiPatch, apiDelete, API_BASE_URL, getAuthHeaders } from './util';
 
 class UserService {
   async getAllUsers(): Promise<UserDTO[]> {

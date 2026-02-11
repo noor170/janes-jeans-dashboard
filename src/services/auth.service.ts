@@ -4,8 +4,7 @@
  */
 
 import { AuthResponse, LoginRequest, RegisterRequest } from '@/types/auth';
-import { jwtService } from './jwt.service';
-import { API_BASE_URL, handleResponse, getAuthHeaders } from './api.client';
+import { jwtService, API_BASE_URL, handleResponse, getAuthHeaders } from './util';
 
 class AuthService {
   async register(request: RegisterRequest): Promise<AuthResponse> {

@@ -4,7 +4,7 @@
  */
 import { authService } from '@/services/auth.service';
 import { userService } from '@/services/user.service';
-import { jwtService } from '@/services/jwt.service';
+import { jwtService } from '@/services/util';
 import { AuthResponse, LoginRequest, RegisterRequest, UserDTO, UserRole } from '@/types/auth';
 
 /**
