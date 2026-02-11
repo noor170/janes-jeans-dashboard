@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { GenderFilterProvider } from "@/contexts/GenderFilterContext";
@@ -63,7 +63,7 @@ const App = () => (
                       {/* Protected Dashboard Routes - Requires Authentication */}
                       <Route element={<ProtectedRoute />}>
                         <Route element={<DashboardLayout />}>
-                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/orders" element={<Orders />} />
                           <Route path="/customers" element={<Customers />} />
@@ -83,6 +83,7 @@ const App = () => (
                         </Route>
                       </Route>
                       
+                      <Route path="/" element={<Navigate to="/shop" replace />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </CartProvider>
