@@ -43,9 +43,9 @@ export function ProductCard({ product }: ProductCardProps) {
           <img
             src={product.images[0]}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
           />
-          <Badge className="absolute top-2 left-2" variant="secondary">
+          <Badge className="absolute top-2 left-2 z-10" variant="secondary">
             {getCategoryLabel(product.category)}
           </Badge>
         </div>
