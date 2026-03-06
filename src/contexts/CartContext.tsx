@@ -20,10 +20,7 @@ export interface ShipmentDetails {
 }
 
 export interface PaymentDetails {
-  type: 'card' | 'bkash';
-  cardNumber?: string;
-  expiryDate?: string;
-  cvv?: string;
+  type: 'bkash' | 'nagad';
   bkashNumber?: string;
   transactionId?: string;
 }
