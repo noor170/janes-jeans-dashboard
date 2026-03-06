@@ -109,6 +109,33 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_categories: {
+        Row: {
+          created_at: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          icon?: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       shop_customers: {
         Row: {
           city: string
@@ -151,11 +178,13 @@ export type Database = {
           id: string
           images: string[]
           in_stock: boolean
+          metadata: Json | null
           name: string
           price: number
           rating: number
           reviews: number
           sizes: string[]
+          subcategory: string | null
         }
         Insert: {
           category?: string
@@ -165,11 +194,13 @@ export type Database = {
           id: string
           images?: string[]
           in_stock?: boolean
+          metadata?: Json | null
           name: string
           price: number
           rating?: number
           reviews?: number
           sizes?: string[]
+          subcategory?: string | null
         }
         Update: {
           category?: string
@@ -179,13 +210,50 @@ export type Database = {
           id?: string
           images?: string[]
           in_stock?: boolean
+          metadata?: Json | null
           name?: string
           price?: number
           rating?: number
           reviews?: number
           sizes?: string[]
+          subcategory?: string | null
         }
         Relationships: []
+      }
+      shop_subcategories: {
+        Row: {
+          category_id: string
+          created_at: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number | null
+        }
+        Insert: {
+          category_id: string
+          created_at?: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order?: number | null
+        }
+        Update: {
+          category_id?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_subcategories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "shop_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
