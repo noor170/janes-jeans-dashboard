@@ -88,19 +88,7 @@ export const fetchShopProducts = async (category?: string): Promise<ShopProduct[
   }
   const { data, error } = await query;
   if (error) throw error;
-  return (data || []).map((p: any) => ({
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    price: Number(p.price),
-    category: p.category,
-    sizes: p.sizes || [],
-    colors: p.colors || [],
-    images: p.images || ['/placeholder.svg'],
-    inStock: p.in_stock ?? true,
-    rating: Number(p.rating) || 4.5,
-    reviews: p.reviews || 0,
-  }));
+  return (data || []).map(mapShopProduct);
 };
 
 export const fetchShopProductById = async (id: string): Promise<ShopProduct | null> => {
