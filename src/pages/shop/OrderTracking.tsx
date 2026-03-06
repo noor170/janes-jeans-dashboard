@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 
 const trackingSchema = z.object({
   orderNumber: z.string().min(1, 'Order number is required'),
-  email: z.string().email('Invalid email address'),
 });
 
 type TrackingData = z.infer<typeof trackingSchema>;
