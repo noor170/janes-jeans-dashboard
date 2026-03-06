@@ -36,6 +36,10 @@ Deno.serve(async (req) => {
 
     const body: OrderEmailRequest = await req.json();
     const { customerName, customerEmail, orderNumber, items, totalAmount, shippingAddress, shippingCity, paymentType } = body;
+    
+    // Derive site URL from request origin or use a default
+    const origin = req.headers.get('origin') || req.headers.get('referer') || '';
+    const siteUrl = origin ? new URL(origin).origin : 'https://denim-dash-toggle.lovable.app';
 
     const itemsHtml = items.map(item => `
       <tr>
