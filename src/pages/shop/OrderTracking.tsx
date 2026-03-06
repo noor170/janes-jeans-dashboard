@@ -67,7 +67,6 @@ export default function OrderTracking() {
         .from('orders')
         .select('*')
         .eq('order_number', data.orderNumber)
-        .eq('customer_email', data.email)
         .maybeSingle();
 
       if (error) throw error;
