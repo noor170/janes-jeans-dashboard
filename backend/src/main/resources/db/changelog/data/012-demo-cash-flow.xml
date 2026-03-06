@@ -83,7 +83,7 @@
             <column name="type" value="EXPENSE"/>
             <column name="category" value="Marketing"/>
             <column name="amount" valueNumeric="1800.00"/>
-            <column name="description" value="Facebook & Instagram ads – March"/>
+            <column name="description" value="Facebook &amp; Instagram ads – March"/>
             <column name="payment_method" value="Card"/>
             <column name="status" value="PENDING"/>
             <column name="transaction_date" valueDate="2025-03-10T00:00:00"/>
