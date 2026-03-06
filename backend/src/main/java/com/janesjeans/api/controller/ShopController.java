@@ -2,6 +2,7 @@ package com.janesjeans.api.controller;
 
 import com.janesjeans.api.dto.GuestOrderRequest;
 import com.janesjeans.api.dto.GuestOrderResponse;
+import com.janesjeans.api.dto.PaginatedCatalogResponse;
 import com.janesjeans.api.dto.ShopCategoryDTO;
 import com.janesjeans.api.dto.ShopProductDTO;
 import com.janesjeans.api.dto.ShopProductDetailDTO;
