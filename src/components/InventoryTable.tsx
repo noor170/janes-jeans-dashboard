@@ -374,12 +374,13 @@ const InventoryTable = () => {
                     {language === 'en' ? 'Discount' : 'ডিসকাউন্ট'}
                   </SortableHeader>
                 </TableHead>
+                <TableHead className="text-right">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagination.paginatedItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                   <TableCell colSpan={10} className="h-24 text-center text-muted-foreground">
                     {t('noData')}
                   </TableCell>
                 </TableRow>
