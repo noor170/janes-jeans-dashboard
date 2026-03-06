@@ -27,7 +27,7 @@ const bkashSchema = z.object({
 
 export default function PaymentPage() {
   const navigate = useNavigate();
-  const { items, shipmentDetails, setPaymentDetails, getCartTotal } = useCart();
+  const { items, shipmentDetails, setPaymentDetails, getCartTotal, appliedCoupon } = useCart();
   const [paymentType, setPaymentType] = useState<'card' | 'bkash'>('card');
 
   const cardForm = useForm({
@@ -56,9 +56,10 @@ export default function PaymentPage() {
   };
 
   const total = getCartTotal();
+  const couponDiscount = appliedCoupon?.discount ?? 0;
   const shipping = total > 100 ? 0 : 9.99;
-  const tax = total * 0.08;
-  const grandTotal = total + shipping + tax;
+  const tax = (total - couponDiscount) * 0.08;
+  const grandTotal = total - couponDiscount + shipping + tax;
 
   return (
     <div className="min-h-screen bg-background">
@@ -261,6 +262,12 @@ export default function PaymentPage() {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-primary">
+                      <span>Coupon ({appliedCoupon?.code})</span>
+                      <span>-${couponDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
                     <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
