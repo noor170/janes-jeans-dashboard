@@ -219,7 +219,7 @@ export default function OrderSuccessPage() {
                           <p className="text-sm text-muted-foreground">Size: {item.size} x {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-medium">৳{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
