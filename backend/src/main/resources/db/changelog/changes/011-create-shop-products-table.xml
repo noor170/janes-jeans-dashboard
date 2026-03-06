@@ -21,9 +21,15 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subcategory" type="VARCHAR(100)" defaultValue=""/>
+<<<<<<< Updated upstream
             <column name="sizes" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
             <column name="colors" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
             <column name="images" type="TEXT[]" defaultValueComputed="'{/placeholder.svg}'::text[]"/>
+=======
+            <column name="sizes" type="TEXT[]" defaultValueComputed="ARRAY[]::TEXT[]"/>
+            <column name="colors" type="TEXT[]" defaultValueComputed="ARRAY[]::TEXT[]"/>
+            <column name="images" type="TEXT[]" defaultValue="'{/placeholder.svg}'"/>
+>>>>>>> Stashed changes
             <column name="in_stock" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
