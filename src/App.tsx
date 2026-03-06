@@ -41,6 +41,8 @@ import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
 import ShopRegister from "./pages/shop/ShopRegister";
 import OrderTracking from "./pages/shop/OrderTracking";
 import ResetPassword from "./pages/shop/ResetPassword";
+import MyOrders from "./pages/shop/MyOrders";
+import SetPassword from "./pages/shop/SetPassword";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -66,6 +68,8 @@ const App = () => (
                       <Route path="/shop/register" element={<ShopRegister />} />
                       <Route path="/shop/track-order" element={<OrderTracking />} />
                       <Route path="/shop/reset-password" element={<ResetPassword />} />
+                      <Route path="/shop/my-orders" element={<MyOrders />} />
+                      <Route path="/shop/set-password" element={<SetPassword />} />
                       <Route path="/shop" element={<ShoppingDashboard />} />
                       <Route path="/shop/product/:productId" element={<ProductDetails />} />
                       <Route path="/shop/cart" element={<CartPage />} />

@@ -344,7 +344,9 @@ export default function ShopRegister() {
           </Tabs>
 
           <div className="mt-4 text-center space-y-2">
-            <Link to="/shop/track-order" className="text-sm text-primary hover:underline block">📦 Track Your Order</Link>
+            <Link to="/shop/my-orders" className="text-sm text-primary hover:underline block">📦 My Orders</Link>
+            <Link to="/shop/track-order" className="text-sm text-primary hover:underline block">🔍 Track Your Order</Link>
+            <Link to="/shop/set-password" className="text-sm text-primary hover:underline block">🔐 Activate Account (Set Password)</Link>
             <Link to="/shop" className="text-sm text-muted-foreground">← Back to Shop</Link>
           </div>
         </CardContent>
