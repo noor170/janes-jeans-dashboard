@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-007-shop-categories" author="janesjeans" context="dev,docker">
+        <insert tableName="shop_categories"><column name="id" value="jeans"/><column name="name" value="Jeans"/><column name="slug" value="jeans"/><column name="icon" value="Shirt"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="leather-bags"/><column name="name" value="Leather Bags"/><column name="slug" value="leather-bags"/><column name="icon" value="ShoppingBag"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="skincare"/><column name="name" value="Skin Care"/><column name="slug" value="skincare"/><column name="icon" value="Droplets"/><column name="sort_order" valueNumeric="3"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="haircare"/><column name="name" value="Hair Care"/><column name="slug" value="haircare"/><column name="icon" value="Scissors"/><column name="sort_order" valueNumeric="4"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="cosmetics"/><column name="name" value="Cosmetics"/><column name="slug" value="cosmetics"/><column name="icon" value="Palette"/><column name="sort_order" valueNumeric="5"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="jewelry"/><column name="name" value="Jewelry"/><column name="slug" value="jewelry"/><column name="icon" value="Gem"/><column name="sort_order" valueNumeric="6"/></insert>
+        <insert tableName="shop_categories"><column name="id" value="undergarments"/><column name="name" value="Undergarments"/><column name="slug" value="undergarments"/><column name="icon" value="Heart"/><column name="sort_order" valueNumeric="7"/></insert>
+    </changeSet>
+
+</databaseChangeLog>

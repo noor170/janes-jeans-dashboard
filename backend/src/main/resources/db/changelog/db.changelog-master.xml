@@ -14,6 +14,9 @@
     <include file="db/changelog/changes/006-create-shipping-vendors-table.xml"/>
     <include file="db/changelog/changes/007-create-shipments-table.xml"/>
     <include file="db/changelog/changes/008-create-audit-logs-table.xml"/>
+    <include file="db/changelog/changes/009-create-shop-categories-table.xml"/>
+    <include file="db/changelog/changes/010-create-shop-subcategories-table.xml"/>
+    <include file="db/changelog/changes/011-create-shop-products-table.xml"/>
     
     <!-- Demo Data -->
     <include file="db/changelog/data/001-demo-users.xml"/>
@@ -22,5 +25,8 @@
     <include file="db/changelog/data/004-demo-shipping-vendors.xml"/>
     <include file="db/changelog/data/005-demo-orders.xml"/>
     <include file="db/changelog/data/006-demo-shipments.xml"/>
+    <include file="db/changelog/data/007-shop-categories.xml"/>
+    <include file="db/changelog/data/008-shop-subcategories.xml"/>
+    <include file="db/changelog/data/009-shop-products.xml"/>
 
 </databaseChangeLog>
