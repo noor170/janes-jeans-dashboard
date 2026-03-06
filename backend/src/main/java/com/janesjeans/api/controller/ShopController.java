@@ -65,21 +65,41 @@ public class ShopController {
         return ResponseEntity.ok(dtos);
     }
 
-    @Operation(summary = "List shop catalog products", description = "Returns products from the shop_products table with JSONB metadata. Optionally filter by category and subcategory.")
+    @Operation(summary = "Search & browse shop catalog", description = "Paginated, searchable, filterable product listing from shop_products table. Supports sorting by price, name, rating, reviews, created_at.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Paginated products", content = @Content(schema = @Schema(implementation = PaginatedCatalogResponse.class)))
+    })
     @GetMapping("/catalog")
-    public ResponseEntity<List<ShopProductDetailDTO>> getCatalogProducts(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String subcategory) {
-        List<ShopProduct> products;
-        if (category != null && subcategory != null) {
-            products = shopCatalogService.getShopProductsByCategoryAndSub(category, subcategory);
-        } else if (category != null && !"all".equals(category)) {
-            products = shopCatalogService.getShopProductsByCategory(category);
-        } else {
-            products = shopCatalogService.getAllShopProducts();
-        }
-        List<ShopProductDetailDTO> dtos = products.stream().map(this::toDetailDTO).collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<PaginatedCatalogResponse> getCatalogProducts(
+            @RequestParam(required = false) @Schema(description = "Filter by category slug", example = "skincare") String category,
+            @RequestParam(required = false) @Schema(description = "Filter by subcategory slug", example = "serums") String subcategory,
+            @RequestParam(required = false) @Schema(description = "Search by name or description", example = "vitamin") String search,
+            @RequestParam(required = false) @Schema(description = "Filter by stock availability") Boolean inStock,
+            @RequestParam(required = false) @Schema(description = "Minimum price", example = "10") java.math.BigDecimal minPrice,
+            @RequestParam(required = false) @Schema(description = "Maximum price", example = "100") java.math.BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") @Schema(description = "Page number (0-based)", example = "0") int page,
+            @RequestParam(defaultValue = "12") @Schema(description = "Page size", example = "12") int size,
+            @RequestParam(defaultValue = "createdAt") @Schema(description = "Sort field: name, price, rating, reviews, createdAt", example = "price") String sortBy,
+            @RequestParam(defaultValue = "desc") @Schema(description = "Sort direction: asc or desc", example = "asc") String sortDir) {
+
+        org.springframework.data.domain.Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? org.springframework.data.domain.Sort.by(sortBy).ascending()
+                : org.springframework.data.domain.Sort.by(sortBy).descending();
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+
+        org.springframework.data.domain.Page<ShopProduct> resultPage =
+                shopCatalogService.searchCatalog(category, subcategory, inStock, minPrice, maxPrice, search, pageable);
+
+        PaginatedCatalogResponse response = PaginatedCatalogResponse.builder()
+                .content(resultPage.getContent().stream().map(this::toDetailDTO).collect(Collectors.toList()))
+                .page(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .totalElements(resultPage.getTotalElements())
+                .totalPages(resultPage.getTotalPages())
+                .last(resultPage.isLast())
+                .first(resultPage.isFirst())
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get shop catalog product by ID", description = "Returns a single product from shop_products with full metadata")
