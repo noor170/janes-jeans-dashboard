@@ -98,19 +98,7 @@ export const fetchShopProductById = async (id: string): Promise<ShopProduct | nu
     .eq('id', id)
     .maybeSingle();
   if (error || !data) return null;
-  return {
-    id: data.id,
-    name: data.name,
-    description: data.description,
-    price: Number(data.price),
-    category: data.category,
-    sizes: data.sizes || [],
-    colors: data.colors || [],
-    images: data.images || ['/placeholder.svg'],
-    inStock: data.in_stock ?? true,
-    rating: Number(data.rating) || 4.5,
-    reviews: data.reviews || 0,
-  };
+  return mapShopProduct(data);
 };
 
 export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {
