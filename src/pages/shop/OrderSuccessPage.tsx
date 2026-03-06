@@ -9,6 +9,7 @@ import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
 import { useShopCustomer } from '@/contexts/ShopCustomerContext';
 import { createGuestOrder, checkStockAvailability, GuestOrderResponse, StockCheckResult } from '@/lib/shopApi';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
