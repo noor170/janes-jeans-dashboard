@@ -22,10 +22,13 @@
             </column>
             <column name="subcategory" type="VARCHAR(100)" defaultValue=""/>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <column name="sizes" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
             <column name="colors" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
             <column name="images" type="TEXT[]" defaultValueComputed="'{/placeholder.svg}'::text[]"/>
 =======
+=======
+>>>>>>> Stashed changes
             <column name="sizes" type="TEXT[]" defaultValueComputed="ARRAY[]::TEXT[]"/>
             <column name="colors" type="TEXT[]" defaultValueComputed="ARRAY[]::TEXT[]"/>
             <column name="images" type="TEXT[]" defaultValue="'{/placeholder.svg}'"/>
