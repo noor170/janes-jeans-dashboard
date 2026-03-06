@@ -64,6 +64,8 @@ const App = () => (
                       
                       {/* Shop Routes */}
                       <Route path="/shop/register" element={<ShopRegister />} />
+                      <Route path="/shop/track-order" element={<OrderTracking />} />
+                      <Route path="/shop/reset-password" element={<ResetPassword />} />
                       <Route path="/shop" element={<ShoppingDashboard />} />
                       <Route path="/shop/product/:productId" element={<ProductDetails />} />
                       <Route path="/shop/cart" element={<CartPage />} />
