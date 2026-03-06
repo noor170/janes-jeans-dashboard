@@ -611,7 +611,7 @@ const Analytics = () => {
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব']}
+                    formatter={(value: number) => [`৳${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব']}
                   />
                   <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>

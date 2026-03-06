@@ -52,7 +52,7 @@ const SalesChart = () => {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                formatter={(value: number) => [`৳${value.toLocaleString()}`, '']}
               />
               <Legend />
               {(genderFilter === 'All' || genderFilter === 'Men') && (

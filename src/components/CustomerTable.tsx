@@ -93,7 +93,7 @@ const CustomerTable = () => {
       customer.email,
       customer.phone,
       customer.totalOrders,
-      `$${customer.totalSpent.toFixed(2)}`,
+      `৳${customer.totalSpent.toFixed(2)}`,
       new Date(customer.createdAt).toLocaleDateString(),
       customer.status,
     ]);
