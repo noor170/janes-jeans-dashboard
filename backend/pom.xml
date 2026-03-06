@@ -20,7 +20,6 @@
         <java.version>17</java.version>
         <jjwt.version>0.11.5</jjwt.version>
         <lombok.version>1.18.26</lombok.version>
-        <liquibase.version>4.20.0</liquibase.version>
     </properties>
     
     <dependencies>
@@ -61,7 +60,6 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase.version}</version>
         </dependency>
         
         <!-- JWT -->
@@ -146,25 +144,6 @@
                         </exclude>
                     </excludes>
                 </configuration>
-            </plugin>
-            <!-- Liquibase Maven Plugin -->
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase.version}</version>
-                <configuration>
-                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
-                    <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
-                    <verbose>true</verbose>
-                    <logging>INFO</logging>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>42.7.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

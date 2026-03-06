@@ -19,11 +19,6 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
-    contexts: dev,docker
-    label-filter: production-ready
-    drop-first: false
-    database-change-log-table: DATABASECHANGELOG
-    database-change-log-lock-table: DATABASECHANGELOGLOCK
   
   # Mail Configuration
   mail:
@@ -93,9 +88,9 @@ cors:
 ---
 # Development Profile
 spring:
-  # config:
-  #   activate:
-  #     on-profile: dev
+  config:
+    activate:
+      on-profile: dev
   
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:janesjeans}
