@@ -21,9 +21,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="subcategory" type="VARCHAR(100)" defaultValue=""/>
-            <column name="sizes" type="TEXT[]" defaultValue="'{}'"/>
-            <column name="colors" type="TEXT[]" defaultValue="'{}'"/>
-            <column name="images" type="TEXT[]" defaultValue="'{/placeholder.svg}'"/>
+            <column name="sizes" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
+            <column name="colors" type="TEXT[]" defaultValueComputed="'{}'::text[]"/>
+            <column name="images" type="TEXT[]" defaultValueComputed="'{/placeholder.svg}'::text[]"/>
             <column name="in_stock" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
