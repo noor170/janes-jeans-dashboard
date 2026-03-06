@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { ShopCategory } from '@/data/shopProducts';
-import { Briefcase, Droplets, Scissors, Palette, Gem, Heart, Shirt, Package } from 'lucide-react';
+import { Briefcase, Droplets, Scissors, Palette, Gem, Heart, Shirt, Package, Zap } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
-  Briefcase, Droplets, Scissors, Palette, Gem, Heart, Shirt, Package,
+  Briefcase, Droplets, Scissors, Palette, Gem, Heart, Shirt, Package, Zap,
 };
 
 interface CategoryNavProps {
