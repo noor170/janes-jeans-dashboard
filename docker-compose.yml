@@ -33,11 +33,11 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - DB_HOST=mysql
-      - DB_PORT=3306
+      - DB_HOST=postgres
+      - DB_PORT=5432
       - DB_NAME=janesjeans
-      - DB_USERNAME=${DB_USERNAME:-root}
-      - DB_PASSWORD=${DB_PASSWORD:-root}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - JWT_SECRET=${JWT_SECRET:-your-256-bit-secret-key-here-make-it-long-and-secure-at-least-32-chars}
       - MAIL_HOST=${MAIL_HOST:-smtp.gmail.com}
       - MAIL_PORT=${MAIL_PORT:-587}
@@ -47,7 +47,7 @@ services:
     networks:
       - janes-jeans-network
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
@@ -56,43 +56,42 @@ services:
       retries: 5
       start_period: 60s
 
-  # MySQL Database
-  mysql:
-    image: mysql:8.0
-    container_name: janes-jeans-mysql
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: janes-jeans-postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
-      - MYSQL_DATABASE=janesjeans
+      - POSTGRES_USER=${DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=janesjeans
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - janes-jeans-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-root}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d janesjeans"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
-  # phpMyAdmin (Optional - for database management)
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: janes-jeans-phpmyadmin
+  # pgAdmin (Optional - for database management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: janes-jeans-pgadmin
     ports:
       - "5050:80"
     environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@janesjeans.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
     restart: unless-stopped
     networks:
       - janes-jeans-network
     depends_on:
-      - mysql
+      - postgres
     profiles:
       - tools
 
@@ -101,5 +100,5 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  postgres_data:
     driver: local
