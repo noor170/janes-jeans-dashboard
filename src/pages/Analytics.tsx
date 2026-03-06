@@ -351,7 +351,7 @@ const Analytics = () => {
         />
         <KPICard
           title={language === 'en' ? 'Avg Order Value' : 'গড় অর্ডার মূল্য'}
-          value={`$${orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0}`}
+          value={`৳${orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0}`}
           change={8.1}
           changeLabel={vsLastMonth}
           icon={Target}
