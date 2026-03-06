@@ -2,13 +2,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { GenderFilterProvider } from "@/contexts/GenderFilterContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
+import { ShopCustomerProvider } from "@/contexts/ShopCustomerContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
@@ -20,6 +21,7 @@ import ShippingVendors from "./pages/ShippingVendors";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import AdminLogin from "./pages/AdminLogin";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
@@ -32,7 +34,7 @@ import CartPage from "./pages/shop/CartPage";
 import CheckoutPage from "./pages/shop/CheckoutPage";
 import PaymentPage from "./pages/shop/PaymentPage";
 import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
-
+import ShopRegister from "./pages/shop/ShopRegister";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -45,14 +47,17 @@ const App = () => (
               <NotificationProvider>
                 <AuthProvider>
                   <CartProvider>
+                    <ShopCustomerProvider>
                     <Toaster />
                     <Sonner />
                     <Routes>
                       {/* Public Routes */}
                       <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
                       <Route path="/admin/login" element={<AdminLogin />} />
                       
-                      {/* Shop Routes (Guest Checkout - No Auth Required) */}
+                      {/* Shop Routes */}
+                      <Route path="/shop/register" element={<ShopRegister />} />
                       <Route path="/shop" element={<ShoppingDashboard />} />
                       <Route path="/shop/product/:productId" element={<ProductDetails />} />
                       <Route path="/shop/cart" element={<CartPage />} />
@@ -63,7 +68,7 @@ const App = () => (
                       {/* Protected Dashboard Routes - Requires Authentication */}
                       <Route element={<ProtectedRoute />}>
                         <Route element={<DashboardLayout />}>
-                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/dashboard" element={<Dashboard />} />
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/orders" element={<Orders />} />
                           <Route path="/customers" element={<Customers />} />
@@ -83,8 +88,10 @@ const App = () => (
                         </Route>
                       </Route>
                       
+                      <Route path="/" element={<Navigate to="/shop" replace />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
+                    </ShopCustomerProvider>
                   </CartProvider>
                 </AuthProvider>
               </NotificationProvider>

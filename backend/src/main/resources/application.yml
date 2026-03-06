@@ -63,6 +63,23 @@ logging:
     root: INFO
     com.janesjeans: DEBUG
     org.springframework.security: INFO
+    
+# SMS Configuration (used by SMSConfige)
+sms:
+  provider: log
+  enabled: false
+  fromNumber: "+10000000000"
+  otpLength: 6
+  otpTtlSeconds: 300
+
+# SpringDoc / Swagger UI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
 
 # CORS Configuration
 cors:
@@ -86,6 +103,7 @@ spring:
   
   liquibase:
     contexts: dev
+    enabled: false
 
 ---
 # Docker Profile

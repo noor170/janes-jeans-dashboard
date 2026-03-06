@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { AuthUser, LoginRequest } from '@/types/auth';
+import { AuthUser, LoginRequest, RegisterRequest } from '@/types/auth';
 import { authApi } from '@/lib/authApi';
 import { auditLogService } from '@/lib/auditLogService';
 
@@ -8,6 +8,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
+  register: (request: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshAuth: () => Promise<void>;
 }
@@ -26,7 +27,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (isValid) {
           setUser(storedUser);
         } else {
-          // Try to refresh the token
           try {
             const refreshed = await authApi.refreshToken();
             setUser(refreshed.user);
@@ -50,13 +50,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [initAuth]);
 
   const login = async (credentials: LoginRequest) => {
-    // Use regular login for all users - backend will validate role appropriately
     const response = await authApi.login(credentials);
     setUser(response.user);
-    // Log successful login after user is set
     setTimeout(() => {
       auditLogService.logAction({ action: 'USER_LOGIN' });
     }, 100);
+  };
+
+  const register = async (request: RegisterRequest) => {
+    const response = await authApi.register(request);
+    setUser(response.user);
   };
 
   const logout = () => {
@@ -81,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         isLoading,
         login,
+        register,
         logout,
         refreshAuth,
       }}
