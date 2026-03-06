@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGenderFilter } from '@/contexts/GenderFilterContext';
 import { fetchProducts } from '@/lib/api';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createProduct, updateProduct, deleteProduct } from '@/services/product.service';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { ProductDTO } from '@/types';
 import {
   Table,
@@ -17,12 +18,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Download, Edit, X, Upload } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Search, Download, Edit, X, Upload, Plus, Trash2, Pencil } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
 import SortableHeader from './SortableHeader';
 import ProductQuickViewDialog from './ProductQuickViewDialog';
+import ProductFormDialog from './ProductFormDialog';
 import BulkEditDialog from './BulkEditDialog';
 import ImportCsvDialog from './ImportCsvDialog';
 import { exportToCsv } from '@/lib/exportCsv';
@@ -38,7 +44,28 @@ const InventoryTable = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductDTO | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<ProductDTO | null>(null);
 
+  const createMutation = useMutation({
+    mutationFn: (data: Partial<ProductDTO>) => createProduct(data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product created'); setIsProductFormOpen(false); },
+    onError: () => toast.error('Failed to create product'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<ProductDTO> }) => updateProduct(id, data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product updated'); setIsProductFormOpen(false); },
+    onError: () => toast.error('Failed to update product'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product deleted'); setDeleteDialogOpen(false); },
+    onError: () => toast.error('Failed to delete product'),
+  });
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products', genderFilter],
     queryFn: () => fetchProducts(genderFilter),
@@ -225,6 +252,13 @@ const InventoryTable = () => {
               <Download className="h-4 w-4" />
               {t('export')}
             </Button>
+            <Button
+              onClick={() => { setEditingProduct(null); setIsProductFormOpen(true); }}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {language === 'en' ? 'Add Product' : 'পণ্য যোগ করুন'}
+            </Button>
           </div>
         </div>
 
@@ -340,12 +374,13 @@ const InventoryTable = () => {
                     {language === 'en' ? 'Discount' : 'ডিসকাউন্ট'}
                   </SortableHeader>
                 </TableHead>
+                <TableHead className="text-right">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagination.paginatedItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                   <TableCell colSpan={10} className="h-24 text-center text-muted-foreground">
                     {t('noData')}
                   </TableCell>
                 </TableRow>
@@ -450,6 +485,16 @@ const InventoryTable = () => {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
+                    <TableCell className="text-right" onClick={e => e.stopPropagation()}>
+                      <div className="flex justify-end gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingProduct(product); setIsProductFormOpen(true); }}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => { setProductToDelete(product); setDeleteDialogOpen(true); }}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -483,6 +528,41 @@ const InventoryTable = () => {
         open={isQuickViewOpen}
         onOpenChange={setIsQuickViewOpen}
       />
+
+      {/* Product Create/Edit Dialog */}
+      <ProductFormDialog
+        product={editingProduct}
+        open={isProductFormOpen}
+        onOpenChange={setIsProductFormOpen}
+        onSubmit={(data) => {
+          if (editingProduct) {
+            updateMutation.mutate({ id: editingProduct.id, data });
+          } else {
+            createMutation.mutate(data);
+          }
+        }}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{language === 'en' ? 'Delete Product' : 'পণ্য মুছুন'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {language === 'en' 
+                ? `Are you sure you want to delete "${productToDelete?.name}"? This cannot be undone.`
+                : `আপনি কি "${productToDelete?.name}" মুছতে চান? এটি পূর্বাবস্থায় ফেরানো যাবে না।`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{language === 'en' ? 'Cancel' : 'বাতিল'}</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground" onClick={() => productToDelete && deleteMutation.mutate(productToDelete.id)}>
+              {language === 'en' ? 'Delete' : 'মুছুন'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Bulk Edit Dialog */}
       <BulkEditDialog

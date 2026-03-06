@@ -29,6 +29,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Coupons from "./pages/Coupons";
 import CashFlow from "./pages/CashFlow";
+import ProductReturns from "./pages/ProductReturns";
 // Shop pages
 import ShoppingDashboard from "./pages/shop/ShoppingDashboard";
 import ProductDetails from "./pages/shop/ProductDetails";
@@ -77,6 +78,7 @@ const App = () => (
                           <Route path="/shipments" element={<Shipments />} />
                           <Route path="/shipping-vendors" element={<ShippingVendors />} />
                           <Route path="/coupons" element={<Coupons />} />
+                          <Route path="/returns" element={<ProductReturns />} />
                           <Route path="/cash-flow" element={<CashFlow />} />
                           <Route path="/analytics" element={<Analytics />} />
                           <Route path="/settings" element={<Settings />} />

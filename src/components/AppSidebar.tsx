@@ -12,6 +12,7 @@ import {
   BarChart3,
   Ticket,
   DollarSign,
+  RotateCcw,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/customers', icon: Users, label: t('customers') },
     { path: '/shipments', icon: Truck, label: language === 'en' ? 'Shipments' : 'শিপমেন্ট' },
     { path: '/shipping-vendors', icon: Building2, label: language === 'en' ? 'Vendors' : 'ভেন্ডর' },
+    { path: '/returns', icon: RotateCcw, label: language === 'en' ? 'Returns' : 'রিটার্ন' },
     { path: '/coupons', icon: Ticket, label: language === 'en' ? 'Coupons' : 'কুপন' },
     { path: '/cash-flow', icon: DollarSign, label: language === 'en' ? 'Cash Flow' : 'ক্যাশ ফ্লো' },
     { path: '/analytics', icon: BarChart3, label: t('analytics') },

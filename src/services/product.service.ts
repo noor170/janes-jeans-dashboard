@@ -4,7 +4,7 @@
  */
 
 import { ProductDTO, GenderFilter } from '@/types';
-import { apiGet } from './util';
+import { apiGet, apiPost, apiPut, apiDelete } from './util';
 
 export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]> => {
   const params = gender !== 'All' ? `?gender=${gender}` : '';
@@ -24,4 +24,16 @@ export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]>
     offerStart: p.offerStart,
     offerEnd: p.offerEnd,
   }));
+};
+
+export const createProduct = async (product: Partial<ProductDTO>): Promise<ProductDTO> => {
+  return apiPost<ProductDTO>('/api/products', product);
+};
+
+export const updateProduct = async (id: string, product: Partial<ProductDTO>): Promise<ProductDTO> => {
+  return apiPut<ProductDTO>(`/api/products/${id}`, product);
+};
+
+export const deleteProduct = async (id: string): Promise<boolean> => {
+  return apiDelete(`/api/products/${id}`);
 };
