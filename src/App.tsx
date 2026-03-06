@@ -27,6 +27,8 @@ import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import Coupons from "./pages/Coupons";
+import CashFlow from "./pages/CashFlow";
 // Shop pages
 import ShoppingDashboard from "./pages/shop/ShoppingDashboard";
 import ProductDetails from "./pages/shop/ProductDetails";
