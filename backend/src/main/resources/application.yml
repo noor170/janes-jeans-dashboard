@@ -19,6 +19,11 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+    contexts: dev,docker
+    label-filter: production-ready
+    drop-first: false
+    database-change-log-table: DATABASECHANGELOG
+    database-change-log-lock-table: DATABASECHANGELOGLOCK
   
   # Mail Configuration
   mail:

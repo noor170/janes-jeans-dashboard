@@ -16,6 +16,11 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+    contexts: dev,docker
+    label-filter: dev,docker
+    drop-first: false
+    database-change-log-table: DATABASECHANGELOG
+    database-change-log-lock-table: DATABASECHANGELOGLOCK
   
   # Mail Configuration
   mail:
@@ -99,8 +104,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   
   liquibase:
-    contexts: dev
+    contexts: dev,docker
     enabled: true
+    label-filter: dev,docker
+    drop-first: false
 
 ---
 # Docker Profile

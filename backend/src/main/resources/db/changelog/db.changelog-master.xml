@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <!-- Schema Changes -->
+    <!-- Schema Changes - Tables -->
     <include file="db/changelog/changes/001-create-users-table.xml"/>
     <include file="db/changelog/changes/002-create-products-table.xml"/>
     <include file="db/changelog/changes/003-create-customers-table.xml"/>
@@ -17,12 +17,14 @@
     <include file="db/changelog/changes/009-create-shop-categories-table.xml"/>
     <include file="db/changelog/changes/010-create-shop-subcategories-table.xml"/>
     <include file="db/changelog/changes/011-create-shop-products-table.xml"/>
+    
+    <!-- Schema Changes - Modifications (MUST run before data inserts) -->
     <include file="db/changelog/changes/012-add-discount-fields-to-products.xml"/>
     <include file="db/changelog/changes/013-create-coupons-table.xml"/>
     <include file="db/changelog/changes/014-create-cash-flow-table.xml"/>
     <include file="db/changelog/changes/015-create-product-returns-table.xml"/>
     
-    <!-- Demo Data -->
+    <!-- Demo Data - All data inserts run AFTER schema changes -->
     <include file="db/changelog/data/001-demo-users.xml"/>
     <include file="db/changelog/data/002-demo-products.xml"/>
     <include file="db/changelog/data/003-demo-customers.xml"/>
