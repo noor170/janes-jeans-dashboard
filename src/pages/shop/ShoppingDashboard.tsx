@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft, Loader2, AlertTriangle, ShieldCheck, Package, Search, X } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Loader2, AlertTriangle, ShieldCheck, Package, Search, X, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ProductCard } from '@/components/shop/ProductCard';
