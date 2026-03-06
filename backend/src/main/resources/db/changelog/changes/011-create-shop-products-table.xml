@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="011-create-shop-products-table" author="janesjeans">
+        <createTable tableName="shop_products">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT" defaultValue=""/>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(50)" defaultValue="jeans">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subcategory" type="VARCHAR(100)" defaultValue=""/>
+            <column name="sizes" type="TEXT[]" defaultValue="'{}'"/>
+            <column name="colors" type="TEXT[]" defaultValue="'{}'"/>
+            <column name="images" type="TEXT[]" defaultValue="'{/placeholder.svg}'"/>
+            <column name="in_stock" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="DECIMAL(3,1)" defaultValueNumeric="4.5">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reviews" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="JSONB" defaultValue="'{}'"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="shop_products" indexName="idx_shop_products_category">
+            <column name="category"/>
+        </createIndex>
+
+        <createIndex tableName="shop_products" indexName="idx_shop_products_subcategory">
+            <column name="subcategory"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
