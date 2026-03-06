@@ -151,3 +151,25 @@ export interface CashFlowSummary {
   totalExpense: number;
   netCashFlow: number;
 }
+
+// ProductReturnDTO
+export interface ProductReturnDTO {
+  id: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  customerName: string;
+  customerEmail?: string;
+  quantity: number;
+  reason: string;
+  description: string;
+  status: 'PENDING' | 'RECEIVED' | 'APPROVED' | 'REJECTED' | 'COMPLETED';
+  refundAmount?: number;
+  refundStatus: 'NONE' | 'PENDING' | 'PROCESSED' | 'FAILED';
+  restock: boolean;
+  notes?: string;
+  requestedAt: string;
+  resolvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
