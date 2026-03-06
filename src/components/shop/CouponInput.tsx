@@ -27,7 +27,7 @@ export function CouponInput({ orderTotal }: CouponInputProps) {
         discountValue: result.discountValue,
       };
       setAppliedCoupon(coupon);
-      toast.success(`Coupon "${coupon.code}" applied! You save $${coupon.discount.toFixed(2)}`);
+      toast.success(`Coupon "${coupon.code}" applied! You save ৳${coupon.discount.toFixed(2)}`);
       setCode('');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid coupon code';
