@@ -262,6 +262,12 @@ export default function PaymentPage() {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-primary">
+                      <span>Coupon ({appliedCoupon?.code})</span>
+                      <span>-${couponDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
                     <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>

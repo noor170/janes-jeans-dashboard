@@ -192,22 +192,31 @@ export default function CheckoutPage() {
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="border-t pt-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>${total.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                    <span>Total</span>
-                    <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                <div className="border-t pt-4 space-y-3">
+                  <CouponInput orderTotal={total} />
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                    {couponDiscount > 0 && (
+                      <div className="flex justify-between text-primary">
+                        <span>Coupon ({appliedCoupon?.code})</span>
+                        <span>-${couponDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tax</span>
+                      <span>${tax.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                      <span>Total</span>
+                      <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
