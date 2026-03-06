@@ -12,6 +12,7 @@ import {
   BarChart3,
   Ticket,
   DollarSign,
+  RotateCcw,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
