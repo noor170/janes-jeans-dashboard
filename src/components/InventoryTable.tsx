@@ -331,6 +331,15 @@ const InventoryTable = () => {
                     {t('stockLevel')}
                   </SortableHeader>
                 </TableHead>
+                <TableHead className="text-right">
+                  <SortableHeader
+                    sortDirection={getSortDirection('discountPercent')}
+                    onClick={() => requestSort('discountPercent')}
+                    className="justify-end"
+                  >
+                    {language === 'en' ? 'Discount' : 'ডিসকাউন্ট'}
+                  </SortableHeader>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
