@@ -13,6 +13,7 @@ import {
   Ticket,
   DollarSign,
   RotateCcw,
+  QrCode,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
