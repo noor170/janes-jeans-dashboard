@@ -147,15 +147,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setPendingCheckoutState(pending);
   }, []);
 
+  const setAppliedCoupon = useCallback((coupon: AppliedCoupon | null) => {
+    setAppliedCouponState(coupon);
+  }, []);
+
   const resetCheckout = useCallback(() => {
     setItems([]);
     setShipmentDetailsState(null);
     setPaymentDetailsState(null);
     setPendingCheckoutState(false);
+    setAppliedCouponState(null);
     localStorage.removeItem(CART_STORAGE_KEY);
     localStorage.removeItem(SHIPMENT_STORAGE_KEY);
     localStorage.removeItem(PAYMENT_STORAGE_KEY);
     localStorage.removeItem(PENDING_CHECKOUT_KEY);
+    localStorage.removeItem(COUPON_STORAGE_KEY);
   }, []);
 
   return (
