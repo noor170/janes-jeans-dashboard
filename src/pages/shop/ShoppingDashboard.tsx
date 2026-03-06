@@ -155,7 +155,14 @@ export default function ShoppingDashboard() {
               <h1 className="text-xl font-bold">Jane's Boutique</h1>
             </div>
           </div>
-          <CartIcon />
+          <div className="flex items-center gap-2">
+            <Link to="/shop/my-orders">
+              <Button variant="ghost" size="icon" title="My Orders">
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
+            <CartIcon />
+          </div>
         </div>
       </header>
 
