@@ -146,7 +146,7 @@ export default function OrderSuccessPage() {
                 <Separator />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span className="text-primary">${Number(orderResponse.totalAmount).toFixed(2)}</span>
+                  <span className="text-primary">৳{Number(orderResponse.totalAmount).toFixed(2)}</span>
                 </div>
               </CardContent>
             </Card>
