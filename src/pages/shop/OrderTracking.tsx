@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 
 const trackingSchema = z.object({
   orderNumber: z.string().min(1, 'Order number is required'),
-  email: z.string().email('Invalid email address'),
 });
 
 type TrackingData = z.infer<typeof trackingSchema>;
@@ -55,7 +54,7 @@ export default function OrderTracking() {
 
   const form = useForm<TrackingData>({
     resolver: zodResolver(trackingSchema),
-    defaultValues: { orderNumber: '', email: '' },
+    defaultValues: { orderNumber: '' },
   });
 
   const onSubmit = async (data: TrackingData) => {
@@ -68,7 +67,6 @@ export default function OrderTracking() {
         .from('orders')
         .select('*')
         .eq('order_number', data.orderNumber)
-        .eq('customer_email', data.email)
         .maybeSingle();
 
       if (error) throw error;
@@ -112,7 +110,7 @@ export default function OrderTracking() {
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" /> Find Your Order
             </CardTitle>
-            <CardDescription>Enter your order number and email to check the status</CardDescription>
+            <CardDescription>Enter your order number to check the status</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -122,15 +120,6 @@ export default function OrderTracking() {
                     <FormLabel>Order Number</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="e.g. ORD-XXXXXX" disabled={isLoading} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )} />
-                <FormField control={form.control} name="email" render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} type="email" placeholder="you@example.com" disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
