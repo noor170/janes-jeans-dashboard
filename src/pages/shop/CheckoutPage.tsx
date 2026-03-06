@@ -47,9 +47,10 @@ export default function CheckoutPage() {
   };
 
   const total = getCartTotal();
+  const couponDiscount = appliedCoupon?.discount ?? 0;
   const shipping = total > 100 ? 0 : 9.99;
-  const tax = total * 0.08;
-  const grandTotal = total + shipping + tax;
+  const tax = (total - couponDiscount) * 0.08;
+  const grandTotal = total - couponDiscount + shipping + tax;
 
   return (
     <div className="min-h-screen bg-background">
