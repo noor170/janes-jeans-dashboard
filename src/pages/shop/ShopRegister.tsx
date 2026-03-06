@@ -77,7 +77,10 @@ export default function ShopRegister() {
         gender: data.gender,
         city: data.city,
       });
-      toast.success('Account created! Please check your email to verify your account before signing in.');
+      // Auto-confirmed — sign in immediately
+      await loginWithAuth(data.email, data.password);
+      toast.success('Account created and signed in!');
+      navigate(from, { replace: true });
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {
