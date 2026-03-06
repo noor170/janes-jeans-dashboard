@@ -6,53 +6,24 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <changeSet id="011-create-shop-products-table" author="janesjeans">
-        <createTable tableName="shop_products">
-            <column name="id" type="VARCHAR(50)">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="TEXT" defaultValue=""/>
-            <column name="price" type="DECIMAL(10,2)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="category" type="VARCHAR(50)" defaultValue="jeans">
-                <constraints nullable="false"/>
-            </column>
-            <column name="subcategory" type="VARCHAR(100)" defaultValue=""/>
-            <column name="sizes" type="TEXT" defaultValueComputed="'{}'::text[]">
-                <constraints nullable="true"/>
-                <modifySql>
-                    <append value="[]"/>
-                </modifySql>
-            </column>
-            <column name="colors" type="TEXT" defaultValueComputed="'{}'::text[]">
-                <constraints nullable="true"/>
-                <modifySql>
-                    <append value="[]"/>
-                </modifySql>
-            </column>
-            <column name="images" type="TEXT" defaultValueComputed="'{/placeholder.svg}'::text[]">
-                <constraints nullable="true"/>
-                <modifySql>
-                    <append value="[]"/>
-                </modifySql>
-            </column>
-            <column name="in_stock" type="BOOLEAN" defaultValueBoolean="true">
-                <constraints nullable="false"/>
-            </column>
-            <column name="rating" type="DECIMAL(3,1)" defaultValueNumeric="4.5">
-                <constraints nullable="false"/>
-            </column>
-            <column name="reviews" type="INT" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="metadata" type="JSONB" defaultValueComputed="'{}'::jsonb"/>
-            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+        <sql>
+            CREATE TABLE shop_products (
+                id VARCHAR(50) PRIMARY KEY NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                description TEXT DEFAULT '',
+                price DECIMAL(10,2) NOT NULL,
+                category VARCHAR(50) DEFAULT 'jeans' NOT NULL,
+                subcategory VARCHAR(100) DEFAULT '',
+                sizes TEXT[] DEFAULT '{}',
+                colors TEXT[] DEFAULT '{}',
+                images TEXT[] DEFAULT '{"placeholder.svg"}',
+                in_stock BOOLEAN DEFAULT true NOT NULL,
+                rating DECIMAL(3,1) DEFAULT 4.5 NOT NULL,
+                reviews INT DEFAULT 0 NOT NULL,
+                metadata JSONB DEFAULT '{}',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+            )
+        </sql>
 
         <createIndex tableName="shop_products" indexName="idx_shop_products_category">
             <column name="category"/>
