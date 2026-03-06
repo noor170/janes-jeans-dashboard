@@ -1,16 +1,17 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, ArrowLeft, Loader2, AlertTriangle, ShieldCheck, Package } from 'lucide-react';
+import { ShoppingBag, ArrowLeft, Loader2, AlertTriangle, ShieldCheck, Package, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { CategoryNav } from '@/components/shop/CategoryNav';
 import { DynamicFilterSidebar } from '@/components/shop/DynamicFilterSidebar';
 import { ShopByConcern } from '@/components/shop/ShopByConcern';
 import { ProductComparisonTool } from '@/components/shop/ProductComparisonTool';
 import { CartIcon } from '@/components/shop/CartIcon';
+import { ShopPagination } from '@/components/shop/ShopPagination';
 import { ShopProduct } from '@/data/shopProducts';
-import { fetchShopProducts } from '@/services/shop.service';
+import { searchCatalog, PaginatedCatalogResponse } from '@/services/shop.service';
 import { toast } from 'sonner';
 
 export default function ShoppingDashboard() {
@@ -18,26 +19,87 @@ export default function ShoppingDashboard() {
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState('all');
   const [metadataFilters, setMetadataFilters] = useState<Record<string, any>>({});
-  const [products, setProducts] = useState<ShopProduct[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Pagination state (0-based page)
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(12);
+
+  // Server response
+  const [catalogResponse, setCatalogResponse] = useState<PaginatedCatalogResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Debounce search input
   useEffect(() => {
-    setLoading(true);
-    fetchShopProducts()
-      .then(setProducts)
-      .catch((err) => {
-        console.error('Failed to fetch products:', err);
-        toast.error('Failed to load products!');
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 400);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
-  // Reset sub-filters when category changes
+  // Reset to page 0 and sub-filters when category changes
   useEffect(() => {
     setSelectedSubcategory('all');
     setMetadataFilters({});
     setSelectedPriceRange('all');
+    setPage(0);
   }, [selectedCategory]);
+
+  // Reset to page 0 when filters/search change
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, selectedSubcategory, selectedPriceRange]);
+
+  // Fetch catalog from backend/supabase
+  const fetchCatalog = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [minPrice, maxPrice] = selectedPriceRange !== 'all'
+        ? selectedPriceRange.split('-').map(Number)
+        : [undefined, undefined];
+
+      const result = await searchCatalog({
+        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+        subcategory: selectedSubcategory !== 'all' ? selectedSubcategory : undefined,
+        search: debouncedSearch || undefined,
+        minPrice,
+        maxPrice,
+        page,
+        size: pageSize,
+      });
+      setCatalogResponse(result);
+    } catch (err) {
+      console.error('Failed to fetch catalog:', err);
+      toast.error('Failed to load products!');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedCategory, selectedSubcategory, selectedPriceRange, debouncedSearch, page, pageSize]);
+
+  useEffect(() => {
+    fetchCatalog();
+  }, [fetchCatalog]);
+
+  // Client-side metadata filtering (metadata filters aren't sent to backend)
+  const filteredProducts = useMemo(() => {
+    const products = catalogResponse?.content || [];
+    if (Object.keys(metadataFilters).length === 0) return products;
+
+    return products.filter((product) => {
+      for (const [key, value] of Object.entries(metadataFilters)) {
+        if (value === undefined) continue;
+        const metaValue = product.metadata?.[key];
+        if (typeof value === 'boolean') {
+          if (metaValue !== value) return false;
+        } else if (Array.isArray(value)) {
+          const metaArr = Array.isArray(metaValue) ? metaValue : [metaValue];
+          if (!value.some((v: string) => metaArr.includes(v))) return false;
+        } else if (typeof value === 'string') {
+          if (metaValue !== value) return false;
+        }
+      }
+      return true;
+    });
+  }, [catalogResponse, metadataFilters]);
 
   const handleMetadataFilterChange = (key: string, value: any) => {
     setMetadataFilters(prev => {
@@ -52,6 +114,7 @@ export default function ShoppingDashboard() {
     setSelectedPriceRange('all');
     setSelectedSubcategory('all');
     setMetadataFilters({});
+    setSearchQuery('');
   };
 
   const handleShopByConcern = (concerns: string[]) => {
@@ -59,43 +122,17 @@ export default function ShoppingDashboard() {
     setMetadataFilters({ concern: concerns });
   };
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      if (selectedCategory !== 'all' && product.category !== selectedCategory) return false;
-      if (selectedSubcategory !== 'all' && product.subcategory !== selectedSubcategory) return false;
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setPage(0);
+  };
 
-      if (selectedPriceRange !== 'all') {
-        const [min, max] = selectedPriceRange.split('-').map(Number);
-        if (product.price < min || product.price > max) return false;
-      }
-
-      // Metadata filters
-      for (const [key, value] of Object.entries(metadataFilters)) {
-        if (value === undefined) continue;
-        const metaValue = product.metadata?.[key];
-
-        if (typeof value === 'boolean') {
-          if (metaValue !== value) return false;
-        } else if (Array.isArray(value)) {
-          // multiselect: product metadata field can be array (match any)
-          const metaArr = Array.isArray(metaValue) ? metaValue : [metaValue];
-          if (!value.some((v: string) => metaArr.includes(v))) return false;
-        } else if (typeof value === 'string') {
-          if (metaValue !== value) return false;
-        }
-      }
-
-      return true;
-    });
-  }, [products, selectedCategory, selectedSubcategory, selectedPriceRange, metadataFilters]);
-
+  const totalElements = catalogResponse?.totalElements ?? 0;
+  const totalPages = catalogResponse?.totalPages ?? 0;
   const showBeautySection = selectedCategory === 'all' || selectedCategory === 'skincare' || selectedCategory === 'haircare';
   const showComparison = selectedCategory === 'skincare';
-
-  // Check for undergarment items in filtered products
   const hasNonReturnable = filteredProducts.some(p => p.metadata?.non_returnable);
 
-  // Check for expiring products (within 6 months)
   const expiringProducts = filteredProducts.filter(p => {
     const expiry = p.metadata?.expiry_date;
     if (!expiry) return false;
@@ -123,12 +160,31 @@ export default function ShoppingDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-6">
+        {/* Search bar */}
+        <div className="mb-6 relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-8"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
         {/* Category Navigation */}
         <div className="mb-6">
           <CategoryNav selected={selectedCategory} onSelect={setSelectedCategory} />
         </div>
 
-        {/* Shop by Concern - shown for beauty categories */}
+        {/* Shop by Concern */}
         {showBeautySection && selectedCategory === 'all' && (
           <div className="mb-8">
             <ShopByConcern onSelectConcern={handleShopByConcern} />
@@ -155,7 +211,7 @@ export default function ShoppingDashboard() {
         )}
 
         <div className="flex gap-6">
-          {/* Sidebar - shown when a category is selected */}
+          {/* Sidebar */}
           {selectedCategory !== 'all' && (
             <aside className="hidden md:block w-64 shrink-0">
               <div className="sticky top-24 bg-card rounded-lg border p-4">
@@ -178,7 +234,7 @@ export default function ShoppingDashboard() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-bold">
-                  {selectedCategory === 'all' ? 'Browse Our Collection' : filteredProducts.length + ' Products'}
+                  {selectedCategory === 'all' ? 'Browse Our Collection' : `${totalElements} Products`}
                 </h2>
                 {selectedCategory === 'all' && (
                   <p className="text-muted-foreground text-sm">Discover quality products for every style</p>
@@ -195,11 +251,25 @@ export default function ShoppingDashboard() {
                 <span className="ml-3 text-muted-foreground">Loading products...</span>
               </div>
             ) : filteredProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+
+                {/* Pagination */}
+                <div className="mt-8">
+                  <ShopPagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    pageSize={pageSize}
+                    totalItems={totalElements}
+                    onPageChange={setPage}
+                    onPageSizeChange={handlePageSizeChange}
+                  />
+                </div>
+              </>
             ) : (
               <div className="text-center py-12">
                 <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
