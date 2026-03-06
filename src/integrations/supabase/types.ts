@@ -109,6 +109,30 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_qr_codes: {
+        Row: {
+          account_number: string
+          id: string
+          payment_method: string
+          qr_image_url: string
+          updated_at: string
+        }
+        Insert: {
+          account_number?: string
+          id?: string
+          payment_method: string
+          qr_image_url: string
+          updated_at?: string
+        }
+        Update: {
+          account_number?: string
+          id?: string
+          payment_method?: string
+          qr_image_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shop_categories: {
         Row: {
           created_at: string | null

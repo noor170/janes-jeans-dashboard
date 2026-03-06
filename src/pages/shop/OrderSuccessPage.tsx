@@ -243,7 +243,7 @@ export default function OrderSuccessPage() {
               <div>
                 <h3 className="font-semibold mb-2">Payment Method</h3>
                 <p className="text-muted-foreground capitalize">
-                  {paymentDetails.type === 'bkash' ? 'bKash Mobile Payment' : 'Credit/Debit Card'}
+                  {paymentDetails.type === 'bkash' ? 'bKash Mobile Payment' : 'Nagad Mobile Payment'}
                 </p>
               </div>
 

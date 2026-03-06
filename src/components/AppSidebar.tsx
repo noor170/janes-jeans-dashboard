@@ -13,6 +13,7 @@ import {
   Ticket,
   DollarSign,
   RotateCcw,
+  QrCode,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,7 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/returns', icon: RotateCcw, label: language === 'en' ? 'Returns' : 'রিটার্ন' },
     { path: '/coupons', icon: Ticket, label: language === 'en' ? 'Coupons' : 'কুপন' },
     { path: '/cash-flow', icon: DollarSign, label: language === 'en' ? 'Cash Flow' : 'ক্যাশ ফ্লো' },
+    { path: '/payment-qr', icon: QrCode, label: language === 'en' ? 'Payment QR' : 'পেমেন্ট QR' },
     { path: '/analytics', icon: BarChart3, label: t('analytics') },
     { path: '/settings', icon: Settings, label: t('settings') },
   ];

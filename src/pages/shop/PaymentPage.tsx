@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Smartphone, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Smartphone, ArrowRight, QrCode } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,47 +11,59 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
-import { useCart, PaymentDetails } from '@/contexts/CartContext';
+import { useCart } from '@/contexts/CartContext';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
-const cardSchema = z.object({
-  cardNumber: z.string().min(16, 'Please enter a valid card number').max(19),
-  expiryDate: z.string().regex(/^\d{2}\/\d{2}$/, 'Please enter in MM/YY format'),
-  cvv: z.string().min(3, 'Please enter a valid CVV').max(4),
+const mobilePaymentSchema = z.object({
+  senderNumber: z.string().min(11, 'Please enter a valid mobile number').max(14),
+  transactionId: z.string().min(1, 'Transaction ID is required'),
 });
 
-const bkashSchema = z.object({
-  bkashNumber: z.string().min(11, 'Please enter a valid bKash number').max(14),
-  transactionId: z.string().optional(),
-});
+interface PaymentQRCode {
+  payment_method: string;
+  qr_image_url: string;
+  account_number: string;
+}
 
 export default function PaymentPage() {
   const navigate = useNavigate();
   const { items, shipmentDetails, setPaymentDetails, getCartTotal, appliedCoupon } = useCart();
-  const [paymentType, setPaymentType] = useState<'card' | 'bkash'>('card');
+  const [paymentType, setPaymentType] = useState<'bkash' | 'nagad'>('bkash');
+  const [qrCodes, setQrCodes] = useState<Record<string, PaymentQRCode>>({});
 
-  const cardForm = useForm({
-    resolver: zodResolver(cardSchema),
-    defaultValues: { cardNumber: '', expiryDate: '', cvv: '' },
+  const form = useForm({
+    resolver: zodResolver(mobilePaymentSchema),
+    defaultValues: { senderNumber: '', transactionId: '' },
   });
 
-  const bkashForm = useForm({
-    resolver: zodResolver(bkashSchema),
-    defaultValues: { bkashNumber: '', transactionId: '' },
-  });
+  useEffect(() => {
+    const fetchQRCodes = async () => {
+      const { data } = await supabase
+        .from('payment_qr_codes')
+        .select('payment_method, qr_image_url, account_number');
+      if (data) {
+        const map: Record<string, PaymentQRCode> = {};
+        data.forEach((item) => {
+          map[item.payment_method] = item;
+        });
+        setQrCodes(map);
+      }
+    };
+    fetchQRCodes();
+  }, []);
 
   if (items.length === 0 || !shipmentDetails) {
     navigate('/shop/cart');
     return null;
   }
 
-  const handleCardSubmit = (data: z.infer<typeof cardSchema>) => {
-    setPaymentDetails({ type: 'card', ...data });
-    navigate('/shop/order-success');
-  };
-
-  const handleBkashSubmit = (data: z.infer<typeof bkashSchema>) => {
-    setPaymentDetails({ type: 'bkash', ...data });
+  const handleSubmit = (data: z.infer<typeof mobilePaymentSchema>) => {
+    setPaymentDetails({
+      type: paymentType as 'bkash',
+      bkashNumber: data.senderNumber,
+      transactionId: data.transactionId,
+    });
     navigate('/shop/order-success');
   };
 
@@ -60,6 +72,9 @@ export default function PaymentPage() {
   const shipping = total > 100 ? 0 : 9.99;
   const tax = (total - couponDiscount) * 0.08;
   const grandTotal = total - couponDiscount + shipping + tax;
+
+  const currentQR = qrCodes[paymentType];
+  const accountNumber = currentQR?.account_number || '';
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,167 +93,142 @@ export default function PaymentPage() {
         <CheckoutSteps currentStep={3} />
 
         <div className="grid lg:grid-cols-3 gap-8 mt-8">
-          {/* Payment Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Payment Method Selection */}
             <Card>
               <CardHeader>
                 <CardTitle>Payment Method</CardTitle>
-                <CardDescription>Select your preferred payment option</CardDescription>
+                <CardDescription>Select bKash or Nagad to pay</CardDescription>
               </CardHeader>
               <CardContent>
                 <RadioGroup
                   value={paymentType}
-                  onValueChange={(v) => setPaymentType(v as 'card' | 'bkash')}
+                  onValueChange={(v) => {
+                    setPaymentType(v as 'bkash' | 'nagad');
+                    form.reset();
+                  }}
                   className="grid grid-cols-2 gap-4"
                 >
-                  <div>
-                    <RadioGroupItem value="card" id="card" className="peer sr-only" />
-                    <Label
-                      htmlFor="card"
-                      className={cn(
-                        'flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer',
-                        paymentType === 'card' && 'border-primary'
-                      )}
-                    >
-                      <CreditCard className="h-8 w-8 mb-2" />
-                      <span className="font-semibold">Credit/Debit Card</span>
-                    </Label>
-                  </div>
                   <div>
                     <RadioGroupItem value="bkash" id="bkash" className="peer sr-only" />
                     <Label
                       htmlFor="bkash"
                       className={cn(
                         'flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer',
-                        paymentType === 'bkash' && 'border-primary'
+                        paymentType === 'bkash' && 'border-pink-500 bg-pink-50 dark:bg-pink-950/20'
                       )}
                     >
-                      <Smartphone className="h-8 w-8 mb-2" />
-                      <span className="font-semibold">bKash</span>
+                      <Smartphone className="h-8 w-8 mb-2 text-pink-600" />
+                      <span className="font-semibold text-pink-600">bKash</span>
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="nagad" id="nagad" className="peer sr-only" />
+                    <Label
+                      htmlFor="nagad"
+                      className={cn(
+                        'flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer',
+                        paymentType === 'nagad' && 'border-orange-500 bg-orange-50 dark:bg-orange-950/20'
+                      )}
+                    >
+                      <Smartphone className="h-8 w-8 mb-2 text-orange-600" />
+                      <span className="font-semibold text-orange-600">Nagad</span>
                     </Label>
                   </div>
                 </RadioGroup>
               </CardContent>
             </Card>
 
-            {/* Card Payment Form */}
-            {paymentType === 'card' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Card Details</CardTitle>
-                  <CardDescription>Enter your card information securely</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...cardForm}>
-                    <form onSubmit={cardForm.handleSubmit(handleCardSubmit)} className="space-y-4">
-                      <FormField
-                        control={cardForm.control}
-                        name="cardNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Card Number</FormLabel>
-                            <FormControl>
-                              <Input placeholder="1234 5678 9012 3456" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+            {/* QR Code & Payment Form */}
+            <Card>
+              <CardHeader>
+                <CardTitle className={paymentType === 'bkash' ? 'text-pink-600' : 'text-orange-600'}>
+                  {paymentType === 'bkash' ? 'bKash' : 'Nagad'} Payment
+                </CardTitle>
+                <CardDescription>
+                  {accountNumber
+                    ? <>Send payment to: <span className="font-semibold">{accountNumber}</span></>
+                    : 'Scan the QR code below to pay'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* QR Code Display */}
+                {currentQR?.qr_image_url ? (
+                  <div className="flex flex-col items-center gap-3 p-4 bg-muted/50 rounded-lg">
+                    <p className="text-sm font-medium text-muted-foreground">Scan QR Code to Pay</p>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <img
+                        src={currentQR.qr_image_url}
+                        alt={`${paymentType} QR Code`}
+                        className="w-48 h-48 object-contain"
                       />
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={cardForm.control}
-                          name="expiryDate"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Expiry Date</FormLabel>
-                              <FormControl>
-                                <Input placeholder="MM/YY" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={cardForm.control}
-                          name="cvv"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>CVV</FormLabel>
-                              <FormControl>
-                                <Input type="password" placeholder="123" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <Button type="submit" size="lg" className="w-full">
-                        Pay ৳{grandTotal.toFixed(2)}
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-            )}
+                    </div>
+                    <p className="text-lg font-bold">
+                      Amount: <span className={paymentType === 'bkash' ? 'text-pink-600' : 'text-orange-600'}>৳{grandTotal.toFixed(2)}</span>
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-3 p-6 bg-muted/50 rounded-lg text-muted-foreground">
+                    <QrCode className="h-16 w-16" />
+                    <p className="text-sm">QR code not available. Please use the account number above.</p>
+                  </div>
+                )}
 
-            {/* bKash Payment Form */}
-            {paymentType === 'bkash' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-pink-600">bKash Payment</CardTitle>
-                  <CardDescription>
-                    Send payment to: <span className="font-semibold">01700-000000</span>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...bkashForm}>
-                    <form onSubmit={bkashForm.handleSubmit(handleBkashSubmit)} className="space-y-4">
-                      <FormField
-                        control={bkashForm.control}
-                        name="bkashNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Your bKash Number</FormLabel>
-                            <FormControl>
-                              <Input placeholder="01XXXXXXXXX" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={bkashForm.control}
-                        name="transactionId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Transaction ID (Optional)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="TrxID from bKash" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="bg-muted p-4 rounded-lg text-sm space-y-2">
-                        <p className="font-semibold">Instructions:</p>
-                        <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                          <li>Open bKash app and go to Send Money</li>
-                          <li>Enter number: 01700-000000</li>
-                          <li>Send amount: ${grandTotal.toFixed(2)}</li>
-                          <li>Enter the Transaction ID above</li>
-                        </ol>
-                      </div>
-                      <Button type="submit" size="lg" className="w-full bg-pink-600 hover:bg-pink-700">
-                        Confirm bKash Payment
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
-            )}
+                {/* Payment Form */}
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="senderNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your {paymentType === 'bkash' ? 'bKash' : 'Nagad'} Number</FormLabel>
+                          <FormControl>
+                            <Input placeholder="01XXXXXXXXX" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="transactionId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Transaction ID</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter TrxID after payment" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="bg-muted p-4 rounded-lg text-sm space-y-2">
+                      <p className="font-semibold">Instructions:</p>
+                      <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                        <li>Scan the QR code or open {paymentType === 'bkash' ? 'bKash' : 'Nagad'} app</li>
+                        <li>Go to Send Money{accountNumber ? ` → ${accountNumber}` : ''}</li>
+                        <li>Send amount: ৳{grandTotal.toFixed(2)}</li>
+                        <li>Enter the Transaction ID above</li>
+                      </ol>
+                    </div>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className={cn(
+                        'w-full',
+                        paymentType === 'bkash'
+                          ? 'bg-pink-600 hover:bg-pink-700'
+                          : 'bg-orange-600 hover:bg-orange-700'
+                      )}
+                    >
+                      Confirm {paymentType === 'bkash' ? 'bKash' : 'Nagad'} Payment
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Order Summary */}
