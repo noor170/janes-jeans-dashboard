@@ -3,24 +3,24 @@ import { ProductDTO, OrderDTO, SalesData, CustomerDTO, ShippingVendorDTO, Shipme
 // Mock Products
 export const mockProducts: ProductDTO[] = [
   // Men's Jeans
-  { id: 'P001', name: 'Classic Indigo Slim', gender: 'Men', fit: 'Slim', size: '32', wash: 'Dark Indigo', price: 89.99, stockLevel: 45 },
-  { id: 'P002', name: 'Urban Skinny Fit', gender: 'Men', fit: 'Skinny', size: '30', wash: 'Black', price: 79.99, stockLevel: 8 },
-  { id: 'P003', name: 'Comfort Relaxed', gender: 'Men', fit: 'Relaxed', size: '34', wash: 'Stone Wash', price: 74.99, stockLevel: 32 },
-  { id: 'P004', name: 'Premium Slim Dark', gender: 'Men', fit: 'Slim', size: '32', wash: 'Raw Denim', price: 129.99, stockLevel: 5 },
-  { id: 'P005', name: 'Weekend Relaxed', gender: 'Men', fit: 'Relaxed', size: '36', wash: 'Light Blue', price: 69.99, stockLevel: 28 },
-  { id: 'P006', name: 'Street Skinny', gender: 'Men', fit: 'Skinny', size: '28', wash: 'Washed Black', price: 84.99, stockLevel: 3 },
-  { id: 'P007', name: 'Executive Slim', gender: 'Men', fit: 'Slim', size: '33', wash: 'Deep Navy', price: 99.99, stockLevel: 18 },
-  { id: 'P008', name: 'Vintage Relaxed', gender: 'Men', fit: 'Relaxed', size: '35', wash: 'Vintage Wash', price: 79.99, stockLevel: 22 },
+  { id: 'P001', name: 'Classic Indigo Slim', gender: 'Men', fit: 'Slim', size: '32', wash: 'Dark Indigo', price: 89.99, stockLevel: 45, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P002', name: 'Urban Skinny Fit', gender: 'Men', fit: 'Skinny', size: '30', wash: 'Black', price: 79.99, stockLevel: 8, discountPercent: 10, offerDiscountPercent: 0 },
+  { id: 'P003', name: 'Comfort Relaxed', gender: 'Men', fit: 'Relaxed', size: '34', wash: 'Stone Wash', price: 74.99, stockLevel: 32, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P004', name: 'Premium Slim Dark', gender: 'Men', fit: 'Slim', size: '32', wash: 'Raw Denim', price: 129.99, stockLevel: 5, discountPercent: 15, offerDiscountPercent: 5, offerName: 'Summer Sale' },
+  { id: 'P005', name: 'Weekend Relaxed', gender: 'Men', fit: 'Relaxed', size: '36', wash: 'Light Blue', price: 69.99, stockLevel: 28, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P006', name: 'Street Skinny', gender: 'Men', fit: 'Skinny', size: '28', wash: 'Washed Black', price: 84.99, stockLevel: 3, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P007', name: 'Executive Slim', gender: 'Men', fit: 'Slim', size: '33', wash: 'Deep Navy', price: 99.99, stockLevel: 18, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P008', name: 'Vintage Relaxed', gender: 'Men', fit: 'Relaxed', size: '35', wash: 'Vintage Wash', price: 79.99, stockLevel: 22, discountPercent: 0, offerDiscountPercent: 0 },
   
   // Women's Jeans
-  { id: 'P009', name: 'High Rise Skinny', gender: 'Women', fit: 'Skinny', size: '26', wash: 'Dark Indigo', price: 89.99, stockLevel: 42 },
-  { id: 'P010', name: 'Mom Fit Relaxed', gender: 'Women', fit: 'Relaxed', size: '28', wash: 'Light Wash', price: 79.99, stockLevel: 6 },
-  { id: 'P011', name: 'Ankle Slim', gender: 'Women', fit: 'Slim', size: '27', wash: 'Medium Blue', price: 84.99, stockLevel: 35 },
-  { id: 'P012', name: 'Curve Skinny', gender: 'Women', fit: 'Skinny', size: '29', wash: 'Black', price: 94.99, stockLevel: 9 },
-  { id: 'P013', name: 'Wide Leg Relaxed', gender: 'Women', fit: 'Relaxed', size: '26', wash: 'Stone Wash', price: 99.99, stockLevel: 27 },
-  { id: 'P014', name: 'Cropped Slim', gender: 'Women', fit: 'Slim', size: '25', wash: 'Bleached', price: 74.99, stockLevel: 4 },
-  { id: 'P015', name: 'Bootcut Slim', gender: 'Women', fit: 'Slim', size: '28', wash: 'Dark Wash', price: 89.99, stockLevel: 31 },
-  { id: 'P016', name: 'Stretch Skinny', gender: 'Women', fit: 'Skinny', size: '27', wash: 'Midnight Blue', price: 84.99, stockLevel: 19 },
+  { id: 'P009', name: 'High Rise Skinny', gender: 'Women', fit: 'Skinny', size: '26', wash: 'Dark Indigo', price: 89.99, stockLevel: 42, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P010', name: 'Mom Fit Relaxed', gender: 'Women', fit: 'Relaxed', size: '28', wash: 'Light Wash', price: 79.99, stockLevel: 6, discountPercent: 20, offerDiscountPercent: 0 },
+  { id: 'P011', name: 'Ankle Slim', gender: 'Women', fit: 'Slim', size: '27', wash: 'Medium Blue', price: 84.99, stockLevel: 35, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P012', name: 'Curve Skinny', gender: 'Women', fit: 'Skinny', size: '29', wash: 'Black', price: 94.99, stockLevel: 9, discountPercent: 0, offerDiscountPercent: 10, offerName: 'Flash Deal' },
+  { id: 'P013', name: 'Wide Leg Relaxed', gender: 'Women', fit: 'Relaxed', size: '26', wash: 'Stone Wash', price: 99.99, stockLevel: 27, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P014', name: 'Cropped Slim', gender: 'Women', fit: 'Slim', size: '25', wash: 'Bleached', price: 74.99, stockLevel: 4, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P015', name: 'Bootcut Slim', gender: 'Women', fit: 'Slim', size: '28', wash: 'Dark Wash', price: 89.99, stockLevel: 31, discountPercent: 0, offerDiscountPercent: 0 },
+  { id: 'P016', name: 'Stretch Skinny', gender: 'Women', fit: 'Skinny', size: '27', wash: 'Midnight Blue', price: 84.99, stockLevel: 19, discountPercent: 0, offerDiscountPercent: 0 },
 ];
 
 // Mock Orders
