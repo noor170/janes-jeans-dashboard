@@ -88,12 +88,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [shipmentDetails, setShipmentDetailsState] = useState<ShipmentDetails | null>(() => loadFromStorage<ShipmentDetails>(SHIPMENT_STORAGE_KEY));
   const [paymentDetails, setPaymentDetailsState] = useState<PaymentDetails | null>(() => loadFromStorage<PaymentDetails>(PAYMENT_STORAGE_KEY));
   const [pendingCheckout, setPendingCheckoutState] = useState<boolean>(() => loadFromStorage<boolean>(PENDING_CHECKOUT_KEY) || false);
+  const [appliedCoupon, setAppliedCouponState] = useState<AppliedCoupon | null>(() => loadFromStorage<AppliedCoupon>(COUPON_STORAGE_KEY));
 
   // Persist to localStorage on change
   useEffect(() => { saveToStorage(CART_STORAGE_KEY, items); }, [items]);
   useEffect(() => { saveToStorage(SHIPMENT_STORAGE_KEY, shipmentDetails); }, [shipmentDetails]);
   useEffect(() => { saveToStorage(PAYMENT_STORAGE_KEY, paymentDetails); }, [paymentDetails]);
   useEffect(() => { saveToStorage(PENDING_CHECKOUT_KEY, pendingCheckout); }, [pendingCheckout]);
+  useEffect(() => { saveToStorage(COUPON_STORAGE_KEY, appliedCoupon); }, [appliedCoupon]);
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantity = 1) => {
     setItems(prev => {
