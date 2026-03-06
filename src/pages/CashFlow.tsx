@@ -27,6 +27,13 @@ import {
   PieChart, Pie, Cell,
 } from 'recharts';
 
+const PIE_COLORS = [
+  'hsl(var(--primary))', 'hsl(var(--destructive))', 'hsl(142, 76%, 36%)',
+  'hsl(38, 92%, 50%)', 'hsl(262, 83%, 58%)', 'hsl(199, 89%, 48%)',
+  'hsl(330, 81%, 60%)', 'hsl(24, 94%, 50%)', 'hsl(174, 72%, 40%)',
+  'hsl(47, 100%, 50%)', 'hsl(291, 47%, 51%)', 'hsl(210, 79%, 46%)', 'hsl(0, 0%, 50%)',
+];
+
 const CATEGORIES = [
   'Sales', 'Refund Received', 'Investment', 'Other Income',
   'Inventory Purchase', 'Shipping', 'Salary', 'Rent', 'Marketing',
