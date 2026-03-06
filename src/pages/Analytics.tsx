@@ -402,7 +402,7 @@ const Analytics = () => {
                       borderRadius: '8px',
                     }}
                     formatter={(value: number, name: string) => {
-                      if (name === 'total') return [`$${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব'];
+                      if (name === 'total') return [`৳${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব'];
                       return [value, name];
                     }}
                   />
