@@ -174,7 +174,7 @@ export default function PaymentPage() {
                         />
                       </div>
                       <Button type="submit" size="lg" className="w-full">
-                        Pay ${grandTotal.toFixed(2)}
+                        Pay ৳{grandTotal.toFixed(2)}
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
                     </form>
