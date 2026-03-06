@@ -38,7 +38,7 @@ services:
       - DB_NAME=janesjeans
       - DB_USERNAME=${DB_USERNAME:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
-      - JWT_SECRET=${JWT_SECRET:-your-256-bit-secret-key-here-make-it-long-and-secure-at-least-32-chars}
+      - JWT_SECRET=${JWT_SECRET:-K28784clYAgJErwn8JNRcg+IzSGp15GdgUN9mUa2J8=}
       - MAIL_HOST=${MAIL_HOST:-smtp.gmail.com}
       - MAIL_PORT=${MAIL_PORT:-587}
       - MAIL_USERNAME=${MAIL_USERNAME}
