@@ -28,10 +28,18 @@ export interface PaymentDetails {
   transactionId?: string;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discount: number;
+  discountType: string;
+  discountValue: number;
+}
+
 interface CartContextType {
   items: CartItem[];
   shipmentDetails: ShipmentDetails | null;
   paymentDetails: PaymentDetails | null;
+  appliedCoupon: AppliedCoupon | null;
   addToCart: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void;
   removeFromCart: (id: string, size: string) => void;
   updateQuantity: (id: string, size: string, quantity: number) => void;
@@ -40,6 +48,7 @@ interface CartContextType {
   getCartCount: () => number;
   setShipmentDetails: (details: ShipmentDetails) => void;
   setPaymentDetails: (details: PaymentDetails) => void;
+  setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   resetCheckout: () => void;
   pendingCheckout: boolean;
   setPendingCheckout: (pending: boolean) => void;
