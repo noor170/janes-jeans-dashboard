@@ -36,6 +36,10 @@ Deno.serve(async (req) => {
 
     const body: OrderEmailRequest = await req.json();
     const { customerName, customerEmail, orderNumber, items, totalAmount, shippingAddress, shippingCity, paymentType } = body;
+    
+    // Derive site URL from request origin or use a default
+    const origin = req.headers.get('origin') || req.headers.get('referer') || '';
+    const siteUrl = origin ? new URL(origin).origin : 'https://denim-dash-toggle.lovable.app';
 
     const itemsHtml = items.map(item => `
       <tr>
@@ -97,6 +101,13 @@ Deno.serve(async (req) => {
             <div style="margin-top:24px; padding:16px; background:#f9fafb; border-radius:8px;">
               <p style="margin:0 0 8px; font-size:14px;"><strong>Shipping:</strong> ${shippingAddress}, ${shippingCity}</p>
               <p style="margin:0; font-size:14px;"><strong>Payment:</strong> ${paymentLabel}</p>
+            </div>
+            
+            <!-- Activate Account CTA -->
+            <div style="margin-top:24px; padding:24px; background:#eff6ff; border-radius:8px; text-align:center; border:1px solid #bfdbfe;">
+              <p style="margin:0 0 8px; font-size:16px; font-weight:bold; color:#1e40af;">🔐 Track Your Order Anytime</p>
+              <p style="margin:0 0 16px; font-size:13px; color:#3b82f6;">Set a password to log in and view your order status, shipping updates, and delivery tracking.</p>
+              <a href="${siteUrl}/shop/set-password" style="display:inline-block; background:#2563eb; color:#ffffff; padding:12px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:14px;">Activate My Account</a>
             </div>
             
             <p style="margin-top:24px; font-size:14px; color:#6b7280;">
