@@ -54,7 +54,7 @@ export default function OrderTracking() {
 
   const form = useForm<TrackingData>({
     resolver: zodResolver(trackingSchema),
-    defaultValues: { orderNumber: '', email: '' },
+    defaultValues: { orderNumber: '' },
   });
 
   const onSubmit = async (data: TrackingData) => {
