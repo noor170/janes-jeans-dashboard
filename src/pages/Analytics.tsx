@@ -394,7 +394,7 @@ const Analytics = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
