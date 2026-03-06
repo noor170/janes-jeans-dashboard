@@ -51,7 +51,7 @@ export function CouponInput({ orderTotal }: CouponInputProps) {
           <span className="text-xs text-muted-foreground">
             {appliedCoupon.discountType === 'PERCENTAGE'
               ? `${appliedCoupon.discountValue}% off`
-              : `$${appliedCoupon.discountValue} off`}
+              : `৳${appliedCoupon.discountValue} off`}
           </span>
         </div>
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleRemove}>

@@ -247,7 +247,7 @@ const CashFlow = () => {
                     </Pie>
                     <Tooltip
                       contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }}
-                      formatter={(value: number) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, undefined]}
+                      formatter={(value: number) => [`৳${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, undefined]}
                     />
                   </PieChart>
                 </ResponsiveContainer>

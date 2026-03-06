@@ -307,7 +307,7 @@ const Shipments = () => {
                     <TableCell>
                       <div className="font-medium">{shipment.orderId}</div>
                       <div className="text-xs text-muted-foreground">
-                        ${order?.totalAmount.toFixed(2) || '-'}
+                        ৳{order?.totalAmount.toFixed(2) || '-'}
                       </div>
                     </TableCell>
                     <TableCell>

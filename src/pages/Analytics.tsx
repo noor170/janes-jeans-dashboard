@@ -603,7 +603,7 @@ const Analytics = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topProductsData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={(value) => `$${value}`} />
+                  <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={(value) => `৳${value}`} />
                   <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
                   <Tooltip
                     contentStyle={{

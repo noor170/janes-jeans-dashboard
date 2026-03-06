@@ -366,7 +366,7 @@ const OrdersTable = () => {
                       {format(new Date(order.orderDate), 'MMM dd, yyyy')}
                     </TableCell>
                     <TableCell className="text-right font-medium">
-                      ${order.totalAmount.toFixed(2)}
+                      ৳{order.totalAmount.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>

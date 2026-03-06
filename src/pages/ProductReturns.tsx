@@ -303,7 +303,7 @@ const ProductReturns = () => {
                 <div><span className="text-muted-foreground">Quantity:</span><p>{detailsOpen.quantity}</p></div>
                 <div><span className="text-muted-foreground">Reason:</span><p>{RETURN_REASONS.find(r => r.value === detailsOpen.reason)?.label}</p></div>
                 <div><span className="text-muted-foreground">Status:</span>{getStatusBadge(detailsOpen.status)}</div>
-                <div><span className="text-muted-foreground">Refund:</span><p>{detailsOpen.refundAmount ? `$${detailsOpen.refundAmount.toFixed(2)}` : '—'}</p></div>
+                <div><span className="text-muted-foreground">Refund:</span><p>{detailsOpen.refundAmount ? `৳${detailsOpen.refundAmount.toFixed(2)}` : '—'}</p></div>
                 <div><span className="text-muted-foreground">Restock:</span><p>{detailsOpen.restock ? 'Yes' : 'No'}</p></div>
               </div>
               {detailsOpen.description && <div><span className="text-muted-foreground text-sm">Description:</span><p className="text-sm mt-1">{detailsOpen.description}</p></div>}

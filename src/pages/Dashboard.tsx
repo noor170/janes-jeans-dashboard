@@ -125,7 +125,7 @@ const Dashboard = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title={t('totalSales')}
-          value={`$${(stats?.totalSales || 0).toLocaleString()}`}
+          value={`৳${(stats?.totalSales || 0).toLocaleString()}`}
           icon={DollarSign}
           variant="success"
         />

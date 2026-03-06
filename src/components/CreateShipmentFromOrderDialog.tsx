@@ -154,7 +154,7 @@ const CreateShipmentFromOrderDialog = ({
               <Package className="h-4 w-4 text-muted-foreground" />
               <span className="font-medium">{order.customerName}</span>
               <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground">${order.totalAmount.toFixed(2)}</span>
+              <span className="text-muted-foreground">৳{order.totalAmount.toFixed(2)}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1 truncate">
               {order.shippingAddress}

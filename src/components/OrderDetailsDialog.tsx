@@ -142,7 +142,7 @@ const OrderDetailsDialog = ({ order, open, onOpenChange }: OrderDetailsDialogPro
           {/* Total */}
           <div className="flex items-center justify-between">
             <h4 className="text-lg font-medium">{t('total')}</h4>
-            <p className="text-xl font-bold">${order.totalAmount.toFixed(2)}</p>
+            <p className="text-xl font-bold">৳{order.totalAmount.toFixed(2)}</p>
           </div>
         </div>
       </DialogContent>
