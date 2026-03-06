@@ -22,6 +22,10 @@ import {
 import { Label } from '@/components/ui/label';
 import { Search, Plus, Edit, Trash2, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from 'recharts';
 
 const CATEGORIES = [
   'Sales', 'Refund Received', 'Investment', 'Other Income',
