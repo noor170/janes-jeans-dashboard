@@ -9,6 +9,7 @@ import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
 import { useCart } from '@/contexts/CartContext';
 import { useShopCustomer } from '@/contexts/ShopCustomerContext';
 import { createGuestOrder, checkStockAvailability, GuestOrderResponse, StockCheckResult } from '@/lib/shopApi';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function OrderSuccessPage() {
@@ -93,6 +94,31 @@ export default function OrderSuccessPage() {
       setOrderResponse(response);
       setOrderPlaced(true);
       toast.success(`Order placed successfully! Order ID: ${response.orderNumber}`);
+
+      // Send order confirmation email
+      try {
+        await supabase.functions.invoke('send-order-email', {
+          body: {
+            customerName: shipmentDetails.name,
+            customerEmail: shipmentDetails.email,
+            orderNumber: response.orderNumber,
+            items: items.map(item => ({
+              productName: item.name,
+              quantity: item.quantity,
+              size: item.size,
+              price: item.price,
+            })),
+            totalAmount: grandTotal,
+            shippingAddress: shipmentDetails.address,
+            shippingCity: shipmentDetails.city,
+            paymentType: paymentDetails.type,
+          },
+        });
+        toast.success('Order confirmation email sent!');
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+      }
+
       resetCheckout();
       // Auto-redirect to shop after short delay
       setTimeout(() => navigate('/shop'), 3000);
