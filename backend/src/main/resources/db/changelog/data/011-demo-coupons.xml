@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-011-demo-coupons" author="janesjeans" context="dev,docker">
+        <insert tableName="coupons">
+            <column name="id" value="cpn-001"/>
+            <column name="code" value="WELCOME10"/>
+            <column name="description" value="10% off for new customers"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="10.00"/>
+            <column name="min_order_amount" valueNumeric="50.00"/>
+            <column name="max_discount_amount" valueNumeric="100.00"/>
+            <column name="usage_limit" valueNumeric="500"/>
+            <column name="used_count" valueNumeric="42"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="valid_from" valueDate="2025-01-01T00:00:00"/>
+            <column name="valid_until" valueDate="2026-12-31T23:59:59"/>
+        </insert>
+
+        <insert tableName="coupons">
+            <column name="id" value="cpn-002"/>
+            <column name="code" value="SUMMER25"/>
+            <column name="description" value="Summer sale – 25% off orders over $100"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="25.00"/>
+            <column name="min_order_amount" valueNumeric="100.00"/>
+            <column name="max_discount_amount" valueNumeric="200.00"/>
+            <column name="usage_limit" valueNumeric="200"/>
+            <column name="used_count" valueNumeric="87"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="valid_from" valueDate="2025-06-01T00:00:00"/>
+            <column name="valid_until" valueDate="2025-08-31T23:59:59"/>
+        </insert>
+
+        <insert tableName="coupons">
+            <column name="id" value="cpn-003"/>
+            <column name="code" value="FLAT50"/>
+            <column name="description" value="$50 flat discount on orders over $250"/>
+            <column name="discount_type" value="FIXED"/>
+            <column name="discount_value" valueNumeric="50.00"/>
+            <column name="min_order_amount" valueNumeric="250.00"/>
+            <column name="usage_limit" valueNumeric="100"/>
+            <column name="used_count" valueNumeric="15"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="valid_from" valueDate="2025-03-01T00:00:00"/>
+            <column name="valid_until" valueDate="2026-03-01T23:59:59"/>
+        </insert>
+
+        <insert tableName="coupons">
+            <column name="id" value="cpn-004"/>
+            <column name="code" value="EXPIRED20"/>
+            <column name="description" value="Expired promo – 20% off"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="20.00"/>
+            <column name="min_order_amount" valueNumeric="0"/>
+            <column name="usage_limit" valueNumeric="100"/>
+            <column name="used_count" valueNumeric="100"/>
+            <column name="is_active" valueBoolean="false"/>
+            <column name="valid_from" valueDate="2024-01-01T00:00:00"/>
+            <column name="valid_until" valueDate="2024-12-31T23:59:59"/>
+        </insert>
+
+        <insert tableName="coupons">
+            <column name="id" value="cpn-005"/>
+            <column name="code" value="VIP15"/>
+            <column name="description" value="VIP customers – 15% off everything"/>
+            <column name="discount_type" value="PERCENTAGE"/>
+            <column name="discount_value" valueNumeric="15.00"/>
+            <column name="min_order_amount" valueNumeric="0"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="valid_from" valueDate="2025-01-01T00:00:00"/>
+            <column name="valid_until" valueDate="2026-12-31T23:59:59"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

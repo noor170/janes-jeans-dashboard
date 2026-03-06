@@ -113,6 +113,16 @@ const ProductQuickViewDialog = ({ product, open, onOpenChange }: ProductQuickVie
               <p className="mt-1 text-2xl font-bold text-success">
                 ${product.price.toFixed(2)}
               </p>
+              {(product.discountPercent > 0 || product.offerDiscountPercent > 0) && (
+                <div className="mt-1 space-y-0.5">
+                  {product.discountPercent > 0 && (
+                    <Badge variant="destructive" className="text-xs">{product.discountPercent}% off</Badge>
+                  )}
+                  {product.offerDiscountPercent > 0 && (
+                    <Badge className="ml-1 text-xs bg-amber-500">{product.offerName || 'Offer'}: {product.offerDiscountPercent}% off</Badge>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Stock Level */}

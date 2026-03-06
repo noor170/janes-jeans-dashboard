@@ -27,6 +27,8 @@ import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import Coupons from "./pages/Coupons";
+import CashFlow from "./pages/CashFlow";
 // Shop pages
 import ShoppingDashboard from "./pages/shop/ShoppingDashboard";
 import ProductDetails from "./pages/shop/ProductDetails";
@@ -74,6 +76,8 @@ const App = () => (
                           <Route path="/customers" element={<Customers />} />
                           <Route path="/shipments" element={<Shipments />} />
                           <Route path="/shipping-vendors" element={<ShippingVendors />} />
+                          <Route path="/coupons" element={<Coupons />} />
+                          <Route path="/cash-flow" element={<CashFlow />} />
                           <Route path="/analytics" element={<Analytics />} />
                           <Route path="/settings" element={<Settings />} />
                         </Route>

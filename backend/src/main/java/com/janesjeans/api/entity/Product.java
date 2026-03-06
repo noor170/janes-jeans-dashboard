@@ -51,6 +51,23 @@ public class Product {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    @Column(name = "discount_percent", nullable = false, precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal discountPercent = BigDecimal.ZERO;
+
+    @Column(name = "offer_discount_percent", nullable = false, precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal offerDiscountPercent = BigDecimal.ZERO;
+
+    @Column(name = "offer_name")
+    private String offerName;
+
+    @Column(name = "offer_start")
+    private LocalDateTime offerStart;
+
+    @Column(name = "offer_end")
+    private LocalDateTime offerEnd;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

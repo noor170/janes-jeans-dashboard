@@ -18,5 +18,10 @@ export const fetchProducts = async (gender: GenderFilter): Promise<ProductDTO[]>
     wash: p.wash || '',
     price: Number(p.price),
     stockLevel: p.stockLevel,
+    discountPercent: Number(p.discountPercent || 0),
+    offerDiscountPercent: Number(p.offerDiscountPercent || 0),
+    offerName: p.offerName || '',
+    offerStart: p.offerStart,
+    offerEnd: p.offerEnd,
   }));
 };

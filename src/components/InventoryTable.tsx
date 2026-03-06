@@ -331,12 +331,21 @@ const InventoryTable = () => {
                     {t('stockLevel')}
                   </SortableHeader>
                 </TableHead>
+                <TableHead className="text-right">
+                  <SortableHeader
+                    sortDirection={getSortDirection('discountPercent')}
+                    onClick={() => requestSort('discountPercent')}
+                    className="justify-end"
+                  >
+                    {language === 'en' ? 'Discount' : 'ডিসকাউন্ট'}
+                  </SortableHeader>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {pagination.paginatedItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
                     {t('noData')}
                   </TableCell>
                 </TableRow>
@@ -420,6 +429,26 @@ const InventoryTable = () => {
                           </Badge>
                         )}
                       </div>
+                    </TableCell>
+                    <TableCell 
+                      className="text-right"
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setIsQuickViewOpen(true);
+                      }}
+                    >
+                      {(product.discountPercent > 0 || product.offerDiscountPercent > 0) ? (
+                        <div className="flex flex-col items-end gap-0.5">
+                          {product.discountPercent > 0 && (
+                            <Badge variant="destructive" className="text-xs">{product.discountPercent}%</Badge>
+                          )}
+                          {product.offerDiscountPercent > 0 && (
+                            <Badge className="text-xs bg-amber-500 text-white">{product.offerDiscountPercent}%</Badge>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))

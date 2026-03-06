@@ -40,6 +40,11 @@ public class ProductService {
         if (updates.getPrice() != null) product.setPrice(updates.getPrice());
         if (updates.getStockLevel() != null) product.setStockLevel(updates.getStockLevel());
         if (updates.getImageUrl() != null) product.setImageUrl(updates.getImageUrl());
+        if (updates.getDiscountPercent() != null) product.setDiscountPercent(updates.getDiscountPercent());
+        if (updates.getOfferDiscountPercent() != null) product.setOfferDiscountPercent(updates.getOfferDiscountPercent());
+        if (updates.getOfferName() != null) product.setOfferName(updates.getOfferName());
+        if (updates.getOfferStart() != null) product.setOfferStart(updates.getOfferStart());
+        if (updates.getOfferEnd() != null) product.setOfferEnd(updates.getOfferEnd());
         return productRepository.save(product);
     }
 

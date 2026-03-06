@@ -8,6 +8,11 @@ export interface ProductDTO {
   wash: string;
   price: number;
   stockLevel: number;
+  discountPercent: number;
+  offerDiscountPercent: number;
+  offerName?: string;
+  offerStart?: string;
+  offerEnd?: string;
 }
 
 // OrderDTO following Spring Boot pattern
@@ -22,7 +27,7 @@ export interface OrderDTO {
   deliveredDate?: string;
   totalAmount: number;
   shippingAddress: string;
-  notes?: string; // Markdown-formatted notes
+  notes?: string;
 }
 
 export interface OrderItemDTO {
@@ -82,7 +87,7 @@ export interface ShippingVendorDTO {
   contactEmail: string;
   contactPhone: string;
   website?: string;
-  trackingUrlTemplate?: string; // e.g., "https://pathao.com/track/{tracking_number}"
+  trackingUrlTemplate?: string;
   status: 'active' | 'inactive';
   avgDeliveryDays: number;
   createdAt: string;
@@ -104,3 +109,45 @@ export interface ShipmentDTO {
 }
 
 export type ShipmentStatus = 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'failed';
+
+// CouponDTO
+export interface CouponDTO {
+  id: string;
+  code: string;
+  description: string;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: number;
+  minOrderAmount: number;
+  maxDiscountAmount?: number;
+  usageLimit?: number;
+  usedCount: number;
+  isActive: boolean;
+  validFrom: string;
+  validUntil: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// CashFlowTransactionDTO
+export interface CashFlowTransactionDTO {
+  id: string;
+  type: 'INCOME' | 'EXPENSE';
+  category: string;
+  amount: number;
+  description: string;
+  referenceId?: string;
+  referenceType?: string;
+  paymentMethod?: string;
+  status: 'COMPLETED' | 'PENDING' | 'CANCELLED';
+  transactionDate: string;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// CashFlowSummary
+export interface CashFlowSummary {
+  totalIncome: number;
+  totalExpense: number;
+  netCashFlow: number;
+}

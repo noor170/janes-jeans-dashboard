@@ -17,6 +17,9 @@
     <include file="db/changelog/changes/009-create-shop-categories-table.xml"/>
     <include file="db/changelog/changes/010-create-shop-subcategories-table.xml"/>
     <include file="db/changelog/changes/011-create-shop-products-table.xml"/>
+    <include file="db/changelog/changes/012-add-discount-fields-to-products.xml"/>
+    <include file="db/changelog/changes/013-create-coupons-table.xml"/>
+    <include file="db/changelog/changes/014-create-cash-flow-table.xml"/>
     
     <!-- Demo Data -->
     <include file="db/changelog/data/001-demo-users.xml"/>
@@ -28,5 +31,8 @@
     <include file="db/changelog/data/007-shop-categories.xml"/>
     <include file="db/changelog/data/008-shop-subcategories.xml"/>
     <include file="db/changelog/data/009-shop-products.xml"/>
+    <include file="db/changelog/data/010-admin-user.xml"/>
+    <include file="db/changelog/data/011-demo-coupons.xml"/>
+    <include file="db/changelog/data/012-demo-cash-flow.xml"/>
 
 </databaseChangeLog>

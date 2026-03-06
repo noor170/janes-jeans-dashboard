@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="012-add-discount-fields-to-products" author="janesjeans">
+        <addColumn tableName="products">
+            <column name="discount_percent" type="DECIMAL(5,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="offer_discount_percent" type="DECIMAL(5,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="offer_name" type="VARCHAR(255)" defaultValue=""/>
+            <column name="offer_start" type="TIMESTAMP"/>
+            <column name="offer_end" type="TIMESTAMP"/>
+        </addColumn>
+
+        <addColumn tableName="shop_products">
+            <column name="discount_percent" type="DECIMAL(5,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="offer_discount_percent" type="DECIMAL(5,2)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="offer_name" type="VARCHAR(255)" defaultValue=""/>
+            <column name="offer_start" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="offer_end" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
