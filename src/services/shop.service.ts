@@ -69,12 +69,14 @@ const mapShopProduct = (p: any): ShopProduct => ({
   description: p.description || '',
   price: Number(p.price),
   category: p.category || 'jeans',
+  subcategory: p.subcategory || '',
   sizes: p.sizes || [],
   colors: p.colors || [],
   images: p.images || ['/placeholder.svg'],
-  inStock: p.inStock ?? true,
-  rating: p.rating || 4.5,
-  reviews: p.reviews || 100,
+  inStock: p.in_stock ?? p.inStock ?? true,
+  rating: Number(p.rating) || 4.5,
+  reviews: p.reviews || 0,
+  metadata: p.metadata || {},
 });
 
 // ============= API Functions =============
