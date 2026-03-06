@@ -42,7 +42,7 @@ const Dashboard = () => {
   const exportStats = () => {
     const headers = ['Metric', 'Value'];
     const data = [
-      [t('totalSales'), `$${(stats?.totalSales || 0).toLocaleString()}`],
+      [t('totalSales'), `৳${(stats?.totalSales || 0).toLocaleString()}`],
       [t('activeOrders'), stats?.activeOrders || 0],
       [t('lowStockAlerts'), stats?.lowStockAlerts || 0],
       [t('totalCustomers'), stats?.totalCustomers || 0],
