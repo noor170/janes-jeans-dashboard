@@ -1,0 +1,24 @@
+
+UPDATE shop_products SET images = ARRAY['/images/products/leather-bags-milano-tote.jpg'] WHERE id = 'LB001';
+UPDATE shop_products SET images = ARRAY['/images/products/leather-bags-urban-crossbody.jpg'] WHERE id = 'LB002';
+UPDATE shop_products SET images = ARRAY['/images/products/leather-bags-evening-clutch.jpg'] WHERE id = 'LB003';
+UPDATE shop_products SET images = ARRAY['/images/products/leather-bags-heritage-backpack.jpg'] WHERE id = 'LB004';
+UPDATE shop_products SET images = ARRAY['/images/products/skincare-hydra-moisturizer.jpg'] WHERE id = 'SK001';
+UPDATE shop_products SET images = ARRAY['/images/products/skincare-vitamin-c-serum.jpg'] WHERE id = 'SK002';
+UPDATE shop_products SET images = ARRAY['/images/products/skincare-foam-cleanser.jpg'] WHERE id = 'SK003';
+UPDATE shop_products SET images = ARRAY['/images/products/skincare-spf50-shield.jpg'] WHERE id = 'SK004';
+UPDATE shop_products SET images = ARRAY['/images/products/skincare-retinol-night-cream.jpg'] WHERE id = 'SK005';
+UPDATE shop_products SET images = ARRAY['/images/products/cosmetics-velvet-lipstick.jpg'] WHERE id = 'COS001';
+UPDATE shop_products SET images = ARRAY['/images/products/cosmetics-flawless-foundation.jpg'] WHERE id = 'COS002';
+UPDATE shop_products SET images = ARRAY['/images/products/cosmetics-eyeshadow-palette.jpg'] WHERE id = 'COS003';
+UPDATE shop_products SET images = ARRAY['/images/products/cosmetics-volume-mascara.jpg'] WHERE id = 'COS004';
+UPDATE shop_products SET images = ARRAY['/images/products/haircare-argan-shampoo.jpg'] WHERE id = 'HC001';
+UPDATE shop_products SET images = ARRAY['/images/products/haircare-silk-conditioner.jpg'] WHERE id = 'HC002';
+UPDATE shop_products SET images = ARRAY['/images/products/haircare-moroccan-oil.jpg'] WHERE id = 'HC003';
+UPDATE shop_products SET images = ARRAY['/images/products/haircare-keratin-mask.jpg'] WHERE id = 'HC004';
+UPDATE shop_products SET images = ARRAY['/images/products/jewelry-diamond-ring.jpg'] WHERE id = 'JW001';
+UPDATE shop_products SET images = ARRAY['/images/products/jewelry-pearl-necklace.jpg'] WHERE id = 'JW002';
+UPDATE shop_products SET images = ARRAY['/images/products/jewelry-sapphire-earrings.jpg'] WHERE id = 'JW003';
+UPDATE shop_products SET images = ARRAY['/images/products/jewelry-tennis-bracelet.jpg'] WHERE id = 'JW004';
+UPDATE shop_products SET images = ARRAY['/images/products/undergarments-everyday-bra.jpg'] WHERE id = 'UG001';
+UPDATE shop_products SET images = ARRAY['/images/products/undergarments-premium-boxers.jpg'] WHERE id = 'UG003';
