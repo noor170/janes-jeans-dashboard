@@ -20,6 +20,7 @@
     <include file="db/changelog/changes/012-add-discount-fields-to-products.xml"/>
     <include file="db/changelog/changes/013-create-coupons-table.xml"/>
     <include file="db/changelog/changes/014-create-cash-flow-table.xml"/>
+    <include file="db/changelog/changes/015-create-product-returns-table.xml"/>
     
     <!-- Demo Data -->
     <include file="db/changelog/data/001-demo-users.xml"/>
@@ -34,5 +35,6 @@
     <include file="db/changelog/data/010-admin-user.xml"/>
     <include file="db/changelog/data/011-demo-coupons.xml"/>
     <include file="db/changelog/data/012-demo-cash-flow.xml"/>
+    <include file="db/changelog/data/013-demo-returns.xml"/>
 
 </databaseChangeLog>
