@@ -39,6 +39,8 @@ import CheckoutPage from "./pages/shop/CheckoutPage";
 import PaymentPage from "./pages/shop/PaymentPage";
 import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
 import ShopRegister from "./pages/shop/ShopRegister";
+import OrderTracking from "./pages/shop/OrderTracking";
+import ResetPassword from "./pages/shop/ResetPassword";
 const queryClient = new QueryClient();
 
 const App = () => (
