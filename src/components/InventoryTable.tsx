@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useGenderFilter } from '@/contexts/GenderFilterContext';
 import { fetchProducts } from '@/lib/api';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { createProduct, updateProduct, deleteProduct } from '@/services/product.service';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { ProductDTO } from '@/types';
 import {
   Table,
@@ -17,12 +18,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Download, Edit, X, Upload } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Search, Download, Edit, X, Upload, Plus, Trash2, Pencil } from 'lucide-react';
 import { usePagination } from '@/hooks/usePagination';
 import { useSorting } from '@/hooks/useSorting';
 import TablePagination from './TablePagination';
 import SortableHeader from './SortableHeader';
 import ProductQuickViewDialog from './ProductQuickViewDialog';
+import ProductFormDialog from './ProductFormDialog';
 import BulkEditDialog from './BulkEditDialog';
 import ImportCsvDialog from './ImportCsvDialog';
 import { exportToCsv } from '@/lib/exportCsv';
@@ -38,7 +44,28 @@ const InventoryTable = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkEditOpen, setIsBulkEditOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductDTO | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<ProductDTO | null>(null);
 
+  const createMutation = useMutation({
+    mutationFn: (data: Partial<ProductDTO>) => createProduct(data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product created'); setIsProductFormOpen(false); },
+    onError: () => toast.error('Failed to create product'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<ProductDTO> }) => updateProduct(id, data),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product updated'); setIsProductFormOpen(false); },
+    onError: () => toast.error('Failed to update product'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['products'] }); toast.success('Product deleted'); setDeleteDialogOpen(false); },
+    onError: () => toast.error('Failed to delete product'),
+  });
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products', genderFilter],
     queryFn: () => fetchProducts(genderFilter),
