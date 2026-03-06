@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- admin@admin.com / 12345678 -->
+    <!-- BCrypt hash generated via PasswordHashGenerator for: 12345678 -->
+    <changeSet id="data-010-admin-user" author="janesjeans" context="dev,docker">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">SELECT COUNT(*) FROM users WHERE email = 'admin@admin.com'</sqlCheck>
+            </not>
+        </preConditions>
+        <insert tableName="users">
+            <column name="id" value="usr-system-admin-001"/>
+            <column name="email" value="admin@admin.com"/>
+            <column name="password" value="$2a$10$FjMY6ALCVk7Dg3HqbZnExuL.j7Xr0OpB1jCWzZoKZfOLzzRKr4y."/>
+            <column name="first_name" value="System"/>
+            <column name="last_name" value="Admin"/>
+            <column name="role" value="SUPER_ADMIN"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-012-demo-cash-flow" author="janesjeans" context="dev,docker">
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-001"/>
+            <column name="type" value="INCOME"/>
+            <column name="category" value="Sales"/>
+            <column name="amount" valueNumeric="15400.00"/>
+            <column name="description" value="January product sales revenue"/>
+            <column name="reference_type" value="ORDER"/>
+            <column name="payment_method" value="Card"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-01-31T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-002"/>
+            <column name="type" value="EXPENSE"/>
+            <column name="category" value="Inventory Purchase"/>
+            <column name="amount" valueNumeric="8200.00"/>
+            <column name="description" value="Bulk denim fabric purchase – Q1"/>
+            <column name="payment_method" value="Bank Transfer"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-01-15T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-003"/>
+            <column name="type" value="EXPENSE"/>
+            <column name="category" value="Shipping"/>
+            <column name="amount" valueNumeric="1250.00"/>
+            <column name="description" value="January shipping costs via Pathao and Steadfast"/>
+            <column name="payment_method" value="Cash"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-01-31T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-004"/>
+            <column name="type" value="INCOME"/>
+            <column name="category" value="Sales"/>
+            <column name="amount" valueNumeric="22800.00"/>
+            <column name="description" value="February product sales revenue"/>
+            <column name="reference_type" value="ORDER"/>
+            <column name="payment_method" value="Card"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-02-28T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-005"/>
+            <column name="type" value="EXPENSE"/>
+            <column name="category" value="Salary"/>
+            <column name="amount" valueNumeric="5000.00"/>
+            <column name="description" value="Staff salaries – February"/>
+            <column name="payment_method" value="Bank Transfer"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-02-28T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-006"/>
+            <column name="type" value="EXPENSE"/>
+            <column name="category" value="Rent"/>
+            <column name="amount" valueNumeric="3000.00"/>
+            <column name="description" value="Warehouse rent – March"/>
+            <column name="payment_method" value="Bank Transfer"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-03-01T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-007"/>
+            <column name="type" value="INCOME"/>
+            <column name="category" value="Refund Received"/>
+            <column name="amount" valueNumeric="450.00"/>
+            <column name="description" value="Supplier refund for damaged goods"/>
+            <column name="payment_method" value="Bank Transfer"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="transaction_date" valueDate="2025-03-05T00:00:00"/>
+        </insert>
+        <insert tableName="cash_flow_transactions">
+            <column name="id" value="cf-008"/>
+            <column name="type" value="EXPENSE"/>
+            <column name="category" value="Marketing"/>
+            <column name="amount" valueNumeric="1800.00"/>
+            <column name="description" value="Facebook & Instagram ads – March"/>
+            <column name="payment_method" value="Card"/>
+            <column name="status" value="PENDING"/>
+            <column name="transaction_date" valueDate="2025-03-10T00:00:00"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
