@@ -4,10 +4,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { CheckoutSteps } from '@/components/shop/CheckoutSteps';
+import { CouponInput } from '@/components/shop/CouponInput';
 import { useCart, ShipmentDetails } from '@/contexts/CartContext';
 
 const shipmentSchema = z.object({
@@ -21,7 +22,7 @@ const shipmentSchema = z.object({
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, shipmentDetails, setShipmentDetails, getCartTotal } = useCart();
+  const { items, shipmentDetails, setShipmentDetails, getCartTotal, appliedCoupon } = useCart();
 
   const form = useForm<ShipmentDetails>({
     resolver: zodResolver(shipmentSchema),
@@ -46,9 +47,10 @@ export default function CheckoutPage() {
   };
 
   const total = getCartTotal();
+  const couponDiscount = appliedCoupon?.discount ?? 0;
   const shipping = total > 100 ? 0 : 9.99;
-  const tax = total * 0.08;
-  const grandTotal = total + shipping + tax;
+  const tax = (total - couponDiscount) * 0.08;
+  const grandTotal = total - couponDiscount + shipping + tax;
 
   return (
     <div className="min-h-screen bg-background">
@@ -190,22 +192,31 @@ export default function CheckoutPage() {
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="border-t pt-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>${total.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                    <span>Total</span>
-                    <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                <div className="border-t pt-4 space-y-3">
+                  <CouponInput orderTotal={total} />
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                    {couponDiscount > 0 && (
+                      <div className="flex justify-between text-primary">
+                        <span>Coupon ({appliedCoupon?.code})</span>
+                        <span>-${couponDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tax</span>
+                      <span>${tax.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                      <span>Total</span>
+                      <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>

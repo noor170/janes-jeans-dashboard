@@ -63,6 +63,11 @@ export const categoryFilterConfig: Record<string, { label: string; key: string; 
     { label: 'Material', key: 'material', type: 'select', options: ['Cotton blend', 'Lace & Cotton', '100% Cotton', 'Nylon Spandex'] },
     { label: 'Privacy Packaging', key: 'privacy_packaging', type: 'boolean' },
   ],
+  'electric-gadgets': [
+    { label: 'Power Source', key: 'power_source', type: 'select', options: ['USB Rechargeable', 'Battery', 'Plug-in'] },
+    { label: 'Speed Levels', key: 'speed_levels', type: 'select', options: ['2', '3', '5'] },
+    { label: 'Waterproof', key: 'waterproof', type: 'boolean' },
+  ],
 };
 
 // Concern-based landing page data for beauty

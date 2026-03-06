@@ -28,10 +28,18 @@ export interface PaymentDetails {
   transactionId?: string;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discount: number;
+  discountType: string;
+  discountValue: number;
+}
+
 interface CartContextType {
   items: CartItem[];
   shipmentDetails: ShipmentDetails | null;
   paymentDetails: PaymentDetails | null;
+  appliedCoupon: AppliedCoupon | null;
   addToCart: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void;
   removeFromCart: (id: string, size: string) => void;
   updateQuantity: (id: string, size: string, quantity: number) => void;
@@ -40,6 +48,7 @@ interface CartContextType {
   getCartCount: () => number;
   setShipmentDetails: (details: ShipmentDetails) => void;
   setPaymentDetails: (details: PaymentDetails) => void;
+  setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
   resetCheckout: () => void;
   pendingCheckout: boolean;
   setPendingCheckout: (pending: boolean) => void;
@@ -49,6 +58,7 @@ const CART_STORAGE_KEY = 'jj_cart_items';
 const SHIPMENT_STORAGE_KEY = 'jj_shipment_details';
 const PAYMENT_STORAGE_KEY = 'jj_payment_details';
 const PENDING_CHECKOUT_KEY = 'jj_pending_checkout';
+const COUPON_STORAGE_KEY = 'jj_applied_coupon';
 
 function loadFromStorage<T>(key: string): T | null {
   try {
@@ -78,12 +88,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [shipmentDetails, setShipmentDetailsState] = useState<ShipmentDetails | null>(() => loadFromStorage<ShipmentDetails>(SHIPMENT_STORAGE_KEY));
   const [paymentDetails, setPaymentDetailsState] = useState<PaymentDetails | null>(() => loadFromStorage<PaymentDetails>(PAYMENT_STORAGE_KEY));
   const [pendingCheckout, setPendingCheckoutState] = useState<boolean>(() => loadFromStorage<boolean>(PENDING_CHECKOUT_KEY) || false);
+  const [appliedCoupon, setAppliedCouponState] = useState<AppliedCoupon | null>(() => loadFromStorage<AppliedCoupon>(COUPON_STORAGE_KEY));
 
   // Persist to localStorage on change
   useEffect(() => { saveToStorage(CART_STORAGE_KEY, items); }, [items]);
   useEffect(() => { saveToStorage(SHIPMENT_STORAGE_KEY, shipmentDetails); }, [shipmentDetails]);
   useEffect(() => { saveToStorage(PAYMENT_STORAGE_KEY, paymentDetails); }, [paymentDetails]);
   useEffect(() => { saveToStorage(PENDING_CHECKOUT_KEY, pendingCheckout); }, [pendingCheckout]);
+  useEffect(() => { saveToStorage(COUPON_STORAGE_KEY, appliedCoupon); }, [appliedCoupon]);
 
   const addToCart = useCallback((item: Omit<CartItem, 'quantity'>, quantity = 1) => {
     setItems(prev => {
@@ -135,15 +147,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setPendingCheckoutState(pending);
   }, []);
 
+  const setAppliedCoupon = useCallback((coupon: AppliedCoupon | null) => {
+    setAppliedCouponState(coupon);
+  }, []);
+
   const resetCheckout = useCallback(() => {
     setItems([]);
     setShipmentDetailsState(null);
     setPaymentDetailsState(null);
     setPendingCheckoutState(false);
+    setAppliedCouponState(null);
     localStorage.removeItem(CART_STORAGE_KEY);
     localStorage.removeItem(SHIPMENT_STORAGE_KEY);
     localStorage.removeItem(PAYMENT_STORAGE_KEY);
     localStorage.removeItem(PENDING_CHECKOUT_KEY);
+    localStorage.removeItem(COUPON_STORAGE_KEY);
   }, []);
 
   return (
@@ -151,6 +169,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       items,
       shipmentDetails,
       paymentDetails,
+      appliedCoupon,
       addToCart,
       removeFromCart,
       updateQuantity,
@@ -159,6 +178,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       getCartCount,
       setShipmentDetails,
       setPaymentDetails,
+      setAppliedCoupon,
       resetCheckout,
       pendingCheckout,
       setPendingCheckout,
