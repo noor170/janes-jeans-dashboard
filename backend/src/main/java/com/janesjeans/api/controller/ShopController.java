@@ -2,10 +2,10 @@ package com.janesjeans.api.controller;
 
 import com.janesjeans.api.dto.GuestOrderRequest;
 import com.janesjeans.api.dto.GuestOrderResponse;
+import com.janesjeans.api.dto.ShopCategoryDTO;
 import com.janesjeans.api.dto.ShopProductDTO;
-import com.janesjeans.api.entity.Order;
-import com.janesjeans.api.entity.OrderItem;
-import com.janesjeans.api.entity.Product;
+import com.janesjeans.api.dto.ShopProductDetailDTO;
+import com.janesjeans.api.entity.*;
 import com.janesjeans.api.service.EmailService;
 import com.janesjeans.api.service.OrderService;
 import com.janesjeans.api.service.OtpService;
@@ -13,6 +13,7 @@ import com.janesjeans.api.service.ProductService;
 import com.janesjeans.api.service.PaymentService;
 import com.janesjeans.api.service.ShipmentService;
 import com.janesjeans.api.service.ShippingVendorService;
+import com.janesjeans.api.service.ShopCatalogService;
 import com.janesjeans.api.entity.Shipment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -44,6 +45,65 @@ public class ShopController {
     private final ShipmentService shipmentService;
     private final ShippingVendorService shippingVendorService;
     private final OtpService otpService;
+    private final ShopCatalogService shopCatalogService;
+
+    // ==================== CATALOG ENDPOINTS (new shop tables) ====================
+
+    @Operation(summary = "List all shop categories", description = "Returns categories with their subcategories")
+    @GetMapping("/categories")
+    public ResponseEntity<List<ShopCategoryDTO>> getCategories() {
+        List<ShopCategory> categories = shopCatalogService.getAllCategories();
+        List<ShopCategoryDTO> dtos = categories.stream().map(c -> ShopCategoryDTO.builder()
+                .id(c.getId()).name(c.getName()).slug(c.getSlug())
+                .icon(c.getIcon()).sortOrder(c.getSortOrder() != null ? c.getSortOrder() : 0)
+                .subcategories(c.getSubcategories() != null ? c.getSubcategories().stream()
+                        .map(s -> ShopCategoryDTO.SubcategoryDTO.builder()
+                                .id(s.getId()).name(s.getName()).slug(s.getSlug())
+                                .sortOrder(s.getSortOrder() != null ? s.getSortOrder() : 0).build())
+                        .collect(Collectors.toList()) : List.of())
+                .build()).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @Operation(summary = "List shop catalog products", description = "Returns products from the shop_products table with JSONB metadata. Optionally filter by category and subcategory.")
+    @GetMapping("/catalog")
+    public ResponseEntity<List<ShopProductDetailDTO>> getCatalogProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String subcategory) {
+        List<ShopProduct> products;
+        if (category != null && subcategory != null) {
+            products = shopCatalogService.getShopProductsByCategoryAndSub(category, subcategory);
+        } else if (category != null && !"all".equals(category)) {
+            products = shopCatalogService.getShopProductsByCategory(category);
+        } else {
+            products = shopCatalogService.getAllShopProducts();
+        }
+        List<ShopProductDetailDTO> dtos = products.stream().map(this::toDetailDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @Operation(summary = "Get shop catalog product by ID", description = "Returns a single product from shop_products with full metadata")
+    @GetMapping("/catalog/{id}")
+    public ResponseEntity<ShopProductDetailDTO> getCatalogProduct(@PathVariable String id) {
+        ShopProduct product = shopCatalogService.getShopProductById(id);
+        return ResponseEntity.ok(toDetailDTO(product));
+    }
+
+    private ShopProductDetailDTO toDetailDTO(ShopProduct p) {
+        return ShopProductDetailDTO.builder()
+                .id(p.getId()).name(p.getName()).description(p.getDescription())
+                .price(p.getPrice()).category(p.getCategory()).subcategory(p.getSubcategory())
+                .sizes(p.getSizes() != null ? List.of(p.getSizes()) : List.of())
+                .colors(p.getColors() != null ? List.of(p.getColors()) : List.of())
+                .images(p.getImages() != null ? List.of(p.getImages()) : List.of("/placeholder.svg"))
+                .inStock(p.getInStock() != null && p.getInStock())
+                .rating(p.getRating() != null ? p.getRating().doubleValue() : 4.5)
+                .reviews(p.getReviews() != null ? p.getReviews() : 0)
+                .metadata(p.getMetadata() != null ? p.getMetadata() : Map.of())
+                .build();
+    }
+
+    // ==================== LEGACY ENDPOINTS (old products table) ====================
 
     @Operation(summary = "List shop products", description = "Returns all products grouped by name with aggregated sizes. Optionally filter by category.")
     @ApiResponses({
