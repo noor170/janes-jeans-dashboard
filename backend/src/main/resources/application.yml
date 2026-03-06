@@ -15,10 +15,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   
-  # Liquibase Configuration
+  # Liquibase Configuration (schema only)
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  
+  # SQL seed data initialization (runs after Liquibase)
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/seed/DB.sql
+      continue-on-error: true
   
   # Mail Configuration
   mail:
