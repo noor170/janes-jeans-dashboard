@@ -41,6 +41,8 @@ import OrderSuccessPage from "./pages/shop/OrderSuccessPage";
 import ShopRegister from "./pages/shop/ShopRegister";
 import OrderTracking from "./pages/shop/OrderTracking";
 import ResetPassword from "./pages/shop/ResetPassword";
+import MyOrders from "./pages/shop/MyOrders";
+import SetPassword from "./pages/shop/SetPassword";
 const queryClient = new QueryClient();
 
 const App = () => (
