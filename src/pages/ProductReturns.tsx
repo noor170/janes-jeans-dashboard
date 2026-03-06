@@ -207,7 +207,7 @@ const ProductReturns = () => {
                         <TableCell>{getStatusBadge(ret.status)}</TableCell>
                         <TableCell>
                           <div className="space-y-1">
-                            {ret.refundAmount != null && <span className="text-sm font-medium">${ret.refundAmount.toFixed(2)}</span>}
+                            {ret.refundAmount != null && <span className="text-sm font-medium">৳{ret.refundAmount.toFixed(2)}</span>}
                             <div>{getRefundBadge(ret.refundStatus)}</div>
                           </div>
                         </TableCell>
