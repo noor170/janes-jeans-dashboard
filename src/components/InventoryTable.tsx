@@ -252,6 +252,13 @@ const InventoryTable = () => {
               <Download className="h-4 w-4" />
               {t('export')}
             </Button>
+            <Button
+              onClick={() => { setEditingProduct(null); setIsProductFormOpen(true); }}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {language === 'en' ? 'Add Product' : 'পণ্য যোগ করুন'}
+            </Button>
           </div>
         </div>
 
