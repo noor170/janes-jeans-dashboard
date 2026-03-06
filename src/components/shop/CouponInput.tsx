@@ -27,7 +27,7 @@ export function CouponInput({ orderTotal }: CouponInputProps) {
         discountValue: result.discountValue,
       };
       setAppliedCoupon(coupon);
-      toast.success(`Coupon "${coupon.code}" applied! You save $${coupon.discount.toFixed(2)}`);
+      toast.success(`Coupon "${coupon.code}" applied! You save ৳${coupon.discount.toFixed(2)}`);
       setCode('');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Invalid coupon code';
@@ -51,7 +51,7 @@ export function CouponInput({ orderTotal }: CouponInputProps) {
           <span className="text-xs text-muted-foreground">
             {appliedCoupon.discountType === 'PERCENTAGE'
               ? `${appliedCoupon.discountValue}% off`
-              : `$${appliedCoupon.discountValue} off`}
+              : `৳${appliedCoupon.discountValue} off`}
           </span>
         </div>
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleRemove}>

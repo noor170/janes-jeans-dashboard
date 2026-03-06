@@ -197,25 +197,25 @@ export default function CheckoutPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>৳{total.toFixed(2)}</span>
                     </div>
                     {couponDiscount > 0 && (
                       <div className="flex justify-between text-primary">
                         <span>Coupon ({appliedCoupon?.code})</span>
-                        <span>-${couponDiscount.toFixed(2)}</span>
+                        <span>-৳{couponDiscount.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
-                      <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                      <span>{shipping === 0 ? 'Free' : `৳${shipping.toFixed(2)}`}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Tax</span>
-                      <span>${tax.toFixed(2)}</span>
+                      <span>৳{tax.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold pt-2 border-t">
                       <span>Total</span>
-                      <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                      <span className="text-primary">৳{grandTotal.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

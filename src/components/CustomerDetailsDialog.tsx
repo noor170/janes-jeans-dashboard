@@ -171,7 +171,7 @@ const CustomerDetailsDialog = ({ customer, isOpen, onClose }: CustomerDetailsDia
                         </div>
                         <div className="flex justify-between font-medium text-foreground">
                           <span>{t('total')}:</span>
-                          <span>${order.totalAmount.toFixed(2)}</span>
+                          <span>৳{order.totalAmount.toFixed(2)}</span>
                         </div>
                       </div>
                       {/* Order Items Preview */}
@@ -181,7 +181,7 @@ const CustomerDetailsDialog = ({ customer, isOpen, onClose }: CustomerDetailsDia
                           {order.items.map((item, idx) => (
                             <div key={idx} className="flex justify-between text-xs">
                               <span className="truncate max-w-[60%]">{item.productName}</span>
-                              <span>x{item.quantity} · ${item.price.toFixed(2)}</span>
+                              <span>x{item.quantity} · ৳{item.price.toFixed(2)}</span>
                             </div>
                           ))}
                         </div>

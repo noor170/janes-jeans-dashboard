@@ -147,9 +147,9 @@ const Coupons = () => {
                         <TableCell className="max-w-48 truncate">{c.description}</TableCell>
                         <TableCell><Badge variant="outline">{c.discountType}</Badge></TableCell>
                         <TableCell className="text-right font-medium">
-                          {c.discountType === 'PERCENTAGE' ? `${c.discountValue}%` : `$${c.discountValue}`}
+                          {c.discountType === 'PERCENTAGE' ? `${c.discountValue}%` : `৳${c.discountValue}`}
                         </TableCell>
-                        <TableCell className="text-right">${c.minOrderAmount}</TableCell>
+                        <TableCell className="text-right">৳{c.minOrderAmount}</TableCell>
                         <TableCell>{c.usedCount}{c.usageLimit ? `/${c.usageLimit}` : ''}</TableCell>
                         <TableCell>
                           <Badge variant={c.isActive ? 'default' : 'secondary'}>{c.isActive ? 'Active' : 'Inactive'}</Badge>

@@ -85,7 +85,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
           id: `order-${order.id}`,
           type: 'new_order',
           title: 'New Order',
-          message: `Order #${order.id} from ${order.customerName} - $${order.totalAmount.toFixed(2)}`,
+          message: `Order #${order.id} from ${order.customerName} - ৳${order.totalAmount.toFixed(2)}`,
           timestamp: new Date(order.orderDate),
           read: false,
           orderId: order.id,

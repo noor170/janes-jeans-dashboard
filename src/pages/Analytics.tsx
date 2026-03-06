@@ -196,9 +196,9 @@ const Analytics = () => {
     const headers = ['Metric', 'Value', 'Change %', 'Trend'];
     const avgOrderValue = orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0;
     const data = [
-      ['Total Sales', `$${(stats?.totalSales || 0).toLocaleString()}`, '12.5', 'up'],
+      ['Total Sales', `৳${(stats?.totalSales || 0).toLocaleString()}`, '12.5', 'up'],
       ['Active Orders', stats?.activeOrders || 0, '-3.2', 'down'],
-      ['Avg Order Value', `$${avgOrderValue}`, '8.1', 'up'],
+      ['Avg Order Value', `৳${avgOrderValue}`, '8.1', 'up'],
       ['Total Customers', stats?.totalCustomers || 0, '15.3', 'up'],
     ];
     exportToCsv({ filename: `kpi-metrics-${new Date().toISOString().split('T')[0]}`, headers, data });
@@ -335,7 +335,7 @@ const Analytics = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title={t('totalSales')}
-          value={`$${(stats?.totalSales || 0).toLocaleString()}`}
+          value={`৳${(stats?.totalSales || 0).toLocaleString()}`}
           change={12.5}
           changeLabel={vsLastMonth}
           icon={DollarSign}
@@ -351,7 +351,7 @@ const Analytics = () => {
         />
         <KPICard
           title={language === 'en' ? 'Avg Order Value' : 'গড় অর্ডার মূল্য'}
-          value={`$${orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0}`}
+          value={`৳${orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0}`}
           change={8.1}
           changeLabel={vsLastMonth}
           icon={Target}
@@ -394,7 +394,7 @@ const Analytics = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
@@ -402,7 +402,7 @@ const Analytics = () => {
                       borderRadius: '8px',
                     }}
                     formatter={(value: number, name: string) => {
-                      if (name === 'total') return [`$${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব'];
+                      if (name === 'total') return [`৳${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব'];
                       return [value, name];
                     }}
                   />
@@ -481,14 +481,14 @@ const Analytics = () => {
                 <ComposedChart data={salesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
+                  <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                    formatter={(value: number) => [`৳${value.toLocaleString()}`, '']}
                   />
                   <Legend />
                   <Bar dataKey="men" name={t('men')} fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
@@ -603,7 +603,7 @@ const Analytics = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topProductsData} layout="vertical" margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={(value) => `$${value}`} />
+                  <XAxis type="number" tick={{ fontSize: 12 }} tickFormatter={(value) => `৳${value}`} />
                   <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={100} />
                   <Tooltip
                     contentStyle={{
@@ -611,7 +611,7 @@ const Analytics = () => {
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব']}
+                    formatter={(value: number) => [`৳${value.toLocaleString()}`, language === 'en' ? 'Revenue' : 'রাজস্ব']}
                   />
                   <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>

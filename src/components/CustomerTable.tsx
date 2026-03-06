@@ -93,7 +93,7 @@ const CustomerTable = () => {
       customer.email,
       customer.phone,
       customer.totalOrders,
-      `$${customer.totalSpent.toFixed(2)}`,
+      `৳${customer.totalSpent.toFixed(2)}`,
       new Date(customer.createdAt).toLocaleDateString(),
       customer.status,
     ]);
@@ -260,7 +260,7 @@ const CustomerTable = () => {
                   </TableCell>
                   <TableCell className="text-center">{customer.totalOrders}</TableCell>
                   <TableCell className="text-right font-medium">
-                    ${customer.totalSpent.toFixed(2)}
+                    ৳{customer.totalSpent.toFixed(2)}
                   </TableCell>
                   <TableCell>{getStatusBadge(customer.status)}</TableCell>
                   <TableCell className="text-right">

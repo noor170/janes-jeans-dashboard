@@ -42,7 +42,7 @@ const Dashboard = () => {
   const exportStats = () => {
     const headers = ['Metric', 'Value'];
     const data = [
-      [t('totalSales'), `$${(stats?.totalSales || 0).toLocaleString()}`],
+      [t('totalSales'), `৳${(stats?.totalSales || 0).toLocaleString()}`],
       [t('activeOrders'), stats?.activeOrders || 0],
       [t('lowStockAlerts'), stats?.lowStockAlerts || 0],
       [t('totalCustomers'), stats?.totalCustomers || 0],
@@ -125,7 +125,7 @@ const Dashboard = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title={t('totalSales')}
-          value={`$${(stats?.totalSales || 0).toLocaleString()}`}
+          value={`৳${(stats?.totalSales || 0).toLocaleString()}`}
           icon={DollarSign}
           variant="success"
         />

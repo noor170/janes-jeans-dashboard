@@ -82,27 +82,27 @@ export default function CartPage() {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">${total.toFixed(2)}</span>
+                  <span className="font-medium">৳{total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
                   <span className="font-medium">
-                    {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? 'Free' : `৳${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tax (8%)</span>
-                  <span className="font-medium">${tax.toFixed(2)}</span>
+                  <span className="font-medium">৳{tax.toFixed(2)}</span>
                 </div>
                 {total < 100 && (
                   <p className="text-sm text-muted-foreground">
-                    Add ${(100 - total).toFixed(2)} more for free shipping
+                    Add ৳{(100 - total).toFixed(2)} more for free shipping
                   </p>
                 )}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                  <span className="text-primary">৳{grandTotal.toFixed(2)}</span>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col gap-3">

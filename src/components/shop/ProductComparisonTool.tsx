@@ -75,7 +75,7 @@ export function ProductComparisonTool({ products }: ProductComparisonToolProps) 
                 <tbody>
                   <tr className="border-b">
                     <td className="p-2 text-muted-foreground">Price</td>
-                    {compared.map(p => <td key={p.id} className="p-2 font-medium">${p.price.toFixed(2)}</td>)}
+                    {compared.map(p => <td key={p.id} className="p-2 font-medium">৳{p.price.toFixed(2)}</td>)}
                   </tr>
                   <tr className="border-b">
                     <td className="p-2 text-muted-foreground">Rating</td>

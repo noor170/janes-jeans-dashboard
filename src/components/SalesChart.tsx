@@ -44,7 +44,7 @@ const SalesChart = () => {
                 tick={{ fontSize: 12 }}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip
                 contentStyle={{
@@ -52,7 +52,7 @@ const SalesChart = () => {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
-                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                formatter={(value: number) => [`৳${value.toLocaleString()}`, '']}
               />
               <Legend />
               {(genderFilter === 'All' || genderFilter === 'Men') && (

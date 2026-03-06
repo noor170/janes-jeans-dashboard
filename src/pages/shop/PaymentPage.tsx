@@ -174,7 +174,7 @@ export default function PaymentPage() {
                         />
                       </div>
                       <Button type="submit" size="lg" className="w-full">
-                        Pay ${grandTotal.toFixed(2)}
+                        Pay ৳{grandTotal.toFixed(2)}
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
                     </form>
@@ -260,25 +260,25 @@ export default function PaymentPage() {
                 <div className="border-t pt-4 space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>৳{total.toFixed(2)}</span>
                   </div>
                   {couponDiscount > 0 && (
                     <div className="flex justify-between text-primary">
                       <span>Coupon ({appliedCoupon?.code})</span>
-                      <span>-${couponDiscount.toFixed(2)}</span>
+                      <span>-৳{couponDiscount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                    <span>{shipping === 0 ? 'Free' : `৳${shipping.toFixed(2)}`}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>৳{tax.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-lg font-bold pt-2 border-t">
                     <span>Total</span>
-                    <span className="text-primary">${grandTotal.toFixed(2)}</span>
+                    <span className="text-primary">৳{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>

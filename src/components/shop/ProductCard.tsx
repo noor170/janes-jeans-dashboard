@@ -87,7 +87,7 @@ export function ProductCard({ product }: ProductCardProps) {
             Expires: {new Date(expiryDate).toLocaleDateString()}
           </p>
         )}
-        <p className="text-xl font-bold text-primary mt-2">${product.price.toFixed(2)}</p>
+        <p className="text-xl font-bold text-primary mt-2">৳{product.price.toFixed(2)}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex gap-2">
         <Button onClick={handleAddToCart} className="flex-1">Add to Cart</Button>

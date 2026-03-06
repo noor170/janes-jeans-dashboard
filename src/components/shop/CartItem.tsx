@@ -21,7 +21,7 @@ export function CartItem({ item }: CartItemProps) {
       <div className="flex-1 min-w-0">
         <h3 className="font-semibold truncate">{item.name}</h3>
         <p className="text-sm text-muted-foreground">Size: {item.size}</p>
-        <p className="text-primary font-bold">${item.price.toFixed(2)}</p>
+        <p className="text-primary font-bold">৳{item.price.toFixed(2)}</p>
       </div>
       <div className="flex items-center gap-2">
         <Button
@@ -43,7 +43,7 @@ export function CartItem({ item }: CartItemProps) {
         </Button>
       </div>
       <div className="text-right">
-        <p className="font-bold">${(item.price * item.quantity).toFixed(2)}</p>
+        <p className="font-bold">৳{(item.price * item.quantity).toFixed(2)}</p>
         <Button
           variant="ghost"
           size="sm"
