@@ -41,9 +41,9 @@ server:
     include-message: always
     include-binding-errors: always
 
-# JWT Configuration
+# JWT Configuration - NOTE: secret must be BASE64 encoded (32+ bytes for HS256)
 jwt:
-  secret: ${JWT_SECRET:your-256-bit-secret-key-here-make-it-long-and-secure-at-least-32-chars}
+  secret: ${JWT_SECRET:K28784clYAgJErwn8JNRcg+IzSGp15GdgUN9mUa2J8=}
   access-token-expiration: 900000  # 15 minutes
   refresh-token-expiration: 604800000  # 7 days
 

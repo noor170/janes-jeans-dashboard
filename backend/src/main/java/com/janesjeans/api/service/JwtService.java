@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -26,6 +30,11 @@ public class JwtService {
 
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+    public JwtService() {
+        // Diagnostic constructor for startup logging
+        logger.info("JwtService instance created - properties will be injected via @Value");
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -80,7 +89,9 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
+        logger.debug("Decoding JWT secret key - raw length: {}", secretKey != null ? secretKey.length() : 0);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        logger.debug("JWT secret key decoded successfully - key length: {}", keyBytes.length);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
