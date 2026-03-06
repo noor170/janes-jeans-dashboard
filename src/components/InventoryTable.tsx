@@ -485,6 +485,16 @@ const InventoryTable = () => {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
+                    <TableCell className="text-right" onClick={e => e.stopPropagation()}>
+                      <div className="flex justify-end gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingProduct(product); setIsProductFormOpen(true); }}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => { setProductToDelete(product); setDeleteDialogOpen(true); }}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -518,6 +528,41 @@ const InventoryTable = () => {
         open={isQuickViewOpen}
         onOpenChange={setIsQuickViewOpen}
       />
+
+      {/* Product Create/Edit Dialog */}
+      <ProductFormDialog
+        product={editingProduct}
+        open={isProductFormOpen}
+        onOpenChange={setIsProductFormOpen}
+        onSubmit={(data) => {
+          if (editingProduct) {
+            updateMutation.mutate({ id: editingProduct.id, data });
+          } else {
+            createMutation.mutate(data);
+          }
+        }}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{language === 'en' ? 'Delete Product' : 'পণ্য মুছুন'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {language === 'en' 
+                ? `Are you sure you want to delete "${productToDelete?.name}"? This cannot be undone.`
+                : `আপনি কি "${productToDelete?.name}" মুছতে চান? এটি পূর্বাবস্থায় ফেরানো যাবে না।`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{language === 'en' ? 'Cancel' : 'বাতিল'}</AlertDialogCancel>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground" onClick={() => productToDelete && deleteMutation.mutate(productToDelete.id)}>
+              {language === 'en' ? 'Delete' : 'মুছুন'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Bulk Edit Dialog */}
       <BulkEditDialog
