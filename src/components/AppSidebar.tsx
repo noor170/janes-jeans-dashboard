@@ -10,6 +10,8 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
+  Ticket,
+  DollarSign,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -31,6 +33,8 @@ const AppSidebar = ({ isCollapsed, setIsCollapsed }: AppSidebarProps) => {
     { path: '/customers', icon: Users, label: t('customers') },
     { path: '/shipments', icon: Truck, label: language === 'en' ? 'Shipments' : 'শিপমেন্ট' },
     { path: '/shipping-vendors', icon: Building2, label: language === 'en' ? 'Vendors' : 'ভেন্ডর' },
+    { path: '/coupons', icon: Ticket, label: language === 'en' ? 'Coupons' : 'কুপন' },
+    { path: '/cash-flow', icon: DollarSign, label: language === 'en' ? 'Cash Flow' : 'ক্যাশ ফ্লো' },
     { path: '/analytics', icon: BarChart3, label: t('analytics') },
     { path: '/settings', icon: Settings, label: t('settings') },
   ];

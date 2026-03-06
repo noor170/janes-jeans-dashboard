@@ -76,8 +76,9 @@ const App = () => (
                           <Route path="/customers" element={<Customers />} />
                           <Route path="/shipments" element={<Shipments />} />
                           <Route path="/shipping-vendors" element={<ShippingVendors />} />
+                          <Route path="/coupons" element={<Coupons />} />
+                          <Route path="/cash-flow" element={<CashFlow />} />
                           <Route path="/analytics" element={<Analytics />} />
-                          <Route path="/settings" element={<Settings />} />
                         </Route>
                       </Route>
                       
