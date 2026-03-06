@@ -58,6 +58,7 @@ const CART_STORAGE_KEY = 'jj_cart_items';
 const SHIPMENT_STORAGE_KEY = 'jj_shipment_details';
 const PAYMENT_STORAGE_KEY = 'jj_payment_details';
 const PENDING_CHECKOUT_KEY = 'jj_pending_checkout';
+const COUPON_STORAGE_KEY = 'jj_applied_coupon';
 
 function loadFromStorage<T>(key: string): T | null {
   try {
