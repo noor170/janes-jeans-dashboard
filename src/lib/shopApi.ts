@@ -5,6 +5,8 @@
 export {
   fetchShopProducts,
   fetchShopProductById,
+  fetchShopCategories,
+  searchCatalog,
   checkStockAvailability,
   createGuestOrder,
 } from '@/services/shop.service';
@@ -14,4 +16,7 @@ export type {
   StockCheckResult,
   GuestOrderPayload,
   GuestOrderResponse,
+  CatalogSearchParams,
+  PaginatedCatalogResponse,
+  ShopCategoryResponse,
 } from '@/services/shop.service';
