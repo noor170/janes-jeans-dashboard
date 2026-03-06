@@ -27,7 +27,7 @@ const bkashSchema = z.object({
 
 export default function PaymentPage() {
   const navigate = useNavigate();
-  const { items, shipmentDetails, setPaymentDetails, getCartTotal } = useCart();
+  const { items, shipmentDetails, setPaymentDetails, getCartTotal, appliedCoupon } = useCart();
   const [paymentType, setPaymentType] = useState<'card' | 'bkash'>('card');
 
   const cardForm = useForm({
