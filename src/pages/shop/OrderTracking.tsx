@@ -110,7 +110,7 @@ export default function OrderTracking() {
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" /> Find Your Order
             </CardTitle>
-            <CardDescription>Enter your order number and email to check the status</CardDescription>
+            <CardDescription>Enter your order number to check the status</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
