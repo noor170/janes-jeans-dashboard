@@ -7,9 +7,12 @@ import com.janesjeans.api.repository.ShopCategoryRepository;
 import com.janesjeans.api.repository.ShopProductRepository;
 import com.janesjeans.api.repository.ShopSubcategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -54,5 +57,17 @@ public class ShopCatalogService {
     public ShopProduct getShopProductById(String id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Shop product not found: " + id));
+    }
+
+    // ---- Paginated search ----
+
+    public Page<ShopProduct> searchCatalog(String category, String subcategory,
+                                           Boolean inStock, BigDecimal minPrice,
+                                           BigDecimal maxPrice, String search,
+                                           Pageable pageable) {
+        String cat = (category != null && !"all".equalsIgnoreCase(category)) ? category : null;
+        String sub = (subcategory != null && !subcategory.isBlank()) ? subcategory : null;
+        String q = (search != null && !search.isBlank()) ? search : null;
+        return productRepository.searchCatalog(cat, sub, inStock, minPrice, maxPrice, q, pageable);
     }
 }
