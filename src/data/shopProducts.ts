@@ -4,181 +4,82 @@ export interface ShopProduct {
   description: string;
   price: number;
   category: string;
+  subcategory: string;
   sizes: string[];
   colors: string[];
   images: string[];
   inStock: boolean;
   rating: number;
   reviews: number;
+  metadata: Record<string, any>;
 }
 
-export const shopProducts: ShopProduct[] = [
-  {
-    id: 'P001',
-    name: 'Classic Indigo Slim',
-    description: 'Timeless slim-fit jeans in classic indigo wash',
-    price: 89.99,
-    category: 'jeans',
-    sizes: ['30', '32', '34', '36'],
-    colors: ['Dark Indigo'],
-    images: ['/images/products/mens-slim-dark.jpg'],
-    inStock: true,
-    rating: 4.5,
-    reviews: 128,
-  },
-  {
-    id: 'P002',
-    name: 'Urban Skinny Fit',
-    description: 'Modern skinny jeans for urban style',
-    price: 79.99,
-    category: 'jeans',
-    sizes: ['28', '30', '32'],
-    colors: ['Black'],
-    images: ['/images/products/mens-skinny-black.jpg'],
-    inStock: true,
-    rating: 4.3,
-    reviews: 95,
-  },
-  {
-    id: 'P003',
-    name: 'Comfort Relaxed',
-    description: 'Relaxed fit for all-day comfort',
-    price: 74.99,
-    category: 'jeans',
-    sizes: ['32', '34', '36', '38'],
-    colors: ['Stone Wash'],
-    images: ['/images/products/mens-relaxed-light.jpg'],
-    inStock: true,
-    rating: 4.6,
-    reviews: 156,
-  },
-  {
-    id: 'P004',
-    name: 'Premium Slim Dark',
-    description: 'Premium quality raw denim slim jeans',
-    price: 129.99,
-    category: 'jeans',
-    sizes: ['30', '32', '34'],
-    colors: ['Raw Denim'],
-    images: ['/images/products/mens-slim-navy.jpg'],
-    inStock: true,
-    rating: 4.8,
-    reviews: 234,
-  },
-  {
-    id: 'P009',
-    name: 'High Rise Skinny',
-    description: 'Flattering high rise skinny jeans',
-    price: 89.99,
-    category: 'jeans',
-    sizes: ['24', '26', '28', '30'],
-    colors: ['Dark Indigo'],
-    images: ['/images/products/womens-skinny-dark.jpg'],
-    inStock: true,
-    rating: 4.7,
-    reviews: 198,
-  },
-  {
-    id: 'P010',
-    name: 'Mom Fit Relaxed',
-    description: 'Classic mom jeans with relaxed fit',
-    price: 79.99,
-    category: 'jeans',
-    sizes: ['26', '28', '30'],
-    colors: ['Light Wash'],
-    images: ['/images/products/womens-relaxed-light.jpg'],
-    inStock: true,
-    rating: 4.4,
-    reviews: 87,
-  },
-  {
-    id: 'P011',
-    name: 'Ankle Slim',
-    description: 'Chic ankle-length slim jeans',
-    price: 84.99,
-    category: 'jeans',
-    sizes: ['25', '27', '29'],
-    colors: ['Medium Blue'],
-    images: ['/images/products/womens-slim-blue.jpg'],
-    inStock: true,
-    rating: 4.6,
-    reviews: 145,
-  },
-  {
-    id: 'P012',
-    name: 'Curve Skinny',
-    description: 'Designed for curves skinny fit',
-    price: 94.99,
-    category: 'jeans',
-    sizes: ['27', '29', '31'],
-    colors: ['Black'],
-    images: ['/images/products/womens-skinny-black.jpg'],
-    inStock: true,
-    rating: 4.5,
-    reviews: 167,
-  },
-  {
-    id: 'P017',
-    name: 'Distressed Slim',
-    description: 'Trendy distressed slim fit',
-    price: 94.99,
-    category: 'jeans',
-    sizes: ['30', '31', '32', '34'],
-    colors: ['Ripped Blue'],
-    images: ['/images/products/mens-slim-ripped.jpg'],
-    inStock: true,
-    rating: 4.3,
-    reviews: 112,
-  },
-  {
-    id: 'P013',
-    name: 'Wide Leg Relaxed',
-    description: 'Trendy wide leg relaxed jeans',
-    price: 99.99,
-    category: 'jeans',
-    sizes: ['24', '26', '28'],
-    colors: ['Stone Wash'],
-    images: ['/images/products/womens-relaxed-wide.jpg'],
-    inStock: true,
-    rating: 4.7,
-    reviews: 203,
-  },
-  {
-    id: 'P015',
-    name: 'Bootcut Slim',
-    description: 'Classic bootcut slim jeans',
-    price: 89.99,
-    category: 'jeans',
-    sizes: ['26', '28', '30'],
-    colors: ['Dark Wash'],
-    images: ['/images/products/womens-slim-bootcut.jpg'],
-    inStock: true,
-    rating: 4.6,
-    reviews: 89,
-  },
-  {
-    id: 'P020',
-    name: 'Flare Leg',
-    description: 'Retro flare leg jeans',
-    price: 89.99,
-    category: 'jeans',
-    sizes: ['26', '28', '30'],
-    colors: ['Medium Wash'],
-    images: ['/images/products/womens-flare-medium.jpg'],
-    inStock: true,
-    rating: 4.4,
-    reviews: 78,
-  },
-];
+export interface ShopCategory {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  sort_order: number;
+}
 
-export const categories = [
-  { value: 'all', label: 'All Categories' },
-  { value: 'jeans', label: 'Jeans' },
+export interface ShopSubcategory {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  sort_order: number;
+}
+
+// Category-specific metadata field definitions for dynamic filters
+export const categoryFilterConfig: Record<string, { label: string; key: string; type: 'select' | 'range' | 'multiselect' | 'boolean'; options?: string[] }[]> = {
+  jeans: [
+    { label: 'Fit', key: 'fit', type: 'select', options: ['Slim', 'Skinny', 'Relaxed', 'Flare'] },
+    { label: 'Wash', key: 'wash', type: 'select', options: ['Dark Indigo', 'Black', 'Stone Wash', 'Light Wash', 'Medium Blue', 'Raw Denim', 'Ripped Blue', 'Dark Wash', 'Medium Wash'] },
+  ],
+  'leather-bags': [
+    { label: 'Material', key: 'material', type: 'select', options: ['Full-grain Italian leather', 'Pebbled leather', 'Saffiano leather', 'Vegetable-tanned leather'] },
+    { label: 'Has Certificate', key: 'has_certificate', type: 'boolean' },
+  ],
+  skincare: [
+    { label: 'Skin Type', key: 'skin_type', type: 'select', options: ['All', 'Sensitive', 'Oily', 'Dry', 'Mature', 'Combination'] },
+    { label: 'Concern', key: 'concern', type: 'multiselect', options: ['Dryness', 'Anti-aging', 'Dark spots', 'Dullness', 'Sensitivity', 'Redness', 'Acne', 'Wrinkles', 'Fine lines', 'Sun protection'] },
+  ],
+  haircare: [
+    { label: 'Hair Type', key: 'hair_type', type: 'select', options: ['All', 'Damaged', 'Oily', 'Dry', 'Curly', 'Fine'] },
+    { label: 'Scent', key: 'scent', type: 'select', options: ['Fresh Citrus', 'Lavender', 'Vanilla Rose', 'Coconut', 'Unscented'] },
+    { label: 'Concern', key: 'concern', type: 'multiselect', options: ['Damage repair', 'Frizz', 'Smoothing', 'Hydration', 'Shine', 'Frizz control', 'Strengthening'] },
+  ],
+  cosmetics: [
+    { label: 'Finish', key: 'finish', type: 'select', options: ['Matte', 'Dewy', 'Shimmer & Matte', 'Volumizing', 'Satin'] },
+    { label: 'Waterproof', key: 'waterproof', type: 'boolean' },
+  ],
+  jewelry: [
+    { label: 'Metal', key: 'metal', type: 'select', options: ['18K Gold', '14K Gold', 'Sterling Silver', 'Platinum'] },
+    { label: 'Metal Purity', key: 'metal_purity', type: 'select', options: ['750', '925', '585', '950'] },
+    { label: 'Gemstone', key: 'gemstone', type: 'select', options: ['Diamond', 'Freshwater Pearl', 'Blue Sapphire', 'Ruby', 'Emerald'] },
+    { label: 'Has Certificate', key: 'has_certificate', type: 'boolean' },
+  ],
+  undergarments: [
+    { label: 'Material', key: 'material', type: 'select', options: ['Cotton blend', 'Lace & Cotton', '100% Cotton', 'Nylon Spandex'] },
+    { label: 'Privacy Packaging', key: 'privacy_packaging', type: 'boolean' },
+  ],
+};
+
+// Concern-based landing page data for beauty
+export const shopByConcernData = [
+  { id: 'acne', label: 'Acne-Prone', icon: '🔴', description: 'Products for acne-prone skin', concerns: ['Acne', 'Sensitivity'] },
+  { id: 'anti-aging', label: 'Anti-Aging', icon: '✨', description: 'Turn back the clock', concerns: ['Anti-aging', 'Wrinkles', 'Fine lines'] },
+  { id: 'dryness', label: 'Dry Skin', icon: '💧', description: 'Deep hydration solutions', concerns: ['Dryness', 'Hydration'] },
+  { id: 'brightening', label: 'Brightening', icon: '☀️', description: 'Radiant, even-toned skin', concerns: ['Dark spots', 'Dullness'] },
+  { id: 'sensitive', label: 'Sensitive Skin', icon: '🌿', description: 'Gentle, soothing care', concerns: ['Sensitivity', 'Redness'] },
+  { id: 'sun-care', label: 'Sun Protection', icon: '🛡️', description: 'UV defense essentials', concerns: ['Sun protection'] },
 ];
 
 export const priceRanges = [
   { value: 'all', label: 'All Prices' },
-  { value: '0-80', label: 'Under $80' },
-  { value: '80-100', label: '$80 - $100' },
-  { value: '100-150', label: '$100 - $150' },
+  { value: '0-30', label: 'Under $30' },
+  { value: '30-60', label: '$30 - $60' },
+  { value: '60-100', label: '$60 - $100' },
+  { value: '100-300', label: '$100 - $300' },
+  { value: '300-9999', label: '$300+' },
 ];

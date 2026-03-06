@@ -69,12 +69,14 @@ const mapShopProduct = (p: any): ShopProduct => ({
   description: p.description || '',
   price: Number(p.price),
   category: p.category || 'jeans',
+  subcategory: p.subcategory || '',
   sizes: p.sizes || [],
   colors: p.colors || [],
   images: p.images || ['/placeholder.svg'],
-  inStock: p.inStock ?? true,
-  rating: p.rating || 4.5,
-  reviews: p.reviews || 100,
+  inStock: p.in_stock ?? p.inStock ?? true,
+  rating: Number(p.rating) || 4.5,
+  reviews: p.reviews || 0,
+  metadata: p.metadata || {},
 });
 
 // ============= API Functions =============
@@ -86,19 +88,7 @@ export const fetchShopProducts = async (category?: string): Promise<ShopProduct[
   }
   const { data, error } = await query;
   if (error) throw error;
-  return (data || []).map((p: any) => ({
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    price: Number(p.price),
-    category: p.category,
-    sizes: p.sizes || [],
-    colors: p.colors || [],
-    images: p.images || ['/placeholder.svg'],
-    inStock: p.in_stock ?? true,
-    rating: Number(p.rating) || 4.5,
-    reviews: p.reviews || 0,
-  }));
+  return (data || []).map(mapShopProduct);
 };
 
 export const fetchShopProductById = async (id: string): Promise<ShopProduct | null> => {
@@ -108,19 +98,7 @@ export const fetchShopProductById = async (id: string): Promise<ShopProduct | nu
     .eq('id', id)
     .maybeSingle();
   if (error || !data) return null;
-  return {
-    id: data.id,
-    name: data.name,
-    description: data.description,
-    price: Number(data.price),
-    category: data.category,
-    sizes: data.sizes || [],
-    colors: data.colors || [],
-    images: data.images || ['/placeholder.svg'],
-    inStock: data.in_stock ?? true,
-    rating: Number(data.rating) || 4.5,
-    reviews: data.reviews || 0,
-  };
+  return mapShopProduct(data);
 };
 
 export const checkStockAvailability = async (items: StockCheckItem[]): Promise<StockCheckResult> => {
