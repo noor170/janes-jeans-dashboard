@@ -132,6 +132,32 @@ const CashFlow = () => {
     }
   };
 
+  // Monthly bar chart data
+  const monthlyData = useMemo(() => {
+    const months: Record<string, { month: string; income: number; expense: number }> = {};
+    transactions.forEach(tx => {
+      if (!tx.transactionDate) return;
+      const d = new Date(tx.transactionDate);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+      if (!months[key]) months[key] = { month: label, income: 0, expense: 0 };
+      if (tx.type === 'INCOME') months[key].income += tx.amount;
+      else months[key].expense += tx.amount;
+    });
+    return Object.entries(months).sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => v);
+  }, [transactions]);
+
+  // Category pie chart data
+  const categoryData = useMemo(() => {
+    const cats: Record<string, number> = {};
+    transactions.forEach(tx => {
+      cats[tx.category] = (cats[tx.category] || 0) + tx.amount;
+    });
+    return Object.entries(cats)
+      .map(([name, value]) => ({ name, value: Math.round(value * 100) / 100 }))
+      .sort((a, b) => b.value - a.value);
+  }, [transactions]);
+
   const summaryCards = [
     { label: 'Total Income', value: summary?.totalIncome ?? 0, icon: TrendingUp, color: 'text-emerald-600' },
     { label: 'Total Expense', value: summary?.totalExpense ?? 0, icon: TrendingDown, color: 'text-red-500' },
@@ -157,6 +183,86 @@ const CashFlow = () => {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      {/* Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Monthly Income vs Expense Bar Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              {language === 'en' ? 'Monthly Income vs Expense' : 'মাসিক আয় বনাম ব্যয়'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {monthlyData.length === 0 ? (
+              <div className="flex h-64 items-center justify-center text-muted-foreground text-sm">No data available</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={monthlyData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="month" className="text-xs fill-muted-foreground" tick={{ fontSize: 12 }} />
+                  <YAxis className="text-xs fill-muted-foreground" tick={{ fontSize: 12 }} tickFormatter={v => `$${(v / 1000).toFixed(0)}k`} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }}
+                    formatter={(value: number) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, undefined]}
+                  />
+                  <Legend />
+                  <Bar dataKey="income" name="Income" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="expense" name="Expense" fill="hsl(var(--destructive))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Category Breakdown Pie Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              {language === 'en' ? 'Spending by Category' : 'বিভাগ অনুসারে ব্যয়'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {categoryData.length === 0 ? (
+              <div className="flex h-64 items-center justify-center text-muted-foreground text-sm">No data available</div>
+            ) : (
+              <div className="flex flex-col items-center gap-4">
+                <ResponsiveContainer width="100%" height={260}>
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={100}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      labelLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                    >
+                      {categoryData.map((_, i) => (
+                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '8px', color: 'hsl(var(--popover-foreground))' }}
+                      formatter={(value: number) => [`$${value.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, undefined]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {categoryData.slice(0, 8).map((cat, i) => (
+                    <div key={cat.name} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                      {cat.name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Transactions Table */}
