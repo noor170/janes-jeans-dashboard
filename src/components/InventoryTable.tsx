@@ -430,6 +430,26 @@ const InventoryTable = () => {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell 
+                      className="text-right"
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setIsQuickViewOpen(true);
+                      }}
+                    >
+                      {(product.discountPercent > 0 || product.offerDiscountPercent > 0) ? (
+                        <div className="flex flex-col items-end gap-0.5">
+                          {product.discountPercent > 0 && (
+                            <Badge variant="destructive" className="text-xs">{product.discountPercent}%</Badge>
+                          )}
+                          {product.offerDiscountPercent > 0 && (
+                            <Badge className="text-xs bg-amber-500 text-white">{product.offerDiscountPercent}%</Badge>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               )}
