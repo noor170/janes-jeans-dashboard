@@ -88,16 +88,18 @@ export default function SetPassword() {
         return;
       }
 
-      // Send password reset (works for both new and existing auth users)
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/shop/set-password`,
+      // Send activation email via Resend edge function
+      const { data, error: fnError } = await supabase.functions.invoke('send-activation-email', {
+        body: { email },
       });
 
-      if (resetError) throw resetError;
+      if (fnError) throw fnError;
+      if (data && !data.success) throw new Error(data.error || 'Failed to send activation email');
+
       setEmailSent(true);
-      toast.success('Setup link sent! Check your email.');
+      toast.success('Activation link sent! Check your email.');
     } catch (err: any) {
-      setError(err.message || 'Failed to send setup link');
+      setError(err.message || 'Failed to send activation link');
     } finally {
       setIsLoading(false);
     }
