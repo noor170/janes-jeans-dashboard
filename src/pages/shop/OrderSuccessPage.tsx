@@ -92,8 +92,10 @@ export default function OrderSuccessPage() {
 
       setOrderResponse(response);
       setOrderPlaced(true);
-      toast.success('Order placed successfully!');
+      toast.success(`Order placed successfully! Order ID: ${response.orderNumber}`);
       resetCheckout();
+      // Auto-redirect to shop after short delay
+      setTimeout(() => navigate('/shop'), 3000);
     } catch (error: any) {
       if (error?.stockError) {
         toast.error(error.message || 'Some items are out of stock');
