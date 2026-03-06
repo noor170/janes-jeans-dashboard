@@ -22,7 +22,7 @@ const shipmentSchema = z.object({
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { items, shipmentDetails, setShipmentDetails, getCartTotal } = useCart();
+  const { items, shipmentDetails, setShipmentDetails, getCartTotal, appliedCoupon } = useCart();
 
   const form = useForm<ShipmentDetails>({
     resolver: zodResolver(shipmentSchema),
