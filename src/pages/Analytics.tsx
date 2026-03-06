@@ -488,7 +488,7 @@ const Analytics = () => {
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                    formatter={(value: number) => [`৳${value.toLocaleString()}`, '']}
                   />
                   <Legend />
                   <Bar dataKey="men" name={t('men')} fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
