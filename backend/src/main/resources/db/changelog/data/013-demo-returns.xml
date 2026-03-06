@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-013-demo-returns" author="janesjeans" context="dev,docker">
+        <insert tableName="product_returns">
+            <column name="id" value="ret-001"/>
+            <column name="order_id" value="ORD001"/>
+            <column name="product_id" value="P001"/>
+            <column name="product_name" value="Classic Indigo Slim"/>
+            <column name="customer_name" value="John Smith"/>
+            <column name="customer_email" value="john@example.com"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="reason" value="DEFECTIVE"/>
+            <column name="description" value="Stitching came loose after first wash"/>
+            <column name="status" value="APPROVED"/>
+            <column name="refund_amount" valueNumeric="89.99"/>
+            <column name="refund_status" value="PROCESSED"/>
+            <column name="restock" valueBoolean="false"/>
+            <column name="requested_at" valueDate="2025-02-15T10:30:00"/>
+            <column name="resolved_at" valueDate="2025-02-18T14:00:00"/>
+        </insert>
+
+        <insert tableName="product_returns">
+            <column name="id" value="ret-002"/>
+            <column name="order_id" value="ORD002"/>
+            <column name="product_id" value="P009"/>
+            <column name="product_name" value="High Rise Skinny"/>
+            <column name="customer_name" value="Jane Doe"/>
+            <column name="customer_email" value="jane@example.com"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="reason" value="WRONG_SIZE"/>
+            <column name="description" value="Ordered size 26 but need size 28"/>
+            <column name="status" value="PENDING"/>
+            <column name="refund_amount" valueNumeric="89.99"/>
+            <column name="refund_status" value="NONE"/>
+            <column name="restock" valueBoolean="true"/>
+            <column name="requested_at" valueDate="2025-03-01T09:15:00"/>
+        </insert>
+
+        <insert tableName="product_returns">
+            <column name="id" value="ret-003"/>
+            <column name="order_id" value="ORD003"/>
+            <column name="product_id" value="P004"/>
+            <column name="product_name" value="Premium Slim Dark"/>
+            <column name="customer_name" value="Bob Wilson"/>
+            <column name="customer_email" value="bob@example.com"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="reason" value="NOT_AS_DESCRIBED"/>
+            <column name="description" value="Color differs from website photo"/>
+            <column name="status" value="REJECTED"/>
+            <column name="refund_status" value="NONE"/>
+            <column name="restock" valueBoolean="false"/>
+            <column name="notes" value="Product matches listing. Return denied."/>
+            <column name="requested_at" valueDate="2025-02-20T16:45:00"/>
+            <column name="resolved_at" valueDate="2025-02-22T11:00:00"/>
+        </insert>
+
+        <insert tableName="product_returns">
+            <column name="id" value="ret-004"/>
+            <column name="order_id" value="ORD004"/>
+            <column name="product_id" value="P012"/>
+            <column name="product_name" value="Curve Skinny"/>
+            <column name="customer_name" value="Alice Brown"/>
+            <column name="customer_email" value="alice@example.com"/>
+            <column name="quantity" valueNumeric="2"/>
+            <column name="reason" value="CHANGED_MIND"/>
+            <column name="description" value="Found a better deal elsewhere"/>
+            <column name="status" value="APPROVED"/>
+            <column name="refund_amount" valueNumeric="189.98"/>
+            <column name="refund_status" value="PENDING"/>
+            <column name="restock" valueBoolean="true"/>
+            <column name="requested_at" valueDate="2025-03-02T08:00:00"/>
+        </insert>
+
+        <insert tableName="product_returns">
+            <column name="id" value="ret-005"/>
+            <column name="order_id" value="ORD005"/>
+            <column name="product_id" value="P007"/>
+            <column name="product_name" value="Executive Slim"/>
+            <column name="customer_name" value="David Lee"/>
+            <column name="customer_email" value="david@example.com"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="reason" value="DAMAGED_IN_SHIPPING"/>
+            <column name="description" value="Package arrived torn and product stained"/>
+            <column name="status" value="RECEIVED"/>
+            <column name="refund_amount" valueNumeric="99.99"/>
+            <column name="refund_status" value="NONE"/>
+            <column name="restock" valueBoolean="false"/>
+            <column name="requested_at" valueDate="2025-03-04T12:30:00"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
