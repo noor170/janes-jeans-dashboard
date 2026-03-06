@@ -171,7 +171,7 @@ const CustomerDetailsDialog = ({ customer, isOpen, onClose }: CustomerDetailsDia
                         </div>
                         <div className="flex justify-between font-medium text-foreground">
                           <span>{t('total')}:</span>
-                          <span>${order.totalAmount.toFixed(2)}</span>
+                          <span>৳{order.totalAmount.toFixed(2)}</span>
                         </div>
                       </div>
                       {/* Order Items Preview */}
