@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <!-- Schema Changes -->
+    <!-- Schema Changes Only – data seeding is handled by DB.sql -->
     <include file="db/changelog/changes/001-create-users-table.xml"/>
     <include file="db/changelog/changes/002-create-products-table.xml"/>
     <include file="db/changelog/changes/003-create-customers-table.xml"/>
@@ -21,20 +21,5 @@
     <include file="db/changelog/changes/013-create-coupons-table.xml"/>
     <include file="db/changelog/changes/014-create-cash-flow-table.xml"/>
     <include file="db/changelog/changes/015-create-product-returns-table.xml"/>
-    
-    <!-- Demo Data -->
-    <include file="db/changelog/data/001-demo-users.xml"/>
-    <include file="db/changelog/data/002-demo-products.xml"/>
-    <include file="db/changelog/data/003-demo-customers.xml"/>
-    <include file="db/changelog/data/004-demo-shipping-vendors.xml"/>
-    <include file="db/changelog/data/005-demo-orders.xml"/>
-    <include file="db/changelog/data/006-demo-shipments.xml"/>
-    <include file="db/changelog/data/007-shop-categories.xml"/>
-    <include file="db/changelog/data/008-shop-subcategories.xml"/>
-    <include file="db/changelog/data/009-shop-products.xml"/>
-    <include file="db/changelog/data/010-admin-user.xml"/>
-    <include file="db/changelog/data/011-demo-coupons.xml"/>
-    <include file="db/changelog/data/012-demo-cash-flow.xml"/>
-    <include file="db/changelog/data/013-demo-returns.xml"/>
 
 </databaseChangeLog>
