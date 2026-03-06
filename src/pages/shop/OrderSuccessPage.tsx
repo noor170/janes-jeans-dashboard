@@ -178,6 +178,18 @@ export default function OrderSuccessPage() {
                 </div>
               </CardContent>
             </Card>
+            <Card className="mb-8 border-primary/30 bg-primary/5">
+              <CardContent className="pt-6 text-center">
+                <Lock className="h-10 w-10 mx-auto text-primary mb-3" />
+                <h3 className="font-bold text-lg mb-1">Track Your Order Anytime</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Set a password for your account to log in and view your order status, shipping updates, and delivery tracking.
+                </p>
+                <Button asChild>
+                  <Link to="/shop/set-password">Activate My Account</Link>
+                </Button>
+              </CardContent>
+            </Card>
             <div className="flex gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link to="/shop">
@@ -186,7 +198,7 @@ export default function OrderSuccessPage() {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/">Go to Dashboard</Link>
+                <Link to="/shop/my-orders">My Orders</Link>
               </Button>
             </div>
           </div>
