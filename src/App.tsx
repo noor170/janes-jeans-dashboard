@@ -29,6 +29,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Coupons from "./pages/Coupons";
 import CashFlow from "./pages/CashFlow";
+import ProductReturns from "./pages/ProductReturns";
 // Shop pages
 import ShoppingDashboard from "./pages/shop/ShoppingDashboard";
 import ProductDetails from "./pages/shop/ProductDetails";
