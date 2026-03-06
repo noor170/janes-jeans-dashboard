@@ -335,7 +335,7 @@ const Analytics = () => {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title={t('totalSales')}
-          value={`$${(stats?.totalSales || 0).toLocaleString()}`}
+          value={`৳${(stats?.totalSales || 0).toLocaleString()}`}
           change={12.5}
           changeLabel={vsLastMonth}
           icon={DollarSign}
