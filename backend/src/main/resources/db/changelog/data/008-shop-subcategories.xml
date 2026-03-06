@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="data-008-shop-subcategories" author="janesjeans" context="dev,docker">
+        <!-- Jeans -->
+        <insert tableName="shop_subcategories"><column name="id" value="jeans-men"/><column name="category_id" value="jeans"/><column name="name" value="Men's Jeans"/><column name="slug" value="mens-jeans"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="jeans-women"/><column name="category_id" value="jeans"/><column name="name" value="Women's Jeans"/><column name="slug" value="womens-jeans"/><column name="sort_order" valueNumeric="2"/></insert>
+        <!-- Leather Bags -->
+        <insert tableName="shop_subcategories"><column name="id" value="bags-tote"/><column name="category_id" value="leather-bags"/><column name="name" value="Tote Bags"/><column name="slug" value="tote-bags"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="bags-crossbody"/><column name="category_id" value="leather-bags"/><column name="name" value="Crossbody Bags"/><column name="slug" value="crossbody-bags"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="bags-clutch"/><column name="category_id" value="leather-bags"/><column name="name" value="Clutches"/><column name="slug" value="clutches"/><column name="sort_order" valueNumeric="3"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="bags-backpack"/><column name="category_id" value="leather-bags"/><column name="name" value="Backpacks"/><column name="slug" value="backpacks"/><column name="sort_order" valueNumeric="4"/></insert>
+        <!-- Skincare -->
+        <insert tableName="shop_subcategories"><column name="id" value="skin-moisturizer"/><column name="category_id" value="skincare"/><column name="name" value="Moisturizers"/><column name="slug" value="moisturizers"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="skin-serum"/><column name="category_id" value="skincare"/><column name="name" value="Serums"/><column name="slug" value="serums"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="skin-cleanser"/><column name="category_id" value="skincare"/><column name="name" value="Cleansers"/><column name="slug" value="cleansers"/><column name="sort_order" valueNumeric="3"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="skin-sunscreen"/><column name="category_id" value="skincare"/><column name="name" value="Sunscreens"/><column name="slug" value="sunscreens"/><column name="sort_order" valueNumeric="4"/></insert>
+        <!-- Haircare -->
+        <insert tableName="shop_subcategories"><column name="id" value="hair-shampoo"/><column name="category_id" value="haircare"/><column name="name" value="Shampoo"/><column name="slug" value="shampoo"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="hair-conditioner"/><column name="category_id" value="haircare"/><column name="name" value="Conditioner"/><column name="slug" value="conditioner"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="hair-treatment"/><column name="category_id" value="haircare"/><column name="name" value="Treatments"/><column name="slug" value="treatments"/><column name="sort_order" valueNumeric="3"/></insert>
+        <!-- Cosmetics -->
+        <insert tableName="shop_subcategories"><column name="id" value="cos-face"/><column name="category_id" value="cosmetics"/><column name="name" value="Face"/><column name="slug" value="face"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="cos-lips"/><column name="category_id" value="cosmetics"/><column name="name" value="Lips"/><column name="slug" value="lips"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="cos-eyes"/><column name="category_id" value="cosmetics"/><column name="name" value="Eyes"/><column name="slug" value="eyes"/><column name="sort_order" valueNumeric="3"/></insert>
+        <!-- Jewelry -->
+        <insert tableName="shop_subcategories"><column name="id" value="jew-rings"/><column name="category_id" value="jewelry"/><column name="name" value="Rings"/><column name="slug" value="rings"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="jew-necklaces"/><column name="category_id" value="jewelry"/><column name="name" value="Necklaces"/><column name="slug" value="necklaces"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="jew-earrings"/><column name="category_id" value="jewelry"/><column name="name" value="Earrings"/><column name="slug" value="earrings"/><column name="sort_order" valueNumeric="3"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="jew-bracelets"/><column name="category_id" value="jewelry"/><column name="name" value="Bracelets"/><column name="slug" value="bracelets"/><column name="sort_order" valueNumeric="4"/></insert>
+        <!-- Undergarments -->
+        <insert tableName="shop_subcategories"><column name="id" value="ug-bras"/><column name="category_id" value="undergarments"/><column name="name" value="Bras"/><column name="slug" value="bras"/><column name="sort_order" valueNumeric="1"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="ug-panties"/><column name="category_id" value="undergarments"/><column name="name" value="Panties"/><column name="slug" value="panties"/><column name="sort_order" valueNumeric="2"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="ug-boxers"/><column name="category_id" value="undergarments"/><column name="name" value="Boxers"/><column name="slug" value="boxers"/><column name="sort_order" valueNumeric="3"/></insert>
+        <insert tableName="shop_subcategories"><column name="id" value="ug-shapewear"/><column name="category_id" value="undergarments"/><column name="name" value="Shapewear"/><column name="slug" value="shapewear"/><column name="sort_order" valueNumeric="4"/></insert>
+    </changeSet>
+
+</databaseChangeLog>
