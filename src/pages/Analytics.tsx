@@ -196,9 +196,9 @@ const Analytics = () => {
     const headers = ['Metric', 'Value', 'Change %', 'Trend'];
     const avgOrderValue = orders.length > 0 ? Math.round(orders.reduce((sum, o) => sum + o.totalAmount, 0) / orders.length) : 0;
     const data = [
-      ['Total Sales', `$${(stats?.totalSales || 0).toLocaleString()}`, '12.5', 'up'],
+      ['Total Sales', `৳${(stats?.totalSales || 0).toLocaleString()}`, '12.5', 'up'],
       ['Active Orders', stats?.activeOrders || 0, '-3.2', 'down'],
-      ['Avg Order Value', `$${avgOrderValue}`, '8.1', 'up'],
+      ['Avg Order Value', `৳${avgOrderValue}`, '8.1', 'up'],
       ['Total Customers', stats?.totalCustomers || 0, '15.3', 'up'],
     ];
     exportToCsv({ filename: `kpi-metrics-${new Date().toISOString().split('T')[0]}`, headers, data });
