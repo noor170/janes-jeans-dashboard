@@ -19,13 +19,14 @@ public interface ShopProductRepository extends JpaRepository<ShopProduct, String
     List<ShopProduct> findByInStockTrue();
 
     // Paginated + search + filter
+    // Using JPQL with COALESCE to handle NULL search parameter properly
     @Query("SELECT p FROM ShopProduct p WHERE " +
-           "(:category IS NULL OR p.category = :category) AND " +
+           "(:category IS NULL OR :category = 'all' OR p.category = :category) AND " +
            "(:subcategory IS NULL OR p.subcategory = :subcategory) AND " +
            "(:inStock IS NULL OR p.inStock = :inStock) AND " +
            "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
            "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
-           "(:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "(COALESCE(:search, '') = '' OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
            "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<ShopProduct> searchCatalog(
             @Param("category") String category,
