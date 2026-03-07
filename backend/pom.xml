@@ -59,6 +59,18 @@
             <artifactId>spring-ai-pgvector-store-spring-boot-starter</artifactId>
         </dependency>
         
+        <!-- LangChain4j for code ingestion -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>0.38.0</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+            <version>0.38.0</version>
+        </dependency>
+        
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
