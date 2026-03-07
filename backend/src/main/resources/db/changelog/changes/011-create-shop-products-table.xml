@@ -16,7 +16,7 @@
                 subcategory VARCHAR(100) DEFAULT '',
                 sizes TEXT[] DEFAULT '{}',
                 colors TEXT[] DEFAULT '{}',
-                images TEXT[] DEFAULT '{"placeholder.svg"}',
+                images TEXT[] DEFAULT '{"/placeholder.svg"}',
                 in_stock BOOLEAN DEFAULT true NOT NULL,
                 rating DECIMAL(3,1) DEFAULT 4.5 NOT NULL,
                 reviews INT DEFAULT 0 NOT NULL,
