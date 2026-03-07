@@ -85,12 +85,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // This is the crucial line for Postman
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers( "/api/orders/**").permitAll()
-                        .requestMatchers("/api/orders/**", "/error").permitAll()
-                        .anyRequest().permitAll()
-                );
+                        // Auth endpoints - public
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/health",
+                                "/actuator/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/shop/**"
+                        ).permitAll()
+                        // Order-related endpoints - public for guest flows
+                        .requestMatchers(
+                                "/api/orders/**",
+                                "/error"
+                        ).permitAll()
+                        // Everything else requires authentication
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
     @Bean
